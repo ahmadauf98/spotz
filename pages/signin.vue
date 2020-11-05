@@ -1,0 +1,165 @@
+<template>
+  <v-app>
+    <v-main class="d-none d-sm-flex align-center">
+      <v-container class="p-0" fluid>
+        <!-- Notifications -->
+        <v-snackbar
+          v-show="notification.alert != '' || notification.alert != null"
+          v-model="notification.snackbar"
+          :timeout="notification.timeout"
+          dark
+          top
+        >
+          <div class="d-flex justify-center align-center">
+            <v-icon :class="notification.alertIconStyle">{{
+              notification.alertIcon
+            }}</v-icon>
+            {{ notification.alert }}
+          </div>
+        </v-snackbar>
+
+        <v-card width="450px" class="py-4 px-8 mx-auto" outlined>
+          <!-- Image Logo -->
+          <v-row>
+            <v-col class="text-center mb-n4">
+              <img src="~/static/img/logo-full.svg" width="120px" />
+            </v-col>
+          </v-row>
+
+          <!-- Title -->
+          <v-row>
+            <v-col class="pb-0 text-center">
+              <h1><b>Log in</b> as manager</h1>
+            </v-col>
+          </v-row>
+
+          <!-- Sign In -->
+          <v-card-text>
+            <form @submit.prevent="emailLogin">
+              <!-- Email Input -->
+              <v-text-field
+                v-model="email"
+                type="email"
+                label="Email"
+                prepend-icon="mdi-email"
+                dense
+                outlined
+              ></v-text-field>
+
+              <!-- Password Input -->
+              <v-text-field
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                @click:append="showPassword = !showPassword"
+                label="Password"
+                prepend-icon="mdi-lock"
+                dense
+                outlined
+              ></v-text-field>
+
+              <!-- Forgot Password -->
+              <div class="text-right mt-n5 mb-3">
+                <Nuxt-link
+                  to="/emailRecovery"
+                  class="relative hyperlink caption"
+                >
+                  Forgot Password?
+                </Nuxt-link>
+              </div>
+
+              <!-- Signin Button -->
+              <v-card-actions>
+                <v-row>
+                  <v-btn
+                    type="submit"
+                    class="h6 font-weight-bold"
+                    color="#6B46C1"
+                    large
+                    block
+                    dark
+                  >
+                    Log in
+                  </v-btn>
+                </v-row>
+              </v-card-actions>
+            </form>
+
+            <!-- Signup Button -->
+            <div class="text-center mt-2">
+              <h1 class="hyperlink caption">
+                Don't have an account?
+                <Nuxt-link to="/signup"> Sign up. </Nuxt-link>
+              </h1>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-container>
+    </v-main>
+  </v-app>
+</template>
+
+<script>
+import firebase from 'firebase'
+import { mapState } from 'vuex'
+
+export default {
+  layout: 'auth',
+
+  data() {
+    return {
+      // Password Toggle Button
+      showPassword: false,
+
+      // User Input Data
+      email: '',
+      password: '',
+    }
+  },
+
+  // Fetch Notification Data from Vuex
+  computed: {
+    ...mapState(['notification']),
+  },
+
+  methods: {
+    // Signin with Email Provider
+    async emailLogin() {
+      try {
+        if (this.email === null || this.email === '') {
+          console.log('Error. Undefined email.')
+          this.$store.commit('SET_NOTIFICATION', {
+            alert: 'Email is required, please enter valid email.',
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'text-red mr-2 align-self-top',
+            snackbar: true,
+          })
+        } else if (this.password === null || this.password === '') {
+          console.log('Error. Undefined password.')
+          this.$store.commit('SET_NOTIFICATION', {
+            alert: 'Password is required, please enter strong password.',
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'text-red mr-2 align-self-top',
+            snackbar: true,
+          })
+        } else {
+          await firebase
+            .auth()
+            .signInWithEmailAndPassword(this.email, this.password)
+            .then(() => {
+              this.$router.push('/manager/dashboard')
+            })
+        }
+      } catch (error) {
+        console.log(error.code)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'text-red mr-2 align-self-top',
+          snackbar: true,
+        })
+      }
+    },
+  },
+}
+</script>
