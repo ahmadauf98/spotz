@@ -1,5 +1,5 @@
 {
-  "name": "manager",
+  "name": "spotz",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.12.2",
-    "@nuxtjs/firebase": "^7.0.0",
-    "core-js": "^3.6.5",
-    "firebase": "^8.0.0",
+    "@nuxtjs/firebase": "^7.1.1",
+    "core-js": "^3.7.0",
+    "firebase": "^8.0.2",
     "nuxt": "^2.14.6"
   },
   "devDependencies": {

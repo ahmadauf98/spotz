@@ -1,0 +1,56 @@
+.text-green {
+  color: #00c58e;
+}
+
+.text-primary {
+  color: #6b46c1;
+}
+
+.text-red {
+  color: #f11e41;
+}
+
+.text-black {
+  color: black;
+}
+
+.text-white {
+  color: white;
+}
+
+.text-grey {
+  color: #757575;
+}
+
+.text-active {
+  color: #00c58e;
+}
+
+.text-pending {
+  color: #fdd835;
+}
+
+.text-rejected {
+  color: #f11e41;
+}
+
+.text-disabled {
+  color: #757575;
+}
+
+.hyperlink :hover {
+  color: #9f7aea;
+}
+
+.text-hover:hover {
+  text-decoration: underline;
+}
+
+.overflow {
+  overflow: auto;
+}
+
+.relative {
+  position: relative;
+}
+

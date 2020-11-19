@@ -1,0 +1,822 @@
+<template>
+  <v-app>
+    <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
+      <v-container class="p-0 my-0" fluid>
+        <!-- Notifications -->
+        <v-snackbar
+          v-show="notification.alert != '' || notification.alert != null"
+          v-model="notification.snackbar"
+          :timeout="notification.timeout"
+          dark
+          top
+        >
+          <div class="d-flex justify-center align-center">
+            <v-icon
+              :class="notification.alertIconStyle"
+              :color="notification.colorIcon"
+              >{{ notification.alertIcon }}</v-icon
+            >
+            {{ notification.alert }}
+          </div>
+        </v-snackbar>
+
+        <!-- Organization Details Part -->
+        <tournamentHeader />
+
+        <v-row>
+          <!-- Left Side -->
+          <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
+            <!-- Team Registration -->
+            <v-card class="mx-auto py-10 mt-n3 mt-lg-0 px-9 mb-5" outlined tile>
+              <div class="d-flex align-center">
+                <h1 class="text-h6 font-weight-bold mb-1">Team Registration</h1>
+                <h1
+                  class="text-caption font-weight-bold text-grey ml-auto text-red"
+                >
+                  <v-icon color="red darken-1" size="20"
+                    >mdi-calendar-clock</v-icon
+                  >
+                  Due Date:
+                  {{ tournamentFormat.dueDate }}
+                </h1>
+              </div>
+
+              <div>
+                <h1 class="text-caption text-grey">
+                  Please register your players before the due date. Preferable
+                  to do it early because you can resubmit your application if
+                  your application is rejected by the organizer.
+                </h1>
+              </div>
+
+              <v-divider class="mt-5"></v-divider>
+
+              <div class="d-flex align-center mt-n4">
+                <v-icon class="mr-3" size="50">mdi-account-multiple</v-icon>
+                <div class="d-block">
+                  <h1 class="text-subtitle-1 font-weight-medium">Team Name</h1>
+                </div>
+                <v-col cols="5" class="mt-6 d-flex">
+                  <v-text-field
+                    v-model="tempTeamName"
+                    outlined
+                    dense
+                  ></v-text-field>
+                </v-col>
+
+                <v-btn
+                  v-if="teamName == ''"
+                  @click="onSet"
+                  :disabled="tempTeamName == ''"
+                  class="ml-auto text-capitalize"
+                  color="primary"
+                  outlined
+                  >Set</v-btn
+                >
+
+                <v-btn
+                  v-else
+                  @click="onUpdate"
+                  class="ml-auto text-capitalize"
+                  color="primary"
+                  outlined
+                  >Update</v-btn
+                >
+              </div>
+
+              <v-divider v-if="teamName == ''" class="mt-n4"></v-divider>
+              <v-divider v-else class="mt-n4 mb-4 ml-15"></v-divider>
+
+              <div v-show="teamName != ''">
+                <div class="d-flex align-center">
+                  <v-icon class="mr-3 self-align-top" size="50"
+                    >mdi-file-document-edit</v-icon
+                  >
+                  <div class="d-block">
+                    <h1 class="text-subtitle-1 font-weight-medium">
+                      Registration form
+                    </h1>
+
+                    <h1
+                      v-if="availablePlayers == 0"
+                      class="text-caption text-grey"
+                    >
+                      No Players Available
+                    </h1>
+                    <h1 v-else class="text-caption text-grey">
+                      {{ availablePlayers }} Players Available
+                    </h1>
+                  </div>
+
+                  <v-btn
+                    v-show="availablePlayers != 0"
+                    class="ml-auto text-capitalize"
+                    color="green darken-1"
+                    @click="addPlayerOverlay = !addPlayerOverlay"
+                    small
+                    dark
+                    depressed
+                  >
+                    Add Player</v-btn
+                  >
+                </div>
+
+                <v-card
+                  v-show="lengthListPlayers != 0"
+                  class="pa-4 ml-15"
+                  color="white"
+                  outlined
+                >
+                  <v-divider class="mb-5"></v-divider>
+
+                  <v-simple-table class="mt-n5">
+                    <template v-slot:default>
+                      <thead>
+                        <tr>
+                          <th class="text-left">Player Name</th>
+                          <th class="text-center">Identification ID</th>
+                          <th class="text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          v-for="list in listPlayers"
+                          :key="list.identificationID"
+                          class="text-center"
+                        >
+                          <td class="text-left">{{ list.name }}</td>
+                          <td>{{ list.identificationID }}</td>
+                          <td>
+                            <v-btn
+                              @click="onViewPlayer(list)"
+                              class="mx-1 text-capitalize"
+                              color="yellow darken-3"
+                              depressed
+                              small
+                              dark
+                              >View</v-btn
+                            >
+
+                            <!-- Delete Players -->
+                            <v-menu>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  class="mx-1 text-capitalize"
+                                  color="red darken-1"
+                                  depressed
+                                  small
+                                  dark
+                                  >Delete</v-btn
+                                >
+                              </template>
+                              <v-list>
+                                <v-list-item @click="onDeletePlayer(list)">
+                                  <v-list-item-title class="text-subtitle-2">
+                                    Delete Player
+                                  </v-list-item-title>
+                                </v-list-item>
+                              </v-list>
+                            </v-menu>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </v-simple-table>
+                </v-card>
+
+                <v-divider class="mt-4 mb-5"></v-divider>
+
+                <div class="d-flex">
+                  <v-btn
+                    :disabled="availablePlayers != 0"
+                    @click="onSubmit"
+                    class="ml-auto font-weight-regular text-capitalize"
+                    color="primary"
+                    depressed
+                    >Submit</v-btn
+                  >
+                </div>
+              </div>
+            </v-card>
+          </v-col>
+
+          <!-- Right Side -->
+          <v-col cols="12" lg="4" xl="3" order="1" order-lg="2">
+            <tournamentInfo />
+          </v-col>
+
+          <!-- Add Player Overlay -->
+          <v-overlay :opacity="opacity" :value="addPlayerOverlay">
+            <v-card
+              class="mx-auto py-5 px-10 black--text d-block align-center"
+              min-height="300"
+              width="700"
+              color="white"
+              light
+              outlined
+            >
+              <div>
+                <v-btn
+                  @click="addPlayerOverlay = false"
+                  class="mt-n3 ml-n8"
+                  icon
+                >
+                  <v-icon>mdi-close-circle</v-icon>
+                </v-btn>
+              </div>
+
+              <div class="d-flex justify-center">
+                <v-avatar
+                  v-show="tournamentFormat.passportPhoto == true"
+                  class="profile"
+                  color="grey"
+                  size="114"
+                >
+                  <v-img :src="passportPhoto"> </v-img>
+                </v-avatar>
+
+                <!-- File Input Button -->
+                <div class="mt-7 ml-n4">
+                  <v-btn
+                    @click="choosePhoto"
+                    class="mt-15"
+                    color="#1a202c"
+                    :disabled="isFileUploaded == true"
+                    fab
+                    x-small
+                    dark
+                  >
+                    <v-icon size="18" v-if="!isFileUploaded">mdi-camera</v-icon>
+                    <template v-else>
+                      <span class="text-black">{{ uploadPercentage }}%</span>
+                    </template>
+                  </v-btn>
+                  <input
+                    type="file"
+                    ref="photoChoosen"
+                    style="display: none"
+                    @change="onFileSelected"
+                    accept="image/*"
+                  />
+                </div>
+              </div>
+
+              <div class="d-block align-center mt-n2">
+                <v-card-text>
+                  <v-text-field
+                    v-show="tournamentFormat.name == true"
+                    v-model="name"
+                    class="mt-3"
+                    color="primary"
+                    label="Player Name"
+                    outlined
+                    dense
+                  ></v-text-field>
+
+                  <div class="d-flex mt-n2">
+                    <v-text-field
+                      v-show="tournamentFormat.identificationID == true"
+                      v-model="identificationID"
+                      class="mr-2"
+                      color="primary"
+                      label="Identification Number"
+                      outlined
+                      dense
+                    ></v-text-field>
+
+                    <v-select
+                      v-show="tournamentFormat.gender == true"
+                      v-model="gender"
+                      class="ml-2"
+                      color="primary"
+                      label="Gender"
+                      :items="genderList"
+                      outlined
+                      dense
+                    ></v-select>
+                  </div>
+
+                  <v-textarea
+                    v-show="tournamentFormat.address == true"
+                    v-model="address"
+                    class="mt-n2"
+                    color="primary"
+                    label="Address"
+                    outlined
+                    dense
+                  ></v-textarea>
+
+                  <v-text-field
+                    v-show="tournamentFormat.phoneNumber == true"
+                    v-model="phoneNumber"
+                    class="mt-n2"
+                    color="primary"
+                    label="Phone Number"
+                    outlined
+                    dense
+                  ></v-text-field>
+
+                  <v-text-field
+                    v-show="tournamentFormat.numMatric == true"
+                    v-model="numMatric"
+                    class="mt-n2"
+                    color="primary"
+                    label="Matric ID Number"
+                    outlined
+                    dense
+                  ></v-text-field>
+
+                  <v-text-field
+                    v-show="tournamentFormat.numAthelete == true"
+                    v-model="numAthelete"
+                    class="mt-n2"
+                    color="primary"
+                    label="Athelete ID Number"
+                    outlined
+                    dense
+                  ></v-text-field>
+                </v-card-text>
+              </div>
+
+              <div class="d-flex mt-n4 mb-1 px-4">
+                <v-btn
+                  @click="onAddPlayer"
+                  class="ml-auto font-weight-regular text-capitalize"
+                  color="primary"
+                  depressed
+                  >Submit</v-btn
+                >
+              </div>
+            </v-card>
+          </v-overlay>
+
+          <!-- View Player Overlay -->
+          <v-overlay :opacity="opacity" :value="viewPlayerOverlay">
+            <v-card
+              class="mx-auto py-5 px-10 black--text d-block align-center"
+              min-height="300"
+              width="700"
+              color="white"
+              light
+              outlined
+            >
+              <div>
+                <v-btn
+                  @click="viewPlayerOverlay = false"
+                  class="mt-n3 ml-n8"
+                  icon
+                >
+                  <v-icon>mdi-close-circle</v-icon>
+                </v-btn>
+              </div>
+
+              <div class="d-flex justify-center">
+                <v-avatar
+                  v-show="vpassportPhoto != ''"
+                  class="profile"
+                  color="grey"
+                  size="114"
+                >
+                  <v-img :src="vpassportPhoto"></v-img>
+                </v-avatar>
+              </div>
+
+              <div v-show="vName != ''" class="d-flex justify-center mt-4">
+                <h1 class="text-h4 font-weight-light">{{ vName }}</h1>
+              </div>
+
+              <div
+                v-show="vIdentificationID != ''"
+                class="d-flex justify-center"
+              >
+                <h1 class="text-h6 font-weight-light text-grey">
+                  {{ vIdentificationID }}
+                </h1>
+              </div>
+
+              <div v-show="vGender != ''" class="d-flex justify-center mt-4">
+                <div class="text-center mx-5">
+                  <h1 class="text-h6 font-weight-light text-grey">Gender</h1>
+                  <h1 class="text-body-1 mt-n1">{{ vGender }}</h1>
+                </div>
+
+                <div v-show="vNumAthelete != ''" class="text-center mx-5">
+                  <h1 class="text-h6 font-weight-light text-grey">
+                    Athelete ID
+                  </h1>
+                  <h1 class="text-body-1 mt-n1">{{ vNumAthelete }}</h1>
+                </div>
+
+                <div v-show="vNumMatric != ''" class="text-center mx-5">
+                  <h1 class="text-h6 font-weight-light text-grey">Matric ID</h1>
+                  <h1 class="text-body-1 mt-n1">{{ vNumMatric }}</h1>
+                </div>
+              </div>
+
+              <div v-show="vAddress != ''" class="d-flex justify-center mt-4">
+                <h1 class="text-h6 font-weight-light text-grey text-center">
+                  {{ vAddress }}
+                </h1>
+              </div>
+
+              <div class="d-flex justify-center mt-3">
+                <v-chip
+                  v-show="vPhoneNumber != ''"
+                  class="ma-2"
+                  color="primary"
+                >
+                  {{ vPhoneNumber }}
+                </v-chip>
+              </div>
+            </v-card>
+          </v-overlay>
+
+          <v-overlay
+            :opacity="opacityLoading"
+            :value="overlayLoading"
+            color="white"
+          >
+            <v-progress-circular
+              :size="70"
+              :width="7"
+              color="primary"
+              indeterminate
+            ></v-progress-circular>
+          </v-overlay>
+        </v-row>
+      </v-container>
+    </v-main>
+  </v-app>
+</template>
+
+<script>
+import firebase from 'firebase'
+import tournamentHeader from '~/components/manager/tournamentHeader'
+import tournamentInfo from '~/components/manager/tournamentInfo'
+import { mapState } from 'vuex'
+
+export default {
+  middleware: 'authenticated',
+
+  components: {
+    tournamentHeader,
+    tournamentInfo,
+  },
+
+  data() {
+    return {
+      // User Selection
+      genderList: ['Male', 'Female'],
+
+      // User Input Data
+      tournamentFormat: '',
+      numPlayers: null,
+      tempTeamName: '',
+      teamName: '',
+      listPlayers: '',
+      lengthListPlayers: null,
+      availablePlayers: null,
+
+      // Player Registration Input Data
+      name: '',
+      identificationID: '',
+      gender: null,
+      address: '',
+      phoneNumber: '',
+      numMatric: '',
+      numAthelete: '',
+      passportPhoto:
+        'https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2FLogo.jpg?alt=media&token=921893c3-3134-494b-8f8c-332b10666623',
+
+      // View Player Data
+      vName: '',
+      vIdentificationID: '',
+      vGender: null,
+      vAddress: '',
+      vPhoneNumber: '',
+      vNumMatric: '',
+      vNumAthelete: '',
+      vpassportPhoto: '',
+
+      // Passport Picture
+      selectedFile: '',
+      isFileUploaded: false,
+      uploadPercentage: null,
+
+      // User Authentication
+      userId: '',
+
+      // Overlay Data
+      opacity: 0.5,
+      addPlayerOverlay: false,
+      viewPlayerOverlay: false,
+
+      // Refresh Overlay
+      opacityLoading: 1,
+      overlayLoading: false,
+    }
+  },
+
+  // Fetch Notification Data from Vuex
+  computed: { ...mapState(['notification']) },
+
+  // Fetch Data from firestore
+  mounted() {
+    this.userId = this.$fire.auth.currentUser.uid
+
+    this.$fire.firestore
+      .collection('tournaments')
+      .doc(this.$route.params.id)
+      .collection('team-registration')
+      .doc(this.userId)
+      .onSnapshot((doc) => {
+        this.teamName = doc.data().teamName
+        this.tempTeamName = this.teamName
+        this.listPlayers = doc.data().listPlayers
+        this.lengthListPlayers = this.listPlayers.length
+      })
+
+    this.$fire.firestore
+      .collection('tournaments')
+      .doc(this.$route.params.id)
+      .collection('team-registration')
+      .doc('format')
+      .onSnapshot((doc) => {
+        this.tournamentFormat = doc.data()
+        this.numPlayers = doc.data().numPlayers
+        this.availablePlayers = Number(this.numPlayers) - this.lengthListPlayers
+      })
+  },
+
+  methods: {
+    // Upload Profile Photo
+    choosePhoto() {
+      this.$refs.photoChoosen.click()
+    },
+
+    onFileSelected(event) {
+      this.selectedFile = event.target.files[0]
+      this.onUploadProfilePhoto()
+    },
+
+    onUploadProfilePhoto() {
+      var metadata = {
+        contentType: 'image/jpeg',
+      }
+
+      var storageRef = this.$fire.storage
+        .ref()
+        .child('playersPhotos/' + this.selectedFile.name)
+
+      var uploadTask = storageRef.put(this.selectedFile, metadata)
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          console.log('Upload is ' + Math.round(progress) + '% done')
+          this.uploadPercentage = Math.round(progress)
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED: // or 'paused'
+              console.log('Upload is paused')
+              break
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+              console.log('Upload is running')
+              break
+          }
+          this.isFileUploaded = true
+        },
+
+        (error) => {
+          switch (error.code) {
+            case 'storage/unauthorized':
+              console.log('storage/unauthorized')
+              break
+            case 'storage/canceled':
+              console.log('storage/canceled')
+              break
+            case 'storage/unknown':
+              console.log('storage/unknown')
+              break
+          }
+          this.isFileUploaded = false
+        },
+
+        (complete) => {
+          const storageRef = this.$fire.storage
+            .ref()
+            .child('playersPhotos/' + this.selectedFile.name)
+
+          const url = storageRef.getDownloadURL().then((url) => {
+            this.passportPhoto = url
+          })
+
+          console.log('File successfully uploaded.')
+          this.isFileUploaded = false
+        }
+      )
+    },
+
+    // Set Team Name
+    async onSet() {
+      this.overlayLoading = true
+      try {
+        this.teamName = this.tempTeamName
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .doc(this.userId)
+          .set({
+            teamName: this.teamName,
+            listPlayers: [],
+            status: '',
+            uid: this.userId,
+          })
+          .then(() => {
+            this.overlayLoading = false
+          })
+      } catch (error) {
+        console.log(error.code)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
+    },
+
+    // Update Team Name
+    async onUpdate() {
+      this.overlayLoading = true
+      try {
+        this.teamName = this.tempTeamName
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .doc(this.userId)
+          .update({
+            teamName: this.teamName,
+          })
+          .then(() => {
+            this.overlayLoading = false
+          })
+      } catch (error) {
+        console.log(error.code)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
+    },
+
+    // Update Players
+    async onAddPlayer() {
+      this.overlayLoading = true
+      try {
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .doc(this.userId)
+          .update({
+            listPlayers: firebase.firestore.FieldValue.arrayUnion({
+              name: this.name,
+              identificationID: this.identificationID,
+              gender: this.gender,
+              address: this.address,
+              phoneNumber: this.phoneNumber,
+              numMatric: this.numMatric,
+              numAthelete: this.numAthelete,
+              passportPhoto: this.passportPhoto,
+            }),
+          })
+          .then(() => {
+            this.addPlayerOverlay = false
+            this.availablePlayers =
+              Number(this.numPlayers) - this.lengthListPlayers
+            this.name = ''
+            this.identificationID = ''
+            this.gender = null
+            this.address = ''
+            this.phoneNumber = ''
+            this.numMatric = ''
+            this.numAthelete = ''
+            this.passportPhoto =
+              'https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2FLogo.jpg?alt=media&token=921893c3-3134-494b-8f8c-332b10666623'
+            this.overlayLoading = false
+            this.$store.commit('SET_NOTIFICATION', {
+              alert: 'Player has been added',
+              alertIcon: 'mdi-check-circle',
+              alertIconStyle: 'mr-2 align-self-top',
+              colorIcon: 'green darken-1',
+              snackbar: true,
+            })
+          })
+      } catch (error) {
+        console.log(error.code)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
+    },
+
+    // View Players
+    onViewPlayer(data) {
+      this.viewPlayerOverlay = true
+      this.vName = data.name
+      this.vIdentificationID = data.identificationID
+      this.vGender = data.gender
+      this.vAddress = data.address
+      this.vPhoneNumber = data.phoneNumber
+      this.vNumMatric = data.numMatric
+      this.vNumAthelete = data.numAthelete
+      this.vpassportPhoto = data.passportPhoto
+    },
+
+    // Delete Players
+    async onDeletePlayer(data) {
+      this.overlayLoading = true
+      try {
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .doc(this.userId)
+          .update({
+            listPlayers: firebase.firestore.FieldValue.arrayRemove({
+              name: data.name,
+              identificationID: data.identificationID,
+              gender: data.gender,
+              address: data.address,
+              phoneNumber: data.phoneNumber,
+              numMatric: data.numMatric,
+              numAthelete: data.numAthelete,
+              passportPhoto: data.passportPhoto,
+            }),
+          })
+          .then(() => {
+            this.overlayLoading = false
+            this.$store.commit('SET_NOTIFICATION', {
+              alert: 'Player has been deleted',
+              alertIcon: 'mdi-check-circle',
+              alertIconStyle: 'mr-2 align-self-top',
+              colorIcon: 'green darken-1',
+              snackbar: true,
+            })
+          })
+      } catch (error) {
+        console.log(error.code)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
+    },
+
+    // Submit Application
+    async onSubmit() {
+      this.overlayLoading = true
+      try {
+        this.teamName = this.tempTeamName
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .doc(this.userId)
+          .update({
+            status: 'pending',
+          })
+          .then(() => {
+            this.$router.go(-1)
+            this.overlayLoading = false
+          })
+      } catch (error) {
+        console.log(error.code)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
+    },
+  },
+}
+</script>

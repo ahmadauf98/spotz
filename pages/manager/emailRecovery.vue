@@ -11,9 +11,11 @@
           top
         >
           <div class="d-flex justify-center align-center">
-            <v-icon :class="notification.alertIconStyle">{{
-              notification.alertIcon
-            }}</v-icon>
+            <v-icon
+              :class="notification.alertIconStyle"
+              :color="notification.colorIcon"
+              >{{ notification.alertIcon }}</v-icon
+            >
             {{ notification.alert }}
           </div>
         </v-snackbar>
@@ -57,7 +59,14 @@
                     dark
                     color="#6B46C1"
                   >
-                    reset
+                    <span v-if="isLoading == false">Reset</span>
+
+                    <v-progress-circular
+                      v-else
+                      :size="20"
+                      indeterminate
+                      color="white"
+                    ></v-progress-circular>
                   </v-btn>
                 </v-row>
               </v-card-actions>
@@ -76,7 +85,7 @@
             <div class="text-center mt-2">
               <h1 class="hyperlink caption">
                 Don't have an account?
-                <Nuxt-link to="/signup">Sign up. </Nuxt-link>
+                <Nuxt-link to="/manager/signup">Sign up.</Nuxt-link>
               </h1>
             </div>
           </v-card-text>
@@ -89,7 +98,6 @@
 </template>
 
 <script>
-import firebase from 'firebase'
 import { mapState } from 'vuex'
 
 export default {
@@ -99,12 +107,8 @@ export default {
       // User Input Data
       email: '',
 
-      // Notification Data
-      alert: null,
-      alertIcon: '',
-      alertIconStyle: '',
-      snackbar: false,
-      timeout: 5000,
+      // Refresh Page
+      isLoading: false,
     }
   },
 
@@ -116,31 +120,31 @@ export default {
   methods: {
     // Reset User's Password
     async passwordReset() {
+      this.isLoading = true
       try {
-        await firebase
-          .auth()
-          .sendPasswordResetEmail(this.email)
-          .then(() => {
-            console.log('Success.Recovery email has been sent to the user.')
-            this.alert = 'Please check email to reset your password.'
-            this.alertIcon = 'mdi-email'
-            this.alertIconStyle = 'text-primary mx-1'
-            this.snackbar = true
+        await this.$fire.auth.sendPasswordResetEmail(this.email).then(() => {
+          this.isLoading = false
+          console.log('Success.Recovery email has been sent to the user.')
+          this.$store.commit('SET_NOTIFICATION', {
+            alert: 'Please check email to reset your password.',
+            alertIcon: 'mdi-email',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'green darken-1',
+            snackbar: true,
           })
+        })
       } catch (error) {
         console.log(error.code)
-        this.alert = error.message
-        this.alertIcon = 'mdi-alert-circle'
-        this.alertIconStyle = 'text-red mx-1'
-        this.snackbar = true
+        this.isLoading = false
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
       }
     },
   },
 }
 </script>
-
-<style>
-.relative {
-  position: relative;
-}
-</style>

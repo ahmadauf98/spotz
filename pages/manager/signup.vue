@@ -11,9 +11,11 @@
           top
         >
           <div class="d-flex justify-center align-center">
-            <v-icon :class="notification.alertIconStyle">{{
-              notification.alertIcon
-            }}</v-icon>
+            <v-icon
+              :class="notification.alertIconStyle"
+              :color="notification.colorIcon"
+              >{{ notification.alertIcon }}</v-icon
+            >
             {{ notification.alert }}
           </div>
         </v-snackbar>
@@ -117,7 +119,14 @@
                     dark
                     color="#6B46C1"
                   >
-                    Create an account
+                    <span v-if="isLoading == false">Create an account</span>
+
+                    <v-progress-circular
+                      v-else
+                      :size="20"
+                      indeterminate
+                      color="white"
+                    ></v-progress-circular>
                   </v-btn>
                 </v-row>
               </v-card-actions>
@@ -127,7 +136,7 @@
             <div class="text-center mt-2">
               <h1 class="hyperlink caption">
                 Already have an account?
-                <Nuxt-link to="/signin"> Log in. </Nuxt-link>
+                <Nuxt-link to="/manager/signin"> Log in. </Nuxt-link>
               </h1>
             </div>
           </v-card-text>
@@ -138,7 +147,6 @@
 </template>
 
 <script>
-import firebase from 'firebase'
 import { mapState } from 'vuex'
 
 export default {
@@ -155,6 +163,9 @@ export default {
       password: '',
       confirmPassword: '',
       checkbox: false,
+
+      // Refresh Page
+      isLoading: false,
     }
   },
 
@@ -166,65 +177,77 @@ export default {
   methods: {
     // Signup a user email
     async emailSignup() {
+      this.isLoading = true
       try {
         if (this.name === null || this.name === '') {
+          this.isLoading = false
           console.log('Error. Undefined name.')
           this.$store.commit('SET_NOTIFICATION', {
             alert: 'Name is required, please enter name.',
             alertIcon: 'mdi-alert-circle',
-            alertIconStyle: 'text-red mr-2 align-self-top',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
             snackbar: true,
           })
         } else if (this.email === null || this.email === '') {
+          this.isLoading = false
           console.log('Error. Undefined email.')
           this.$store.commit('SET_NOTIFICATION', {
             alert: 'Email is required, please enter valid email.',
             alertIcon: 'mdi-alert-circle',
-            alertIconStyle: 'text-red mr-2 align-self-top',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
             snackbar: true,
           })
         } else if (this.password === null || this.password === '') {
+          this.isLoading = false
           console.log('Error. Undefined password.')
           this.$store.commit('SET_NOTIFICATION', {
             alert: 'Password is required, please enter strong password.',
             alertIcon: 'mdi-alert-circle',
-            alertIconStyle: 'text-red mr-2 align-self-top',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
             snackbar: true,
           })
         } else if (
           this.confirmPassword === null ||
           this.confirmPassword === ''
         ) {
+          this.isLoading = false
           console.log('Error. Undefined confirm password.')
           this.$store.commit('SET_NOTIFICATION', {
             alert:
               'Confirm password is required, please confirm your password.',
             alertIcon: 'mdi-alert-circle',
-            alertIconStyle: 'text-red mr-2 align-self-top',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
             snackbar: true,
           })
         } else if (this.password !== this.confirmPassword) {
+          this.isLoading = false
           console.log('Error. Password did not match.')
           this.$store.commit('SET_NOTIFICATION', {
             alert: 'Password did not match, please confirm your password.',
             alertIcon: 'mdi-alert-circle',
-            alertIconStyle: 'text-red mr-2 align-self-top',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
             snackbar: true,
           })
         } else if (this.checkbox != true) {
+          this.isLoading = false
           console.log('Error. Blank agree checkbox.')
           this.$store.commit('SET_NOTIFICATION', {
             alert: 'Please agree to the Terms of Service and Privacy Policy.',
             alertIcon: 'mdi-alert-circle',
-            alertIconStyle: 'text-red mr-2 align-self-top',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
             snackbar: true,
           })
         } else {
-          await firebase
-            .auth()
+          await this.$fire.auth
             .createUserWithEmailAndPassword(this.email, this.password)
             .then((data) => {
-              firebase.firestore().collection('users').doc(data.user.uid).set({
+              this.$fire.firestore.collection('users').doc(data.user.uid).set({
                 name: this.name,
                 email: this.email,
                 emailVerified: data.user.emailVerified,
@@ -247,15 +270,18 @@ export default {
               })
             })
             .then(() => {
-              this.$router.push('/dashboard')
+              this.$router.push('/manager/auth/dashboard')
+              this.isLoading = false
             })
         }
       } catch (error) {
         console.log(error.code)
+        this.isLoading = false
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
-          alertIconStyle: 'text-red mr-2 align-self-top',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
           snackbar: true,
         })
       }

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import authNavbar from '~/components/authNavbar'
+import authNavbar from '~/components/manager/authNavbar'
 
 export default {
   components: {

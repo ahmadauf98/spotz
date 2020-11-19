@@ -25,10 +25,11 @@
                         your organizer to be invited.
                       </h1>
                       <v-btn
-                        class="font-weight-regular mb-4"
+                        class="font-weight-regular mb-4 text-capitalize"
+                        depressed
                         dark
                         color="#6B46C1"
-                        to="/browseTournaments"
+                        to="/manager/auth/browseTournaments"
                       >
                         Browse Tournaments
                       </v-btn>
@@ -67,10 +68,11 @@
                         be invited.
                       </h1>
                       <v-btn
-                        class="font-weight-regular"
+                        class="font-weight-regular mb-4 text-capitalize"
                         dark
+                        depressed
                         color="#6B46C1"
-                        to="/browseEvents"
+                        to="/manager/auth/browseEvents"
                       >
                         Browse events
                       </v-btn>
@@ -96,9 +98,9 @@
 </template>
 
 <script>
-import firebase from 'firebase'
-
 export default {
+  middleware: 'authenticated',
+
   data() {
     return {
       // User's Data
@@ -111,10 +113,9 @@ export default {
 
   // GET - Fetch User's Data
   created() {
-    this.userId = firebase.auth().currentUser.uid
+    this.userId = this.$fire.auth.currentUser.uid
 
-    return firebase
-      .firestore()
+    return this.$fire.firestore
       .collection('users')
       .doc(this.userId)
       .onSnapshot((doc) => {
