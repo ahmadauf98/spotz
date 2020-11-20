@@ -196,6 +196,11 @@
           <v-list-item-title>Settings</v-list-item-title>
         </v-list-item>
 
+        <!-- Organizer Button -->
+        <v-list-item to="/organizer/auth/dashboard">
+          <v-list-item-title>Spotz Organizer</v-list-item-title>
+        </v-list-item>
+
         <v-divider class="mx-3"></v-divider>
 
         <!-- Logout Button -->
