@@ -319,96 +319,19 @@
 
                           <v-divider class="mt-4 mb-6"></v-divider>
 
-                          <h1 class="text-subtitle-1 font-weight-bold mb-n2">
+                          <h1 class="text-subtitle-1 font-weight-bold mb-n1">
                             Tournament Info
                           </h1>
 
+                          <h1 class="text-caption text-grey">
+                            Two Stage Tournament — groups compete separately,
+                            first and second place teams from each groups will
+                            proceed to a final stage.
+                          </h1>
+
                           <v-row class="d-block">
-                            <!-- Tournament Type -->
+                            <!-- Two Stage Tournament Format -->
                             <v-col cols="12" class="mb-n6">
-                              <v-radio-group v-model="tournamentType">
-                                <template v-slot:label>
-                                  <div>Type</div>
-                                </template>
-
-                                <v-radio class="mt-3" value="single">
-                                  <template v-slot:label>
-                                    <div>Single Stage Tournament</div>
-                                  </template>
-                                </v-radio>
-
-                                <v-radio value="double">
-                                  <template v-slot:label>
-                                    <div>
-                                      Two Stage Tournament — groups compete
-                                      separately, winners proceed to a final
-                                      stage (e.g. World Cup)
-                                    </div>
-                                  </template>
-                                </v-radio>
-                              </v-radio-group>
-                            </v-col>
-
-                            <!-- Single Tournament Format -->
-                            <v-col
-                              v-if="tournamentType == 'single'"
-                              cols="12"
-                              class="mb-n6"
-                            >
-                              <v-select
-                                :items="format"
-                                label="Format"
-                                v-model="sFormat"
-                                outlined
-                                dense
-                              ></v-select>
-
-                              <div v-if="sFormat == 'Single Elimination'">
-                                <v-checkbox
-                                  v-model="sIs3rdPlace"
-                                  class="mt-n5"
-                                  label="Include a match for 3rd place."
-                                ></v-checkbox>
-
-                                <!-- Number of Teams -->
-                                <v-select
-                                  label="Number of Teams"
-                                  :items="teams"
-                                  type="number"
-                                  v-model="participants"
-                                  outlined
-                                  dense
-                                ></v-select>
-                              </div>
-
-                              <div v-else>
-                                <div class="d-flex">
-                                  <label class="mt-2 mr-3 text-grey"
-                                    >Teams play each other</label
-                                  >
-
-                                  <v-select
-                                    :items="round"
-                                    v-model="sRound"
-                                    outlined
-                                    dense
-                                  ></v-select>
-                                </div>
-
-                                <!-- Number of Teams Input -->
-                                <v-text-field
-                                  label="Number of Teams"
-                                  type="number"
-                                  v-model="participants"
-                                  min="2"
-                                  outlined
-                                  dense
-                                ></v-text-field>
-                              </div>
-                            </v-col>
-
-                            <!-- Double Tournament Format -->
-                            <v-col v-else cols="12" class="mb-n6">
                               <v-row>
                                 <v-col cols="3" class="mt-2">
                                   <label class="text-grey"> Group Stage </label>
@@ -489,7 +412,7 @@
                                       <v-text-field
                                         type="number"
                                         placeholder="3"
-                                        v-model="gTeamSeeding"
+                                        v-model="gTeamNumbers"
                                         min="3"
                                         max="6"
                                         outlined
@@ -520,7 +443,7 @@
                                         :items="teams"
                                         placeholder="2"
                                         type="number"
-                                        v-model="gTeam"
+                                        v-model="gGroupNumber"
                                         outlined
                                         dense
                                       ></v-select>
@@ -550,7 +473,7 @@
                                         >
                                           <v-text-field
                                             type="number"
-                                            v-model="qualifyTeam"
+                                            v-model="gQualifyTeam"
                                             v-bind="attrs"
                                             v-on="on"
                                             readonly
@@ -610,7 +533,7 @@
               <v-row class="mt-n2">
                 <v-col cols="6">
                   <v-btn
-                    to="/tournaments"
+                    to="/organizer/auth/tournaments"
                     class="font-weight-regular text-capitalize"
                     color="grey darken-1"
                     depressed
@@ -651,14 +574,9 @@ export default {
   layout: 'organizer',
 
   data: () => ({
-    //Selection Data
+    // Basic Details Info
     sports: ['Football', 'Netball', 'Handball', 'Futsal', 'Basketball'],
     genderList: ['Male', 'Female'],
-    format: ['Single Elimination', 'League'],
-    round: ['once', 'twice'],
-    teams: [2, 4, 8, 16, 32, 64],
-
-    // Input Data
     title: '',
     description: '',
     startDate: '',
@@ -666,7 +584,6 @@ export default {
     photoURL:
       'https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2FLogo.jpg?alt=media&token=921893c3-3134-494b-8f8c-332b10666623',
     sportType: '',
-    participants: null,
     hostName: '',
     websiteURL: '',
     phoneNumber: '',
@@ -674,28 +591,25 @@ export default {
     email: '',
     gender: null,
     isOpen: false,
-    tournamentType: 'single',
 
-    // Single Tournament Data
-    sFormat: 'Single Elimination',
-    sIs3rdPlace: false,
-    sRound: 'once',
-
-    // Two Stage TOurnament Data
+    // Tournament Info
+    round: ['once', 'twice'],
+    teams: [2, 4, 8],
     gStage: 'Round Robin',
-    gTeamSeeding: null,
-    gTeam: null,
+    participants: null,
     gRound: 'once',
+    gTeamNumbers: null,
+    gGroupNumber: null,
+    gQualifyTeam: 2,
     fStage: 'Single Elimination',
-    qualifyTeam: 2,
     fIs3rdPlace: false,
 
-    // Photo
+    // Photo Selection
     selectedFile: null,
     isFileUploaded: false,
     uploadPercentage: null,
 
-    // Calendar
+    // Calendar Selection
     menuStart: false,
     menuEnd: false,
   }),
@@ -704,7 +618,7 @@ export default {
   computed: {
     ...mapState(['notification']),
     result: function () {
-      return this.gTeamSeeding * this.gTeam
+      return this.gTeamNumbers * this.gGroupNumber
     },
   },
 
@@ -789,98 +703,16 @@ export default {
           return str.replace(re2, '').toLowerCase()
         }
 
-        if (this.tournamentType == 'single') {
-          if (this.sFormat == 'Single Elimination') {
-            // Create Tournament Collection
-            await this.$fire.firestore
-              .collection('tournaments')
-              .doc(doDashes(this.title))
-              .set({
-                tournamentID: doDashes(this.title),
-                title: this.title,
-                description: this.description,
-                startDate: this.startDate,
-                endDate: this.endDate,
-                photoURL: this.photoURL,
-                headerURL:
-                  'https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fdefault-cover.svg?alt=media&token=f88fa494-e5ae-49a1-bdf5-30ae75fad015',
-                sportType: this.sportType,
-                participants: this.participants,
-                hostName: this.hostName,
-                websiteURL: this.websiteURL,
-                phoneNumber: this.phoneNumber,
-                location: this.location,
-                email: this.email,
-                status: false,
-                isOpen: this.isOpen,
-                gender: this.gender,
-                managerRef: [],
-                registrationStatus: false,
-                // Single Tournament Data
-                tournamentType: this.tournamentType,
-                sFormat: this.sFormat,
-                sIs3rdPlace: this.sIs3rdPlace,
-              })
-
-            // Update tournamentID in Users Collection
-            await this.$fire.firestore
-              .collection('users')
-              .doc(this.hostName)
-              .update({
-                tournamentsRef: firebase.firestore.FieldValue.arrayUnion(
-                  doDashes(this.title)
-                ),
-              })
-              .then(() => {
-                this.$router.push('/tournaments')
-              })
-          } else {
-            // Create Tournament Collection
-            await this.$fire.firestore
-              .collection('tournaments')
-              .doc(doDashes(this.title))
-              .set({
-                tournamentID: doDashes(this.title),
-                title: this.title,
-                description: this.description,
-                startDate: this.startDate,
-                endDate: this.endDate,
-                photoURL: this.photoURL,
-                headerURL:
-                  'https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fdefault-cover.svg?alt=media&token=f88fa494-e5ae-49a1-bdf5-30ae75fad015',
-                sportType: this.sportType,
-                participants: this.participants,
-                hostName: this.hostName,
-                websiteURL: this.websiteURL,
-                phoneNumber: this.phoneNumber,
-                location: this.location,
-                email: this.email,
-                status: false,
-                isOpen: this.isOpen,
-                gender: this.gender,
-                managerRef: [],
-                registrationStatus: false,
-                // Single Tournament Data
-                tournamentType: this.tournamentType,
-                sFormat: this.sFormat,
-                sRound: this.sRound,
-              })
-
-            // Update tournamentID in Users Collection
-            await this.$fire.firestore
-              .collection('users')
-              .doc(this.hostName)
-              .update({
-                tournamentsRef: firebase.firestore.FieldValue.arrayUnion(
-                  doDashes(this.title)
-                ),
-              })
-              .then(() => {
-                this.$router.push('/tournaments')
-              })
-          }
+        if (this.gTeamNumbers < 3 || this.gTeamNumbers > 6) {
+          this.$store.commit('SET_NOTIFICATION', {
+            alert:
+              'Please pick number of teams compete in each group between 3 to 6 only.',
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
+            snackbar: true,
+          })
         } else {
-          this.participants = this.result
           // Create Tournament Collection
           await this.$fire.firestore
             .collection('tournaments')
@@ -895,7 +727,6 @@ export default {
               headerURL:
                 'https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fdefault-cover.svg?alt=media&token=f88fa494-e5ae-49a1-bdf5-30ae75fad015',
               sportType: this.sportType,
-              participants: this.participants,
               hostName: this.hostName,
               websiteURL: this.websiteURL,
               phoneNumber: this.phoneNumber,
@@ -906,14 +737,15 @@ export default {
               gender: this.gender,
               managerRef: [],
               registrationStatus: false,
-              // Two Stage TOurnament Data
-              tournamentType: this.tournamentType,
+
+              // Single Tournament Data
               gStage: this.gStage,
-              gTeamSeeding: this.gTeamSeeding,
-              gTeam: this.gTeam,
+              participants: this.participants,
               gRound: this.gRound,
+              gTeamNumbers: this.gTeamNumbers,
+              gGroupNumber: this.gGroupNumber,
+              gQualifyTeam: this.gQualifyTeam,
               fStage: this.fStage,
-              qualifyTeam: this.qualifyTeam,
               fIs3rdPlace: this.fIs3rdPlace,
             })
 
@@ -927,7 +759,7 @@ export default {
               ),
             })
             .then(() => {
-              this.$router.push('/tournaments')
+              this.$router.push('/organizer/auth/tournaments')
             })
         }
       } catch (error) {
