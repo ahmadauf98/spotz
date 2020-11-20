@@ -8,7 +8,7 @@
   >
     <!-- Brand Logo -->
     <v-toolbar-title>
-      <NuxtLink to="/organizer/dashboard">
+      <NuxtLink to="/organizer/auth/dashboard">
         <img
           class="mt-2 mr-8"
           src="~/static/img/logo-organizer.svg"
@@ -148,7 +148,7 @@
         <v-divider class="mx-3"></v-divider>
 
         <!-- Settings Button -->
-        <v-list-item to="/organizer/settings">
+        <v-list-item to="/organizer/auth/settings">
           <v-list-item-title>Settings</v-list-item-title>
         </v-list-item>
 
@@ -173,12 +173,12 @@ export default {
   data() {
     return {
       navigation: [
-        { name: 'My Tournaments', route: '/tournaments' },
-        { name: 'My Events', route: '/events' },
+        { name: 'My Tournaments', route: '/organizer/auth/tournaments' },
+        { name: 'My Events', route: '/organizer/auth/events' },
       ],
       lists: [
-        { title: 'My Tournaments', route: '/tournaments' },
-        { title: 'My Events', route: '/events' },
+        { title: 'My Tournaments', route: '/organizer/auth/tournaments' },
+        { title: 'My Events', route: '/organizer/auth/events' },
       ],
       // Input Data
       name: '',
