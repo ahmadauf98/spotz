@@ -1,0 +1,435 @@
+<template>
+  <v-app>
+    <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
+      <v-container class="p-0 my-0" fluid>
+        <!-- Notifications -->
+        <v-snackbar
+          v-show="notification.alert != '' || notification.alert != null"
+          v-model="notification.snackbar"
+          :timeout="notification.timeout"
+          dark
+          top
+        >
+          <div class="d-flex justify-center align-center">
+            <v-icon
+              :class="notification.alertIconStyle"
+              :color="notification.colorIcon"
+              >{{ notification.alertIcon }}</v-icon
+            >
+            {{ notification.alert }}
+          </div>
+        </v-snackbar>
+
+        <!-- Organization Details Part -->
+        <tournamentHeader />
+
+        <v-row>
+          <!-- Left Side -->
+          <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
+            <!-- No Application -->
+            <v-card
+              v-if="approvalList == ''"
+              class="mx-auto py-10 mt-n3 mt-lg-0 px-9"
+              outlined
+              tile
+            >
+              <div class="d-flex">
+                <h1 class="text-h6 font-weight-bold mb-1">
+                  Registration Approval
+                </h1>
+              </div>
+
+              <v-row class="mb-n5 d-flex align-center">
+                <v-col cols="12" md="8" order="2" order-md="1">
+                  <div>
+                    <h1
+                      class="text-subtitle-1 font-weight-regular text-center text-md-left mb-5"
+                    >
+                      Currently there is no application. Once manager submit
+                      registration form, the application will appear here for
+                      your approval.
+                    </h1>
+                  </div>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="4"
+                  class="d-flex justify-center align-top"
+                  order="1"
+                  order-md="2"
+                >
+                  <div class="px-5 mt-md-n8 mt-lg-n3 mt-xl-n6">
+                    <img
+                      src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fmanagers-tournament.svg?alt=media&token=ec47c873-a84d-4353-b823-e0fe7bff619b"
+                      width="220px"
+                      alt="..."
+                    />
+                  </div>
+                </v-col>
+              </v-row>
+            </v-card>
+
+            <!-- Application Approval-->
+            <v-card
+              v-else
+              class="mx-auto py-10 mt-n3 mt-lg-0 px-9 mb-5"
+              outlined
+              tile
+            >
+              <div class="d-flex">
+                <h1 class="text-h6 font-weight-bold mb-1">
+                  Registration Approval
+                </h1>
+              </div>
+
+              <div>
+                <h1 class="text-caption text-grey">
+                  You can approve or reject team registration application.
+                  Before doing that, please check every details of the players.
+                </h1>
+              </div>
+
+              <v-divider class="mt-5"></v-divider>
+
+              <v-simple-table>
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Team Name</th>
+                      <th class="text-center">Manager Name</th>
+                      <th class="text-center">Manager Email</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="list in approvalList"
+                      :key="list.uid"
+                      class="text-center"
+                    >
+                      <td class="text-left">{{ list.teamName }}</td>
+                      <td>{{ list.managerName }}</td>
+                      <td>{{ list.managerEmail }}</td>
+                      <td>
+                        <v-btn
+                          @click="onView(list)"
+                          class="text-capitalize"
+                          color="primary"
+                          depressed
+                          small
+                          dark
+                          >View</v-btn
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card>
+          </v-col>
+
+          <!-- Right Side -->
+          <v-col cols="12" lg="4" xl="3" order="1" order-lg="2">
+            <tournamentInfo />
+          </v-col>
+        </v-row>
+
+        <!-- View Player Overlay -->
+        <v-overlay :opacity="opacity" :value="viewPlayerOverlay">
+          <v-card
+            class="mx-auto py-5 px-10 black--text d-block align-center overflow"
+            max-height="470"
+            width="700"
+            color="white"
+            light
+            outlined
+          >
+            <div>
+              <v-btn
+                @click="viewPlayerOverlay = false"
+                class="mt-n3 ml-n8"
+                icon
+              >
+                <v-icon>mdi-close-circle</v-icon>
+              </v-btn>
+            </div>
+
+            <div v-for="list in selectedTeam" :key="list.identificationID">
+              <div class="d-flex justify-center">
+                <v-avatar
+                  v-show="list.passportPhoto != ''"
+                  class="profile"
+                  color="grey"
+                  size="114"
+                >
+                  <v-img :src="list.passportPhoto"></v-img>
+                </v-avatar>
+              </div>
+
+              <div v-show="list.name != ''" class="d-flex justify-center mt-4">
+                <h1 class="text-h4 font-weight-light">{{ list.name }}</h1>
+              </div>
+
+              <div
+                v-show="list.identificationID != ''"
+                class="d-flex justify-center"
+              >
+                <h1 class="text-h6 font-weight-light text-grey">
+                  {{ list.identificationID }}
+                </h1>
+              </div>
+
+              <div class="d-flex justify-center mt-4">
+                <div v-show="list.gender != ''" class="text-center mx-5">
+                  <h1 class="text-h6 font-weight-light text-grey">Gender</h1>
+                  <h1 class="text-body-1 mt-n1">{{ list.gender }}</h1>
+                </div>
+
+                <div v-show="list.numAthelete != ''" class="text-center mx-5">
+                  <h1 class="text-h6 font-weight-light text-grey">
+                    Athelete ID
+                  </h1>
+                  <h1 class="text-body-1 mt-n1">{{ list.numAthelete }}</h1>
+                </div>
+
+                <div v-show="list.numMatric != ''" class="text-center mx-5">
+                  <h1 class="text-h6 font-weight-light text-grey">Matric ID</h1>
+                  <h1 class="text-body-1 mt-n1">{{ list.numMatric }}</h1>
+                </div>
+              </div>
+
+              <div
+                v-show="list.address != ''"
+                class="d-flex justify-center mt-4"
+              >
+                <h1 class="text-h6 font-weight-light text-grey text-center">
+                  {{ list.address }}
+                </h1>
+              </div>
+
+              <div class="d-flex justify-center mt-3">
+                <v-chip
+                  v-show="list.phoneNumber != ''"
+                  class="ma-2"
+                  color="primary"
+                >
+                  {{ list.phoneNumber }}
+                </v-chip>
+              </div>
+
+              <v-divider class="mt-5 mb-7"></v-divider>
+            </div>
+
+            <div class="d-flex justify-center mb-3">
+              <v-btn
+                @click="onApprove(teamData)"
+                class="mx-3 text-capitalize"
+                color="green darken-1"
+                dark
+                depressed
+                >Approve</v-btn
+              >
+
+              <v-btn
+                @click="onReject(teamData)"
+                class="mx-3 text-capitalize"
+                color="red darken-1"
+                dark
+                depressed
+                >Reject</v-btn
+              >
+            </div>
+          </v-card>
+        </v-overlay>
+
+        <!-- Refresh Overlay -->
+        <v-overlay
+          :opacity="opacityLoading"
+          :value="overlayLoading"
+          color="white"
+        >
+          <v-progress-circular
+            :size="70"
+            :width="7"
+            color="primary"
+            indeterminate
+          ></v-progress-circular>
+        </v-overlay>
+      </v-container>
+    </v-main>
+  </v-app>
+</template>
+
+<script>
+import firebase from 'firebase'
+import tournamentHeader from '~/components/organizer/tournamentHeader'
+import tournamentInfo from '~/components/organizer/tournamentInfo'
+import { mapState } from 'vuex'
+
+export default {
+  middleware: 'authenticated',
+
+  layout: 'organizer',
+
+  components: {
+    tournamentHeader,
+    tournamentInfo,
+  },
+
+  data() {
+    return {
+      // User Input Data
+      tournamentProf: '',
+      tempList: [],
+      approvalList: '',
+      selectedTeam: '',
+      teamData: '',
+
+      // Overlay Data
+      opacity: 0.5,
+      viewPlayerOverlay: false,
+
+      // Refresh Overlay
+      opacityLoading: 1,
+      overlayLoading: false,
+    }
+  },
+
+  // Fetch Notification Data from Vuex
+  computed: { ...mapState(['notification']) },
+
+  // Fetch Data from Firestore
+  mounted() {
+    this.$fire.firestore
+      .collection('tournaments')
+      .doc(this.$route.params.id)
+      .onSnapshot((doc) => {
+        this.tournamentProf = doc.data()
+      })
+
+    this.$fire.firestore
+      .collection('tournaments')
+      .doc(this.$route.params.id)
+      .collection('team-registration')
+      .where('status', '==', 'pending')
+      .onSnapshot((querySnapshot) => {
+        this.tempList = []
+        querySnapshot.forEach((doc) => {
+          this.$fire.firestore
+            .collection('users')
+            .doc(doc.data().uid)
+            .onSnapshot((udoc) => {
+              this.tempList.push({
+                listplayers: doc.data().listPlayers,
+                teamName: doc.data().teamName,
+                uid: doc.data().uid,
+                managerName: udoc.data().name,
+                managerEmail: udoc.data().email,
+              })
+            })
+        })
+        this.approvalList = this.tempList
+      })
+  },
+
+  methods: {
+    // View Application
+    onView(data) {
+      this.viewPlayerOverlay = true
+      this.selectedTeam = data.listplayers
+      this.teamData = data
+    },
+
+    // Approve Registration
+    async onApprove(data) {
+      console.log(data)
+      this.overlayLoading = true
+      try {
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .doc(data.uid)
+          .update({
+            status: 'approved',
+          })
+          .then(
+            await this.$fire.firestore
+              .collection('users')
+              .doc(data.uid)
+              .update({
+                notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
+                  messages:
+                    'Congratulations! Your ' +
+                    this.tournamentProf.title +
+                    ' team registration has been approved.',
+                  isAction: false,
+                  tournamentID: this.tournamentProf.tournamentID,
+                }),
+              })
+          )
+          .then(() => {
+            this.$router.push(
+              `/tournaments/${this.$route.params.id}/participants`
+            )
+            this.viewPlayerOverlay = false
+            this.overlayLoading = false
+          })
+      } catch (error) {
+        console.log(error.code)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
+    },
+
+    // Reject Application
+    async onReject(data) {
+      this.overlayLoading = true
+      try {
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .doc(data.uid)
+          .update({
+            status: 'rejected',
+          })
+          .then(
+            await this.$fire.firestore
+              .collection('users')
+              .doc(data.uid)
+              .update({
+                notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
+                  messages:
+                    'Sorry! Your ' +
+                    this.tournamentProf.title +
+                    ' team registration has been rejected. Kindly resubmit back your application in order to get approved by the organizer.',
+                  isAction: false,
+                  tournamentID: this.tournamentProf.tournamentID,
+                }),
+              })
+          )
+          .then(() => {
+            this.$router.go(-1)
+            this.viewPlayerOverlay = false
+            this.overlayLoading = false
+          })
+      } catch (error) {
+        console.log(error.code)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
+    },
+  },
+}
+</script>

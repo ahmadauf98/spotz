@@ -158,23 +158,23 @@ export default {
       tabs: [
         {
           name: 'Overview',
-          route: `/tournaments/${this.$route.params.id}/overview`,
+          route: `/organizer/auth/tournaments/${this.$route.params.id}/overview`,
         },
         {
           name: 'Group Stage',
-          route: `/tournaments/${this.$route.params.id}/groupstage`,
+          route: `/organizer/auth/tournaments/${this.$route.params.id}/groupstage`,
         },
         {
           name: 'Final Stage',
-          route: `/tournaments/${this.$route.params.id}/finalstage`,
+          route: `/organizer/auth/tournaments/${this.$route.params.id}/finalstage`,
         },
         {
           name: 'Participants',
-          route: `/tournaments/${this.$route.params.id}/participants`,
+          route: `/organizer/auth/tournaments/${this.$route.params.id}/participants`,
         },
         {
           name: 'Settings',
-          route: `/tournaments/${this.$route.params.id}/settings`,
+          route: `/organizer/auth/tournaments/${this.$route.params.id}/settings`,
         },
       ],
 

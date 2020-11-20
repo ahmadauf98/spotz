@@ -141,7 +141,7 @@
 
                     <v-card-actions class="mt-2 d-flex">
                       <v-btn
-                        :to="`/tournaments/${this.$route.params.id}/overview/managers`"
+                        :to="`/organizer/auth/tournaments/${this.$route.params.id}/overview/managers`"
                         color="primary"
                         class="ml-auto text-capitalize"
                         text
@@ -181,7 +181,7 @@
 
                     <v-card-actions class="mt-2 d-flex">
                       <v-btn
-                        :to="`/tournaments/${this.$route.params.id}/overview/seedings`"
+                        :to="`/organizer/auth/tournaments/${this.$route.params.id}/overview/seedings`"
                         color="primary"
                         :disabled="
                           tournamentProf.participants != teamListNumber
@@ -222,7 +222,7 @@
                     <v-card-actions class="mt-2 d-flex">
                       <v-btn
                         v-if="tournamentProf.registrationStatus == false"
-                        :to="`/tournaments/${this.$route.params.id}/overview/registration`"
+                        :to="`/organizer/auth/tournaments/${this.$route.params.id}/overview/registration`"
                         color="primary"
                         class="ml-auto"
                         text
@@ -235,7 +235,7 @@
 
                       <v-btn
                         v-else
-                        :to="`/tournaments/${this.$route.params.id}/overview/teamapproval`"
+                        :to="`/organizer/auth/tournaments/${this.$route.params.id}/overview/teamapproval`"
                         color="primary"
                         class="ml-auto text-capitalize"
                         text
