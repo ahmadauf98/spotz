@@ -270,7 +270,7 @@ export default {
               })
             })
             .then(() => {
-              this.$router.push('/organizer/dashboard')
+              this.$router.push('/organizer/auth/dashboard')
               this.isLoading = false
             })
         }
