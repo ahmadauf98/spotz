@@ -20,7 +20,7 @@
                   dark
                   depressed
                   color="#6b46c1"
-                  to="/browseTournaments"
+                  to="/auth/browseTournaments"
                 >
                   Join Tournament
                 </v-btn>
@@ -50,7 +50,7 @@
                           dark
                           depressed
                           color="#6b46c1"
-                          to="/browseTournaments"
+                          to="/auth/browseTournaments"
                         >
                           Browse Tournaments
                         </v-btn>
