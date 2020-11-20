@@ -59,7 +59,7 @@
                       <v-btn
                         class="mt-n2"
                         color="primary"
-                        :to="`/tournaments/${this.$route.params.id}/settings`"
+                        :to="`/organizer/auth/tournaments/${this.$route.params.id}/settings`"
                         icon
                       >
                         <v-icon>mdi-cogs</v-icon>

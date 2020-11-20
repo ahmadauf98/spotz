@@ -135,7 +135,7 @@
 
                     <div class="mt-3 mb-n3 mb-xl-0 d-flex">
                       <v-btn
-                        :to="`/tournaments/${this.$route.params.id}/overview/teamregistration`"
+                        :to="`/manager/auth/tournaments/${this.$route.params.id}/overview/teamregistration`"
                         :disabled="
                           tournamentProf.registrationStatus == false ||
                           registrationStatus == 'pending' ||
