@@ -1,15 +1,9 @@
 <template>
-    <div>
-
-    </div>
+  <div></div>
 </template>
 
 <script>
-    export default {
-        
-    }
+export default {
+  layout: 'manager',
+}
 </script>
-
-<style lang="scss" scoped>
-
-</style>

@@ -124,6 +124,8 @@
 export default {
   middleware: 'authenticated',
 
+  layout: 'manager',
+
   data() {
     return {
       // Input Data

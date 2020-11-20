@@ -224,6 +224,8 @@ import tournamentBtn from '~/components/manager/tournamentBtn'
 export default {
   middleware: 'authenticated',
 
+  layout: 'manager',
+
   components: {
     tournamentHeader,
     tournamentBtn,

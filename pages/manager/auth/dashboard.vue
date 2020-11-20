@@ -101,6 +101,8 @@
 export default {
   middleware: 'authenticated',
 
+  layout: 'manager',
+
   data() {
     return {
       // User's Data

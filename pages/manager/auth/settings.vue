@@ -282,7 +282,8 @@ import countryList from '~/countries.json'
 import { mapState } from 'vuex'
 
 export default {
-  layout: 'dashboard',
+  layout: 'manager',
+
   middleware: 'authenticated',
 
   data() {
