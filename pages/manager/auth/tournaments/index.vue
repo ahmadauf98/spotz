@@ -83,7 +83,7 @@
             >
               <v-col>
                 <nuxt-link
-                  :to="`tournaments/${tournament.tournamentID}/overview`"
+                  :to="`/manager/auth/tournaments/${tournament.tournamentID}/overview`"
                   class="text-decoration-none card"
                 >
                   <v-card class="py-5" outlined tile>

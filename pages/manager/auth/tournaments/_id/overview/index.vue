@@ -176,7 +176,7 @@ import { mapState } from 'vuex'
 export default {
   middleware: 'authenticated',
 
-   layout: 'manager',
+  layout: 'manager',
 
   components: {
     tournamentHeader,
@@ -208,13 +208,16 @@ export default {
 
   mounted() {
     this.userId = this.$fire.auth.currentUser.uid
-    return this.$fire.firestore
+    this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
       .collection('team-registration')
       .doc(this.userId)
       .onSnapshot((doc) => {
-        this.registrationStatus = doc.data().status
+        if (doc.data() == null) {
+        } else {
+          this.registrationStatus = doc.data().status
+        }
       })
   },
 }

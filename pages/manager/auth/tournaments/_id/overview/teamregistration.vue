@@ -534,10 +534,13 @@ export default {
       .collection('team-registration')
       .doc(this.userId)
       .onSnapshot((doc) => {
-        this.teamName = doc.data().teamName
-        this.tempTeamName = this.teamName
-        this.listPlayers = doc.data().listPlayers
-        this.lengthListPlayers = this.listPlayers.length
+        if (doc.data() == null) {
+        } else {
+          this.teamName = doc.data().teamName
+          this.tempTeamName = this.teamName
+          this.listPlayers = doc.data().listPlayers
+          this.lengthListPlayers = this.listPlayers.length
+        }
       })
 
     this.$fire.firestore

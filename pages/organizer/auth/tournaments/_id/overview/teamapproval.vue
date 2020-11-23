@@ -370,7 +370,7 @@ export default {
           )
           .then(() => {
             this.$router.push(
-              `/tournaments/${this.$route.params.id}/participants`
+              `/organizer/auth/tournaments/${this.$route.params.id}/participants`
             )
             this.viewPlayerOverlay = false
             this.overlayLoading = false

@@ -327,6 +327,7 @@ export default {
     return {
       // User Input Data
       tournamentProf: '',
+      tournamentTempRef: [],
       tournamentRef: [],
       isAction: '',
       messages: '',
@@ -355,6 +356,8 @@ export default {
       .onSnapshot((doc) => {
         this.tournamentProf = doc.data()
         this.managerlength = doc.data().managerRef.length
+        this.tournamentTempRef = []
+
         doc.data().managerRef.forEach((docref) => {
           // console.log(docref)
 
@@ -369,7 +372,7 @@ export default {
                 this.messages = docmgr.messages
                 this.tournamentID = docmgr.tournamentID
               })
-              this.tournamentRef.push({
+              this.tournamentTempRef.push({
                 status: docref.status,
                 uid: docref.uid,
                 name: doc.data().name,
@@ -380,7 +383,8 @@ export default {
               })
             })
         })
-        // console.log(this.tournamentRef)
+        this.tournamentRef = this.tournamentTempRef
+        // console.log(this.tournamentTempRef)
       })
   },
 
@@ -433,7 +437,7 @@ export default {
           })
           .then(() => {
             this.overlayLoading = false
-            this.$router.push(`/tournaments/${this.$route.params.id}/overview`)
+            this.$router.go(-1)
           })
       } catch (error) {
         this.overlayLoading = false
@@ -483,7 +487,7 @@ export default {
           )
           .then(() => {
             this.overlayLoading = false
-            this.$router.push(`/tournaments/${this.$route.params.id}/overview`)
+            this.$router.go(-1)
           })
       } catch (error) {
         this.overlayLoading = false
@@ -524,7 +528,7 @@ export default {
           )
           .then(() => {
             this.overlayLoading = false
-            this.$router.push(`/tournaments/${this.$route.params.id}/overview`)
+            this.$router.go(-1)
           })
       } catch (error) {
         this.overlayLoading = false
@@ -563,8 +567,8 @@ export default {
               })
           )
           .then(() => {
+            this.$router.go(-1)
             this.overlayLoading = false
-            this.$router.push(`/tournaments/${this.$route.params.id}/overview`)
           })
       } catch (error) {
         this.overlayLoading = false
@@ -603,8 +607,8 @@ export default {
               })
           )
           .then(() => {
+            this.$router.go(-1)
             this.overlayLoading = false
-            this.$router.push(`/tournaments/${this.$route.params.id}/overview`)
           })
       } catch (error) {
         this.overlayLoading = false
