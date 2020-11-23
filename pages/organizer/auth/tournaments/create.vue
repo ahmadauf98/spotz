@@ -618,8 +618,9 @@ export default {
   computed: {
     ...mapState(['notification']),
     result: function () {
-      return this.gTeamNumbers * this.gGroupNumber
+      return this.participants = this.gTeamNumbers * this.gGroupNumber
     },
+
   },
 
   // GET - Fetch User's Data
