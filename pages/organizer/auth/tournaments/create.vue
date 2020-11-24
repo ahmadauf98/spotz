@@ -618,9 +618,8 @@ export default {
   computed: {
     ...mapState(['notification']),
     result: function () {
-      return this.participants = this.gTeamNumbers * this.gGroupNumber
+      return (this.participants = this.gTeamNumbers * this.gGroupNumber)
     },
-
   },
 
   // GET - Fetch User's Data
@@ -748,7 +747,134 @@ export default {
               gQualifyTeam: this.gQualifyTeam,
               fStage: this.fStage,
               fIs3rdPlace: this.fIs3rdPlace,
+              isGroupDraw: false, 
             })
+
+          // Create New Seedings
+          if (this.gGroupNumber == 2) {
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(doDashes(this.title))
+              .collection('group-stage')
+              .doc('seedings')
+              .set({ group_A: [], group_B: [] })
+          } else if (this.gGroupNumber == 4) {
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(doDashes(this.title))
+              .collection('group-stage')
+              .doc('seedings')
+              .set({ group_A: [], group_B: [], group_C: [], group_D: [] })
+          } else if (this.gGroupNumber == 8) {
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(doDashes(this.title))
+              .collection('group-stage')
+              .doc('seedings')
+              .set({
+                group_A: [],
+                group_B: [],
+                group_C: [],
+                group_D: [],
+                group_E: [],
+                group_F: [],
+                group_G: [],
+                group_H: [],
+              })
+          }
+
+          // Initialize Default Team
+          if (this.gGroupNumber == 2) {
+            for (var index = 0; index < this.gTeamNumbers; index++) {
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(doDashes(this.title))
+                .collection('group-stage')
+                .doc('seedings')
+                .update({
+                  group_A: firebase.firestore.FieldValue.arrayUnion({
+                    groupID: 'group_A',
+                    groupName: 'Group A',
+                    id: 'A' + index,
+                    teamName: 'Team A' + (index + 1),
+                  }),
+                  group_B: firebase.firestore.FieldValue.arrayUnion({
+                    groupID: 'group_B ',
+                    groupName: 'Group B',
+                    id: 'B' + index,
+                    teamName: 'Team B' + (index + 1),
+                  }),
+                })
+            }
+          } else if (this.gGroupNumber == 4) {
+            for (var index = 0; index < this.gTeamNumbers; index++) {
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(doDashes(this.title))
+                .collection('group-stage')
+                .doc('seedings')
+                .update({
+                  group_A: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'A' + index,
+                    teamName: 'Team A' + (index + 1),
+                  }),
+                  group_B: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'B' + index,
+                    teamName: 'Team B' + (index + 1),
+                  }),
+                  group_C: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'C' + index,
+                    teamName: 'Team C' + (index + 1),
+                  }),
+                  group_D: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'D' + index,
+                    teamName: 'Team D' + (index + 1),
+                  }),
+                })
+            }
+          } else if (this.gGroupNumber == 8) {
+            for (var index = 0; index < this.gTeamNumbers; index++) {
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(doDashes(this.title))
+                .collection('group-stage')
+                .doc('seedings')
+                .update({
+                  group_A: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'A' + index,
+                    teamName: 'Team A' + (index + 1),
+                  }),
+                  group_B: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'B' + index,
+                    teamName: 'Team B' + (index + 1),
+                  }),
+                  group_C: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'C' + index,
+                    teamName: 'Team C' + (index + 1),
+                  }),
+                  group_D: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'D' + index,
+                    teamName: 'Team D' + (index + 1),
+                  }),
+                  group_E: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'E' + index,
+                    teamName: 'Team E' + (index + 1),
+                  }),
+                  group_F: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'F' + index,
+                    teamName: 'Team F' + (index + 1),
+                  }),
+                  group_G: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'G' + index,
+                    teamName: 'Team G' + (index + 1),
+                  }),
+                  group_H: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'H' + index,
+                    teamName: 'Team H' + (index + 1),
+                  }),
+                })
+            }
+          }
 
           // Update tournamentID in Users Collection
           await this.$fire.firestore

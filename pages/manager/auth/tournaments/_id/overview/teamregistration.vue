@@ -238,7 +238,7 @@
                 </v-avatar>
 
                 <!-- File Input Button -->
-                <div class="mt-7 ml-n4">
+                <div v-show="tournamentFormat.passportPhoto == true" class="mt-7 ml-n4">
                   <v-btn
                     @click="choosePhoto"
                     class="mt-15"
