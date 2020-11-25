@@ -998,6 +998,17 @@ export default {
                   fixture_A: [],
                   fixture_B: [],
                 })
+
+              // Initialize Table
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(this.$route.params.id)
+                .collection('group-stage')
+                .doc('tables')
+                .set({
+                  table_A: [],
+                  table_B: [],
+                })
             })
             .then(async () => {
               // Generate Fixture A
@@ -1050,6 +1061,51 @@ export default {
                       winner: '',
                       loser: '',
                       isTie: false,
+                    }),
+                  })
+              })
+            })
+            .then(async () => {
+              // Initialize Table A
+              await this.group_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_A: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table B
+              await this.group_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_B: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
                     }),
                   })
               })
@@ -1185,6 +1241,95 @@ export default {
                       winner: '',
                       loser: '',
                       isTie: false,
+                    }),
+                  })
+              })
+            })
+            .then(async () => {
+              // Initialize Table A
+              await this.group_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_A: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table B
+              await this.group_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_B: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table C
+              await this.group_C.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_C: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table D
+              await this.group_D.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_D: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
                     }),
                   })
               })
@@ -1436,6 +1581,183 @@ export default {
                       winner: '',
                       loser: '',
                       isTie: false,
+                    }),
+                  })
+              })
+            })
+            .then(async () => {
+              // Initialize Table A
+              await this.group_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_A: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table B
+              await this.group_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_B: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table C
+              await this.group_C.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_C: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table D
+              await this.group_D.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_D: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table E
+              await this.group_E.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_E: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table F
+              await this.group_F.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_F: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table G
+              await this.group_G.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_G: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table H
+              await this.group_H.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_H: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goal_against: 0,
+                      goal_difference: 0,
+                      points: 0,
                     }),
                   })
               })
