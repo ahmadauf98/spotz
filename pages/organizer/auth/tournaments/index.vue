@@ -138,23 +138,23 @@ export default {
     }
   },
 
-  beforeCreate() {
+  mounted() {
     this.userId = this.$fire.auth.currentUser.uid
 
     return this.$fire.firestore
       .collection('users')
       .doc(this.userId)
       .onSnapshot((doc) => {
+        this.tournamentsRefTemp = []
         doc.data().tournamentsRef.forEach((docref) => {
-          // console.log(docref)
           this.$fire.firestore
             .collection('tournaments')
             .doc(docref)
             .onSnapshot((doc) => {
-              this.tournamentsRef.push(doc.data())
-              // console.log(this.tournamentsRef)
+              this.tournamentsRefTemp.push(doc.data())
             })
         })
+        this.tournamentsRef = this.tournamentsRefTemp
       })
   },
 }

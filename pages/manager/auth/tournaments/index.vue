@@ -20,7 +20,7 @@
                   dark
                   depressed
                   color="#6b46c1"
-                  to="/auth/browseTournaments"
+                  to="/manager/auth/browseTournaments"
                 >
                   Join Tournament
                 </v-btn>
@@ -50,7 +50,7 @@
                           dark
                           depressed
                           color="#6b46c1"
-                          to="/auth/browseTournaments"
+                          to="/manager/auth/browseTournaments"
                         >
                           Browse Tournaments
                         </v-btn>
@@ -139,23 +139,24 @@ export default {
     }
   },
 
-  beforeCreate() {
+  mounted() {
     this.userId = this.$fire.auth.currentUser.uid
 
     return this.$fire.firestore
       .collection('users')
       .doc(this.userId)
       .onSnapshot((doc) => {
+        this.tournamentsMgrTemp = []
         doc.data().tournamentsMgr.forEach((docref) => {
           // console.log(docref)
           this.$fire.firestore
             .collection('tournaments')
             .doc(docref)
             .onSnapshot((doc) => {
-              this.tournamentsMgr.push(doc.data())
-              // console.log(this.tournamentsMgr)
+              this.tournamentsMgrTemp.push(doc.data())
             })
         })
+        this.tournamentsMgr = this.tournamentsMgrTemp
       })
   },
 }
