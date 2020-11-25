@@ -348,34 +348,105 @@
                   </v-col>
                 </v-row>
 
-                <!-- If No Tournament Fixture -->
-                <v-card
-                  v-if="tournamentRef.isFixtureCreated == false"
-                  class="mx-auto py-5 mt-8 px-9"
-                  outlined
-                  tile
-                >
-                  <div class="d-flex">
-                    <h1 class="text-subtitle-1 font-weight-bold">
-                      Tournament Fixtures
-                    </h1>
-                    <v-btn
-                      class="font-weight-regular text-capitalize ml-auto"
-                      dark
-                      depressed
-                      small
-                      color="primary"
-                    >
-                      Get Fixture
-                    </v-btn>
-                  </div>
-                </v-card>
-
-                <div v-else class="mt-3">
+                <div class="mt-3">
                   <div class="d-flex align-center">
                     <h1 class="text-subtitle-1 font-weight-bold">
                       Tournament Fixtures
                     </h1>
+                  </div>
+
+                  <!-- Group A Fixture -->
+                  <div class="text-center justify-center mt-3">
+                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                      Group A
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_A"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card
+                          class="pa-2 d-flex justify-center align-center"
+                          outlined
+                        >
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-right"
+                            >
+                              {{ fixture.homeTeam }}
+                            </h1>
+                          </v-col>
+
+                          <v-col cols="2">
+                            <v-chip
+                              class="ma-2 mx-auto"
+                              color="primary"
+                              small
+                              label
+                            >
+                              Versus
+                            </v-chip>
+                          </v-col>
+
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-left"
+                            >
+                              {{ fixture.awayTeam }}
+                            </h1>
+                          </v-col>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group B Fixture -->
+                  <div class="text-center justify-center mt-3">
+                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                      Group B
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_B"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card
+                          class="pa-2 d-flex justify-center align-center"
+                          outlined
+                        >
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-right"
+                            >
+                              {{ fixture.homeTeam }}
+                            </h1>
+                          </v-col>
+
+                          <v-col cols="2">
+                            <v-chip
+                              class="ma-2 mx-auto"
+                              color="primary"
+                              small
+                              label
+                            >
+                              Versus
+                            </v-chip>
+                          </v-col>
+
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-left"
+                            >
+                              {{ fixture.awayTeam }}
+                            </h1>
+                          </v-col>
+                        </v-card>
+                      </v-col>
+                    </v-row>
                   </div>
                 </div>
               </div>
@@ -746,8 +817,7 @@ export default {
       // Tournament Data
       tournamentRef: '',
 
-      // Official Team List Data
-      tempList: [],
+      // Official List Data
       officialList: '',
       teams: '',
 
@@ -763,14 +833,24 @@ export default {
       group_H: '',
 
       // Team Fixture Data
-      fixture_A: '',
-      fixture_B: '',
-      fixture_C: '',
-      fixture_D: '',
-      fixture_E: '',
-      fixture_F: '',
-      fixture_G: '',
-      fixture_H: '',
+      fixture_data_A: [],
+      fixture_data_B: [],
+      fixture_data_C: [],
+      fixture_data_D: [],
+      fixture_data_E: [],
+      fixture_data_F: [],
+      fixture_data_G: [],
+      fixture_data_H: [],
+
+      // Fixture Data
+      fixture_A: [],
+      fixture_B: [],
+      fixture_C: [],
+      fixture_D: [],
+      fixture_E: [],
+      fixture_F: [],
+      fixture_G: [],
+      fixture_H: [],
 
       // Add Seedings Overlay
       opacity: 0.5,
@@ -783,7 +863,6 @@ export default {
   // Fetch Notification Data from Vuex
   computed: { ...mapState(['notification']) },
 
-  // Fetch Data from Firestore
   created() {
     // Tournament Data
     this.$fire.firestore
@@ -793,7 +872,7 @@ export default {
         this.tournamentRef = doc.data()
       })
 
-    // Official Team Data
+    // Official List Data
     this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
@@ -828,35 +907,65 @@ export default {
       .collection('group-stage')
       .doc('seedings')
       .onSnapshot((doc) => {
-        // Read Data
-        this.group_A = doc.data().group_A
-        this.group_B = doc.data().group_B
-        this.group_C = doc.data().group_C
-        this.group_D = doc.data().group_D
-        this.group_E = doc.data().group_E
-        this.group_F = doc.data().group_F
-        this.group_G = doc.data().group_G
-        this.group_H = doc.data().group_H
+        if (doc.exists) {
+          // Read Data
+          this.group_A = doc.data().group_A
+          this.group_B = doc.data().group_B
+          this.group_C = doc.data().group_C
+          this.group_D = doc.data().group_D
+          this.group_E = doc.data().group_E
+          this.group_F = doc.data().group_F
+          this.group_G = doc.data().group_G
+          this.group_H = doc.data().group_H
 
-        // Overlay Data
-        this.groupStageData = doc.data()
+          // Overlay Data
+          this.groupStageData = doc.data()
+        }
       })
 
+    // Filter Group for Tournament Generator
     this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
       .collection('group-stage')
       .doc('seedings')
-      .onSnapshot((querySnapshot) => {
-        // var temp_A = querySnapshot.data().group_A
+      .get()
+      .then((querySnapshot) => {
+        if (querySnapshot.exists) {
+          for (var i = 0; i < this.tournamentRef.gTeamNumbers; i++) {
+            if (this.tournamentRef.gGroupNumber == 2) {
+              this.fixture_data_A.push(querySnapshot.data().group_A[i].teamName)
+              this.fixture_data_B.push(querySnapshot.data().group_B[i].teamName)
+            } else if (this.tournamentRef.gGroupNumber == 4) {
+              this.fixture_data_A.push(querySnapshot.data().group_A[i].teamName)
+              this.fixture_data_B.push(querySnapshot.data().group_B[i].teamName)
+              this.fixture_data_C.push(querySnapshot.data().group_C[i].teamName)
+              this.fixture_data_D.push(querySnapshot.data().group_D[i].teamName)
+            } else if (this.tournamentRef.gGroupNumber == 8) {
+              this.fixture_data_A.push(querySnapshot.data().group_A[i].teamName)
+              this.fixture_data_B.push(querySnapshot.data().group_B[i].teamName)
+              this.fixture_data_C.push(querySnapshot.data().group_C[i].teamName)
+              this.fixture_data_D.push(querySnapshot.data().group_D[i].teamName)
+              this.fixture_data_E.push(querySnapshot.data().group_E[i].teamName)
+              this.fixture_data_F.push(querySnapshot.data().group_F[i].teamName)
+              this.fixture_data_G.push(querySnapshot.data().group_G[i].teamName)
+              this.fixture_data_H.push(querySnapshot.data().group_H[i].teamName)
+            }
+          }
+        }
+      })
 
-        // temp_A.forEach((doc) => {
-        //   console.log(doc.data())
-        // })
-
-        querySnapshot.forEach(function (doc) {
-          console.log(doc.data())
-        })
+    // Get Fixture of Each Group
+    this.$fire.firestore
+      .collection('tournaments')
+      .doc(this.$route.params.id)
+      .collection('group-stage')
+      .doc('fixtures')
+      .onSnapshot((doc) => {
+        if (doc.exists) {
+          this.fixture_A = doc.data().fixture_A
+          this.fixture_B = doc.data().fixture_B
+        }
       })
   },
 
@@ -868,7 +977,7 @@ export default {
 
     async onUpdate(selectedData) {
       try {
-        if (this.gGroupNumber == 2) {
+        if (this.tournamentRef.gGroupNumber == 2) {
           await this.$fire.firestore
             .collection('tournaments')
             .doc(this.$route.params.id)
@@ -878,7 +987,74 @@ export default {
               group_A: selectedData.group_A,
               group_B: selectedData.group_B,
             })
-        } else if (this.gGroupNumber == 4) {
+            .then(async () => {
+              // Initialize Fixture
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(this.$route.params.id)
+                .collection('group-stage')
+                .doc('fixtures')
+                .set({
+                  fixture_A: [],
+                  fixture_B: [],
+                })
+            })
+            .then(async () => {
+              // Generate Fixture A
+              const games_A = generator(this.fixture_data_A, {
+                type: 'single-round',
+              })
+              this.fixture_A = games_A.data
+
+              // Generate Fixture B
+              const games_B = generator(this.fixture_data_B, {
+                type: 'single-round',
+              })
+              this.fixture_B = games_B.data
+
+              // Store Fixture A
+              await this.fixture_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_A: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture B
+              await this.fixture_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_B: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+            })
+        } else if (this.tournamentRef.gGroupNumber == 4) {
           await this.$fire.firestore
             .collection('tournaments')
             .doc(this.$route.params.id)
@@ -890,7 +1066,130 @@ export default {
               group_C: selectedData.group_C,
               group_D: selectedData.group_D,
             })
-        } else if (this.gGroupNumber == 8) {
+            .then(async () => {
+              // Initialize Fixture
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(this.$route.params.id)
+                .collection('group-stage')
+                .doc('fixtures')
+                .set({
+                  fixture_A: [],
+                  fixture_B: [],
+                  fixture_C: [],
+                  fixture_D: [],
+                })
+            })
+            .then(async () => {
+              // Generate Fixture A
+              const games_A = generator(this.fixture_data_A, {
+                type: 'single-round',
+              })
+              this.fixture_A = games_A.data
+
+              // Generate Fixture B
+              const games_B = generator(this.fixture_data_B, {
+                type: 'single-round',
+              })
+              this.fixture_B = games_B.data
+
+              // Generate Fixture C
+              const games_C = generator(this.fixture_data_C, {
+                type: 'single-round',
+              })
+              this.fixture_C = games_C.data
+
+              // Generate Fixture D
+              const games_D = generator(this.fixture_data_D, {
+                type: 'single-round',
+              })
+              this.fixture_D = games_D.data
+
+              // Store Fixture A
+              await this.fixture_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_A: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture B
+              await this.fixture_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_B: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture C
+              await this.fixture_C.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_C: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture D
+              await this.fixture_D.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_D: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+            })
+        } else if (this.tournamentRef.gGroupNumber == 8) {
           await this.$fire.firestore
             .collection('tournaments')
             .doc(this.$route.params.id)
@@ -906,6 +1205,241 @@ export default {
               group_G: selectedData.group_G,
               group_H: selectedData.group_H,
             })
+            .then(async () => {
+              // Initialize Fixture
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(this.$route.params.id)
+                .collection('group-stage')
+                .doc('fixtures')
+                .set({
+                  fixture_A: [],
+                  fixture_B: [],
+                  fixture_C: [],
+                  fixture_D: [],
+                  fixture_E: [],
+                  fixture_F: [],
+                  fixture_G: [],
+                  fixture_H: [],
+                })
+            })
+            .then(async () => {
+              // Generate Fixture A
+              const games_A = generator(this.fixture_data_A, {
+                type: 'single-round',
+              })
+              this.fixture_A = games_A.data
+
+              // Generate Fixture B
+              const games_B = generator(this.fixture_data_B, {
+                type: 'single-round',
+              })
+              this.fixture_B = games_B.data
+
+              // Generate Fixture C
+              const games_C = generator(this.fixture_data_C, {
+                type: 'single-round',
+              })
+              this.fixture_C = games_C.data
+
+              // Generate Fixture D
+              const games_D = generator(this.fixture_data_D, {
+                type: 'single-round',
+              })
+              this.fixture_D = games_D.data
+
+              // Generate Fixture E
+              const games_E = generator(this.fixture_data_E, {
+                type: 'single-round',
+              })
+              this.fixture_E = games_E.data
+
+              // Generate Fixture F
+              const games_F = generator(this.fixture_data_F, {
+                type: 'single-round',
+              })
+              this.fixture_F = games_F.data
+
+              // Generate Fixture G
+              const games_G = generator(this.fixture_data_G, {
+                type: 'single-round',
+              })
+              this.fixture_G = games_G.data
+
+              // Generate Fixture H
+              const games_H = generator(this.fixture_data_H, {
+                type: 'single-round',
+              })
+              this.fixture_H = games_H.data
+
+              // Store Fixture A
+              await this.fixture_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_A: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture B
+              await this.fixture_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_B: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture C
+              await this.fixture_C.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_C: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture D
+              await this.fixture_D.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_D: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture E
+              await this.fixture_E.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_E: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture F
+              await this.fixture_F.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_F: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture G
+              await this.fixture_G.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_G: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture H
+              await this.fixture_H.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_H: firebase.firestore.FieldValue.arrayUnion({
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: '',
+                      awayScore: '',
+                      winner: '',
+                      loser: '',
+                      isTie: false,
+                    }),
+                  })
+              })
+            })
         }
 
         await this.$fire.firestore
@@ -913,7 +1447,6 @@ export default {
           .doc(this.$route.params.id)
           .update({
             isGroupDraw: true,
-            isFixtureCreated: false,
           })
           .then(() => {
             this.addSeedingsOverlay = false

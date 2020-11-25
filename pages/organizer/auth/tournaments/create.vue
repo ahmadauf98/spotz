@@ -793,14 +793,10 @@ export default {
                 .doc('seedings')
                 .update({
                   group_A: firebase.firestore.FieldValue.arrayUnion({
-                    groupID: 'group_A',
-                    groupName: 'Group A',
                     id: 'A' + index,
                     teamName: 'Team A' + (index + 1),
                   }),
                   group_B: firebase.firestore.FieldValue.arrayUnion({
-                    groupID: 'group_B ',
-                    groupName: 'Group B',
                     id: 'B' + index,
                     teamName: 'Team B' + (index + 1),
                   }),
