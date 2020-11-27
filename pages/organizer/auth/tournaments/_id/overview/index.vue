@@ -348,14 +348,13 @@ export default {
   },
 
   // Fetch User's Data
-  created() {
+  mounted() {
     this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
         this.tournamentProf = doc.data()
         this.managerlength = doc.data().managerRef.length
-        // console.log(this.tournamentProf)
       })
 
     this.$fire.firestore

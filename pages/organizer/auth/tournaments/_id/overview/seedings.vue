@@ -356,7 +356,14 @@
                   </div>
 
                   <!-- Group A Fixture -->
-                  <div class="text-center justify-center mt-3">
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 2 ||
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-3"
+                  >
                     <h1 class="text-subtitle-1 font-weight-bold text-center">
                       Group A
                     </h1>
@@ -403,7 +410,14 @@
                   </div>
 
                   <!-- Group B Fixture -->
-                  <div class="text-center justify-center mt-3">
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 2 ||
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-3"
+                  >
                     <h1 class="text-subtitle-1 font-weight-bold text-center">
                       Group B
                     </h1>
@@ -411,6 +425,312 @@
                     <v-row>
                       <v-col
                         v-for="(fixture, index) in fixture_B"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card
+                          class="pa-2 d-flex justify-center align-center"
+                          outlined
+                        >
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-right"
+                            >
+                              {{ fixture.homeTeam }}
+                            </h1>
+                          </v-col>
+
+                          <v-col cols="2">
+                            <v-chip
+                              class="ma-2 mx-auto"
+                              color="primary"
+                              small
+                              label
+                            >
+                              Versus
+                            </v-chip>
+                          </v-col>
+
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-left"
+                            >
+                              {{ fixture.awayTeam }}
+                            </h1>
+                          </v-col>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group C Fixture -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                      Group C
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_C"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card
+                          class="pa-2 d-flex justify-center align-center"
+                          outlined
+                        >
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-right"
+                            >
+                              {{ fixture.homeTeam }}
+                            </h1>
+                          </v-col>
+
+                          <v-col cols="2">
+                            <v-chip
+                              class="ma-2 mx-auto"
+                              color="primary"
+                              small
+                              label
+                            >
+                              Versus
+                            </v-chip>
+                          </v-col>
+
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-left"
+                            >
+                              {{ fixture.awayTeam }}
+                            </h1>
+                          </v-col>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group D Fixture -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                      Group D
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_D"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card
+                          class="pa-2 d-flex justify-center align-center"
+                          outlined
+                        >
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-right"
+                            >
+                              {{ fixture.homeTeam }}
+                            </h1>
+                          </v-col>
+
+                          <v-col cols="2">
+                            <v-chip
+                              class="ma-2 mx-auto"
+                              color="primary"
+                              small
+                              label
+                            >
+                              Versus
+                            </v-chip>
+                          </v-col>
+
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-left"
+                            >
+                              {{ fixture.awayTeam }}
+                            </h1>
+                          </v-col>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group E Fixture -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                      Group E
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_E"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card
+                          class="pa-2 d-flex justify-center align-center"
+                          outlined
+                        >
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-right"
+                            >
+                              {{ fixture.homeTeam }}
+                            </h1>
+                          </v-col>
+
+                          <v-col cols="2">
+                            <v-chip
+                              class="ma-2 mx-auto"
+                              color="primary"
+                              small
+                              label
+                            >
+                              Versus
+                            </v-chip>
+                          </v-col>
+
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-left"
+                            >
+                              {{ fixture.awayTeam }}
+                            </h1>
+                          </v-col>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group F Fixture -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                      Group F
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_F"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card
+                          class="pa-2 d-flex justify-center align-center"
+                          outlined
+                        >
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-right"
+                            >
+                              {{ fixture.homeTeam }}
+                            </h1>
+                          </v-col>
+
+                          <v-col cols="2">
+                            <v-chip
+                              class="ma-2 mx-auto"
+                              color="primary"
+                              small
+                              label
+                            >
+                              Versus
+                            </v-chip>
+                          </v-col>
+
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-left"
+                            >
+                              {{ fixture.awayTeam }}
+                            </h1>
+                          </v-col>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group G Fixture -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                      Group G
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_G"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card
+                          class="pa-2 d-flex justify-center align-center"
+                          outlined
+                        >
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-right"
+                            >
+                              {{ fixture.homeTeam }}
+                            </h1>
+                          </v-col>
+
+                          <v-col cols="2">
+                            <v-chip
+                              class="ma-2 mx-auto"
+                              color="primary"
+                              small
+                              label
+                            >
+                              Versus
+                            </v-chip>
+                          </v-col>
+
+                          <v-col cols="4">
+                            <h1
+                              class="text-subtitle-1 font-weight-medium text-left"
+                            >
+                              {{ fixture.awayTeam }}
+                            </h1>
+                          </v-col>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group H Fixture -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                      Group H
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_H"
                         :key="index"
                         cols="12"
                       >
@@ -863,7 +1183,7 @@ export default {
   // Fetch Notification Data from Vuex
   computed: { ...mapState(['notification']) },
 
-  created() {
+  mounted() {
     // Tournament Data
     this.$fire.firestore
       .collection('tournaments')
@@ -1032,13 +1352,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_A: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_A',
+                      tableID: 'table_A',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1053,13 +1375,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_B: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_B',
+                      tableID: 'table_B',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1081,8 +1405,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1103,8 +1427,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1170,13 +1494,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_A: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_A',
+                      tableID: 'table_A',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1191,13 +1517,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_B: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_B',
+                      tableID: 'table_B',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1212,13 +1540,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_C: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_C',
+                      tableID: 'table_C',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1233,13 +1563,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_D: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_D',
+                      tableID: 'table_D',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1261,8 +1593,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1283,8 +1615,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1305,8 +1637,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1327,8 +1659,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1426,13 +1758,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_A: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_A',
+                      tableID: 'table_A',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1447,13 +1781,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_B: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_B',
+                      tableID: 'table_B',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1468,13 +1804,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_C: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_C',
+                      tableID: 'table_C',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1489,13 +1827,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_D: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_D',
+                      tableID: 'table_D',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1510,13 +1850,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_E: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_E',
+                      tableID: 'table_E',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1531,13 +1873,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_F: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_F',
+                      tableID: 'table_F',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1552,13 +1896,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_G: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_G',
+                      tableID: 'table_G',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1573,13 +1919,15 @@ export default {
                   .doc('fixtures')
                   .update({
                     fixture_H: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_H',
+                      tableID: 'table_H',
                       homeTeam: doc.homeTeam,
                       awayTeam: doc.awayTeam,
                       round: doc.round,
-                      homeScore: '',
-                      awayScore: '',
-                      winner: '',
-                      loser: '',
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
                       isTie: false,
                     }),
                   })
@@ -1601,8 +1949,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1623,8 +1971,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1645,8 +1993,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1667,8 +2015,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1689,8 +2037,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1711,8 +2059,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1733,8 +2081,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1755,8 +2103,8 @@ export default {
                       lost: 0,
                       draw: 0,
                       goals_for: 0,
-                      goal_against: 0,
-                      goal_difference: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
                       points: 0,
                     }),
                   })
@@ -1769,6 +2117,8 @@ export default {
           .doc(this.$route.params.id)
           .update({
             isGroupDraw: true,
+            isTournamentLive: false,
+            isTournamentFulltime: false,
           })
           .then(() => {
             this.addSeedingsOverlay = false
