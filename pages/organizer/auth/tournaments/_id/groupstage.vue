@@ -1144,9 +1144,23 @@
                     "
                     class="text-center justify-center mt-3"
                   >
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group A
-                    </h1>
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group A
+                      </h1>
+                      <v-btn
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_A)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
 
                     <v-card outlined>
                       <v-simple-table>
@@ -1172,7 +1186,9 @@
                               class="text-center"
                             >
                               <td class="text-right">{{ index + 1 }}</td>
-                              <td class="text-left">{{ table.teamName }}</td>
+                              <td class="text-left">
+                                {{ table.teamName }}
+                              </td>
                               <td class="text-center">{{ table.matches }}</td>
                               <td class="text-center">{{ table.win }}</td>
                               <td class="text-center">{{ table.draw }}</td>
@@ -1201,9 +1217,23 @@
                     "
                     class="text-center justify-center mt-5"
                   >
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group B
-                    </h1>
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group B
+                      </h1>
+                      <v-btn
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_B)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
 
                     <v-card outlined>
                       <v-simple-table>
@@ -1613,19 +1643,8 @@
               <v-icon>mdi-close-circle</v-icon>
             </v-btn>
             <!-- Title -->
-            <div class="d-flex justify-center mb-4 mt-n2">
+            <div class="d-flex justify-center mb-4 mt-n4">
               <h1 class="text-h6 font-weight-bold">Report Score</h1>
-              <v-btn
-                v-show="resultData.isMatchStart == false"
-                class="ml-auto font-weight-regular text-capitalize"
-                @click="onStartMatch(resultData, currentGroupData)"
-                dark
-                depressed
-                color="orange darken-1"
-                small
-              >
-                Start Match
-              </v-btn>
             </div>
 
             <div class="mb-6">
@@ -1638,6 +1657,7 @@
 
                     <v-col cols="8" class="mx-auto">
                       <v-text-field
+                        v-show="resultData.isMatchStart == true"
                         class="text-h4 mb-n10 font-weight-bold"
                         v-model="resultData.homeScore"
                         type="number"
@@ -1645,6 +1665,13 @@
                         max="100"
                         outlined
                       ></v-text-field>
+
+                      <h1
+                        v-show="resultData.isMatchStart == false"
+                        class="text-center mt-n2"
+                      >
+                        {{ resultData.homeScore }}
+                      </h1>
                     </v-col>
                   </v-col>
 
@@ -1670,6 +1697,7 @@
 
                     <v-col cols="8" class="mx-auto">
                       <v-text-field
+                        v-show="resultData.isMatchStart == true"
                         class="text-h4 mb-n10 font-weight-bold"
                         v-model="resultData.awayScore"
                         type="number"
@@ -1677,6 +1705,13 @@
                         max="100"
                         outlined
                       ></v-text-field>
+
+                      <h1
+                        v-show="resultData.isMatchStart == false"
+                        class="text-center mt-n2"
+                      >
+                        {{ resultData.awayScore }}
+                      </h1>
                     </v-col>
                   </v-col>
                 </v-row>
@@ -1685,6 +1720,19 @@
 
             <div class="d-flex justify-end mb-2">
               <v-btn
+                v-show="resultData.isMatchStart == false"
+                class="ml-auto font-weight-regular text-capitalize"
+                @click="onStartMatch(resultData, currentGroupData)"
+                width="150"
+                dark
+                depressed
+                color="orange darken-1"
+              >
+                Start Match
+              </v-btn>
+
+              <v-btn
+                v-show="resultData.isMatchStart == true"
                 class="px-10 ml-2 font-weight-regular text-capitalize"
                 color="primary"
                 width="150"
@@ -1695,6 +1743,7 @@
               >
 
               <v-btn
+                v-show="resultData.isMatchStart == true"
                 class="px-10 ml-2 font-weight-regular text-capitalize"
                 color="primary"
                 width="150"
@@ -1829,6 +1878,12 @@ export default {
         if (doc.exists) {
           this.fixture_A = doc.data().fixture_A
           this.fixture_B = doc.data().fixture_B
+          this.fixture_C = doc.data().fixture_C
+          this.fixture_D = doc.data().fixture_D
+          this.fixture_E = doc.data().fixture_E
+          this.fixture_F = doc.data().fixture_F
+          this.fixture_G = doc.data().fixture_G
+          this.fixture_H = doc.data().fixture_H
         }
       })
 
@@ -1841,17 +1896,41 @@ export default {
       .onSnapshot((doc) => {
         this.sort_table_A = ''
         this.sort_table_B = ''
+        this.sort_table_C = ''
+        this.sort_table_D = ''
+        this.sort_table_E = ''
+        this.sort_table_F = ''
+        this.sort_table_G = ''
+        this.sort_table_H = ''
 
         if (doc.exists) {
           this.sort_table_A = doc.data().table_A
           this.sort_table_B = doc.data().table_B
+          this.sort_table_C = doc.data().table_C
+          this.sort_table_D = doc.data().table_D
+          this.sort_table_E = doc.data().table_E
+          this.sort_table_F = doc.data().table_F
+          this.sort_table_G = doc.data().table_G
+          this.sort_table_H = doc.data().table_H
         }
 
         this.sort_table_A.sort(this.compare)
         this.sort_table_B.sort(this.compare)
+        this.sort_table_C.sort(this.compare)
+        this.sort_table_D.sort(this.compare)
+        this.sort_table_E.sort(this.compare)
+        this.sort_table_F.sort(this.compare)
+        this.sort_table_G.sort(this.compare)
+        this.sort_table_H.sort(this.compare)
 
         this.table_A = this.sort_table_A
         this.table_B = this.sort_table_B
+        this.table_C = this.sort_table_C
+        this.table_D = this.sort_table_D
+        this.table_E = this.sort_table_E
+        this.table_F = this.sort_table_F
+        this.table_G = this.sort_table_G
+        this.table_H = this.sort_table_H
       })
   },
 
@@ -2062,6 +2141,7 @@ export default {
             )
 
             // Update Winner Data
+            table_winner.tableID = data.tableID
             table_winner.matches += 1
             table_winner.win += 1
             table_winner.points += 3
@@ -2071,6 +2151,7 @@ export default {
             table_winner.goals_difference += goals_diff1
 
             // Update Loser Data
+            table_loser.tableID = data.tableID
             table_loser.matches += 1
             table_loser.lost += 1
             table_loser.goals_for += Number(data.awayScore)
@@ -2087,6 +2168,7 @@ export default {
             )
 
             // Update Winner Data
+            table_winner.tableID = data.tableID
             table_winner.matches += 1
             table_winner.win += 1
             table_winner.points += 3
@@ -2096,6 +2178,7 @@ export default {
             table_winner.goals_difference += goals_diff1
 
             // Update Loser Data
+            table_loser.tableID = data.tableID
             table_loser.matches += 1
             table_loser.lost += 1
             table_loser.goals_for += Number(data.homeScore)
@@ -2112,6 +2195,7 @@ export default {
             (element) => element.teamName === data.awayTeam
           )
           // Update HomeTeam Data
+          table_homeTeam.tableID = data.tableID
           table_homeTeam.matches += 1
           table_homeTeam.draw += 1
           table_homeTeam.points += 1
@@ -2119,6 +2203,7 @@ export default {
           table_homeTeam.goals_against += Number(data.awayScore)
 
           // Update AwayTeam Data
+          table_awayTeam.tableID = data.tableID
           table_awayTeam.matches += 1
           table_awayTeam.draw += 1
           table_awayTeam.points += 1
@@ -2401,6 +2486,83 @@ export default {
         this.updateResultOverlay = false
       } catch (error) {
         console.log(error)
+      }
+    },
+
+    async getQualifiedTeam(table) {
+      try {
+        switch (table[0].tableID) {
+          case 'table_A':
+            this.group_1 = {
+              id: 'group_A1',
+              teamName: table[0].teamName,
+            }
+
+            this.group_2 = {
+              id: 'group_A2',
+              teamName: table[1].teamName,
+            }
+
+            console.log(this.group_2)
+
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('participants')
+              .set(
+                {
+                  group_A1: this.group_1,
+                  group_A2: this.group_2,
+                },
+                { merge: true }
+              )
+            break
+          case 'table_B':
+            this.group_1 = {
+              id: 'group_B1',
+              teamName: table[0].teamName,
+            }
+
+            this.group_2 = {
+              id: 'group_B2',
+              teamName: table[1].teamName,
+            }
+
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('participants')
+              .set(
+                {
+                  group_B1: this.group_1,
+                  group_B2: this.group_2,
+                },
+                { merge: true }
+              )
+            break
+          case 'table_C':
+            // code block
+            break
+          case 'table_D':
+            // code block
+            break
+          case 'table_E':
+            // code block
+            break
+          case 'table_F':
+            // code block
+            break
+          case 'table_G':
+            // code block
+            break
+          case 'table_H':
+            // code block
+            break
+        }
+      } catch (error) {
+        console.log
       }
     },
   },
