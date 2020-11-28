@@ -327,22 +327,7 @@
                       small
                       @click="onLive"
                     >
-                      <v-icon small>mdi-record</v-icon> Live</v-btn
-                    >
-
-                    <v-btn
-                      v-show="
-                        tournamentRef.isTournamentLive == true &&
-                        tournamentRef.isTournamentFulltime == false
-                      "
-                      class="ml-auto"
-                      color="primary"
-                      outlined
-                      small
-                      @click="onFulltime"
-                    >
-                      <v-icon small>mdi-radiobox-marked</v-icon>
-                      Full-Time</v-btn
+                      <v-icon small>mdi-record</v-icon>Start Tournament</v-btn
                     >
                   </div>
 
@@ -370,10 +355,10 @@
                             <v-btn
                               v-show="
                                 tournamentRef.isTournamentLive == true &&
-                                tournamentRef.isTournamentFulltime == false
+                                fixture.isFulltime == false
                               "
                               class="ml-auto mx-3 mb-n8"
-                              @click="updateResult(fixture, fixture_A)"
+                              @click="updateResult(fixture, fixture_A, table_A)"
                               color="grey darken-1"
                               icon
                             >
@@ -390,13 +375,7 @@
                               </h1>
 
                               <h1
-                                v-show="
-                                  (tournamentRef.isTournamentLive == true &&
-                                    tournamentRef.isTournamentFulltime ==
-                                      false) ||
-                                  (tournamentRef.isTournamentLive == true &&
-                                    tournamentRef.isTournamentFulltime == true)
-                                "
+                                v-show="tournamentRef.isTournamentLive == true"
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
@@ -406,8 +385,8 @@
                             <v-col cols="2">
                               <h1
                                 v-show="
-                                  tournamentRef.isTournamentLive == true &&
-                                  tournamentRef.isTournamentFulltime == false
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
                                 "
                                 class="text-caption text-active"
                               >
@@ -417,7 +396,7 @@
                               <h1
                                 v-show="
                                   tournamentRef.isTournamentLive == true &&
-                                  tournamentRef.isTournamentFulltime == true
+                                  fixture.isFulltime == true
                                 "
                                 class="text-caption text-grey"
                               >
@@ -442,13 +421,7 @@
                               </h1>
 
                               <h1
-                                v-show="
-                                  (tournamentRef.isTournamentLive == true &&
-                                    tournamentRef.isTournamentFulltime ==
-                                      false) ||
-                                  (tournamentRef.isTournamentLive == true &&
-                                    tournamentRef.isTournamentFulltime == true)
-                                "
+                                v-show="tournamentRef.isTournamentLive == true"
                                 class="text-center"
                               >
                                 {{ fixture.awayScore }}
@@ -479,44 +452,84 @@
                         :key="index"
                         cols="12"
                       >
-                        <v-card
-                          class="pa-2 d-flex justify-center align-center"
-                          outlined
-                        >
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isTournamentLive == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_B, table_B)"
+                              color="grey darken-1"
+                              icon
                             >
-                              {{ fixture.homeTeam }}
-                            </h1>
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
 
-                            <h1 class="text-center">
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
 
-                          <v-col cols="2">
-                            <v-chip
-                              class="ma-2 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
 
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
 
-                            <h1 class="text-center">
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
+                              <h1
+                                v-show="
+                                  tournamentRef.isTournamentLive == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
                         </v-card>
                       </v-col>
                     </v-row>
@@ -530,7 +543,7 @@
                     "
                     class="text-center justify-center mt-3"
                   >
-                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
                       Group C
                     </h1>
 
@@ -540,44 +553,84 @@
                         :key="index"
                         cols="12"
                       >
-                        <v-card
-                          class="pa-2 d-flex justify-center align-center"
-                          outlined
-                        >
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isTournamentLive == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_C, table_C)"
+                              color="grey darken-1"
+                              icon
                             >
-                              {{ fixture.homeTeam }}
-                            </h1>
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
 
-                            <h1 class="text-center">
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
 
-                          <v-col cols="2">
-                            <v-chip
-                              class="ma-2 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
 
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
 
-                            <h1 class="text-center">
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
+                              <h1
+                                v-show="
+                                  tournamentRef.isTournamentLive == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
                         </v-card>
                       </v-col>
                     </v-row>
@@ -591,7 +644,7 @@
                     "
                     class="text-center justify-center mt-3"
                   >
-                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
                       Group D
                     </h1>
 
@@ -601,44 +654,84 @@
                         :key="index"
                         cols="12"
                       >
-                        <v-card
-                          class="pa-2 d-flex justify-center align-center"
-                          outlined
-                        >
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isTournamentLive == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_D, table_D)"
+                              color="grey darken-1"
+                              icon
                             >
-                              {{ fixture.homeTeam }}
-                            </h1>
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
 
-                            <h1 class="text-center">
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
 
-                          <v-col cols="2">
-                            <v-chip
-                              class="ma-2 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
 
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
 
-                            <h1 class="text-center">
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
+                              <h1
+                                v-show="
+                                  tournamentRef.isTournamentLive == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
                         </v-card>
                       </v-col>
                     </v-row>
@@ -649,7 +742,7 @@
                     v-show="tournamentRef.gGroupNumber == 8"
                     class="text-center justify-center mt-3"
                   >
-                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
                       Group E
                     </h1>
 
@@ -659,44 +752,84 @@
                         :key="index"
                         cols="12"
                       >
-                        <v-card
-                          class="pa-2 d-flex justify-center align-center"
-                          outlined
-                        >
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isTournamentLive == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_E, table_E)"
+                              color="grey darken-1"
+                              icon
                             >
-                              {{ fixture.homeTeam }}
-                            </h1>
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
 
-                            <h1 class="text-center">
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
 
-                          <v-col cols="2">
-                            <v-chip
-                              class="ma-2 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
 
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
 
-                            <h1 class="text-center">
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
+                              <h1
+                                v-show="
+                                  tournamentRef.isTournamentLive == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
                         </v-card>
                       </v-col>
                     </v-row>
@@ -707,7 +840,7 @@
                     v-show="tournamentRef.gGroupNumber == 8"
                     class="text-center justify-center mt-3"
                   >
-                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
                       Group F
                     </h1>
 
@@ -717,44 +850,84 @@
                         :key="index"
                         cols="12"
                       >
-                        <v-card
-                          class="pa-2 d-flex justify-center align-center"
-                          outlined
-                        >
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isTournamentLive == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_F, table_F)"
+                              color="grey darken-1"
+                              icon
                             >
-                              {{ fixture.homeTeam }}
-                            </h1>
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
 
-                            <h1 class="text-center">
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
 
-                          <v-col cols="2">
-                            <v-chip
-                              class="ma-2 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
 
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
 
-                            <h1 class="text-center">
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
+                              <h1
+                                v-show="
+                                  tournamentRef.isTournamentLive == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
                         </v-card>
                       </v-col>
                     </v-row>
@@ -765,7 +938,7 @@
                     v-show="tournamentRef.gGroupNumber == 8"
                     class="text-center justify-center mt-3"
                   >
-                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
                       Group G
                     </h1>
 
@@ -775,44 +948,84 @@
                         :key="index"
                         cols="12"
                       >
-                        <v-card
-                          class="pa-2 d-flex justify-center align-center"
-                          outlined
-                        >
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isTournamentLive == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_G, table_G)"
+                              color="grey darken-1"
+                              icon
                             >
-                              {{ fixture.homeTeam }}
-                            </h1>
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
 
-                            <h1 class="text-center">
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
 
-                          <v-col cols="2">
-                            <v-chip
-                              class="ma-2 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
 
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
 
-                            <h1 class="text-center">
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
+                              <h1
+                                v-show="
+                                  tournamentRef.isTournamentLive == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
                         </v-card>
                       </v-col>
                     </v-row>
@@ -823,7 +1036,7 @@
                     v-show="tournamentRef.gGroupNumber == 8"
                     class="text-center justify-center mt-3"
                   >
-                    <h1 class="text-subtitle-1 font-weight-bold text-center">
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
                       Group H
                     </h1>
 
@@ -833,44 +1046,84 @@
                         :key="index"
                         cols="12"
                       >
-                        <v-card
-                          class="pa-2 d-flex justify-center align-center"
-                          outlined
-                        >
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isTournamentLive == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_H, table_H)"
+                              color="grey darken-1"
+                              icon
                             >
-                              {{ fixture.homeTeam }}
-                            </h1>
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
 
-                            <h1 class="text-center">
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
 
-                          <v-col cols="2">
-                            <v-chip
-                              class="ma-2 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
 
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
 
-                            <h1 class="text-center">
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
+                              <h1
+                                v-show="
+                                  tournamentRef.isTournamentLive == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isTournamentLive == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
                         </v-card>
                       </v-col>
                     </v-row>
@@ -1360,8 +1613,19 @@
               <v-icon>mdi-close-circle</v-icon>
             </v-btn>
             <!-- Title -->
-            <div class="text-center mb-4 mt-n4">
-              <h1 class="text-center text-h6 font-weight-bold">Report Score</h1>
+            <div class="d-flex justify-center mb-4 mt-n2">
+              <h1 class="text-h6 font-weight-bold">Report Score</h1>
+              <v-btn
+                v-show="resultData.isMatchStart == false"
+                class="ml-auto font-weight-regular text-capitalize"
+                @click="onStartMatch(resultData, currentGroupData)"
+                dark
+                depressed
+                color="orange darken-1"
+                small
+              >
+                Start Match
+              </v-btn>
             </div>
 
             <div class="mb-6">
@@ -1388,7 +1652,13 @@
                     <h1 class="text-caption text-grey">
                       Match {{ resultData.round }}
                     </h1>
-                    <v-chip class="ma-2" color="primary" small label>
+                    <v-chip
+                      class="ma-2"
+                      color="green darken-1"
+                      dark
+                      small
+                      label
+                    >
                       Versus
                     </v-chip>
                   </v-col>
@@ -1418,10 +1688,22 @@
                 class="px-10 ml-2 font-weight-regular text-capitalize"
                 color="primary"
                 width="150"
-                @click="onUpdateResult(resultData, currentGroupData)"
+                @click="onLiveUpdate(resultData, currentGroupData)"
+                outlined
+              >
+                Live Update</v-btn
+              >
+
+              <v-btn
+                class="px-10 ml-2 font-weight-regular text-capitalize"
+                color="primary"
+                width="150"
+                @click="
+                  onUpdateResult(resultData, currentGroupData, currentTableData)
+                "
                 depressed
               >
-                Update Result</v-btn
+                Fulltime</v-btn
               >
             </div>
           </v-card>
@@ -1483,7 +1765,7 @@ export default {
       table_G: [],
       table_H: [],
 
-      // updateResult Overlay
+      // UpdateResult Overlay
       updateResultOpacity: 0.5,
       updateResultOverlay: false,
       resultData: '',
@@ -1643,14 +1925,110 @@ export default {
     },
 
     // To Update Result Overlay
-    updateResult(data, fixture) {
+    updateResult(data, fixture, table) {
       this.updateResultOverlay = true
       this.resultData = data
       this.currentGroupData = fixture
+      this.currentTableData = table
     },
 
-    // To Update Result
-    async onUpdateResult(data, fixture) {
+    // To Start Match
+    async onStartMatch(data, fixture) {
+      let fixtureID = data.fixtureID
+      try {
+        data.isMatchStart = true
+
+        switch (fixtureID) {
+          case 'fixture_A':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_A: fixture,
+              })
+            break
+          case 'fixture_B':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_B: fixture,
+              })
+            break
+          case 'fixture_C':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_C: fixture,
+              })
+            break
+          case 'fixture_D':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_D: fixture,
+              })
+            break
+          case 'fixture_E':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_E: fixture,
+              })
+            break
+          case 'fixture_F':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_F: fixture,
+              })
+            break
+          case 'fixture_G':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_G: fixture,
+              })
+            break
+          case 'fixture_H':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_H: fixture,
+              })
+            break
+        }
+
+        this.updateResultOverlay = false
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    // To Update Fulltime Result
+    async onUpdateResult(data, fixture, table) {
       let fixtureID = data.fixtureID
       try {
         // State Winner, Loser of the Fixture
@@ -1658,10 +2036,280 @@ export default {
           // If Home Team Winning
           data.winner = data.homeTeam
           data.loser = data.awayTeam
+          data.isTie = false
+          data.isFulltime = true
         } else if (data.homeScore < data.awayScore) {
           // If Away Team Winning
           data.winner = data.awayTeam
           data.loser = data.homeTeam
+          data.isTie = false
+          data.isFulltime = true
+        } else {
+          // If Result Draw
+          data.isTie = true
+          data.isFulltime = true
+        }
+
+        // Update Group Table Data
+        if (data.isTie == false) {
+          // If HomeTeam Win
+          if (data.winner == data.homeTeam) {
+            let table_winner = table.find(
+              (element) => element.teamName === data.winner
+            )
+            let table_loser = table.find(
+              (element) => element.teamName === data.loser
+            )
+
+            // Update Winner Data
+            table_winner.matches += 1
+            table_winner.win += 1
+            table_winner.points += 3
+            table_winner.goals_for += Number(data.homeScore)
+            table_winner.goals_against += Number(data.awayScore)
+            const goals_diff1 = Number(data.homeScore) - Number(data.awayScore)
+            table_winner.goals_difference += goals_diff1
+
+            // Update Loser Data
+            table_loser.matches += 1
+            table_loser.lost += 1
+            table_loser.goals_for += Number(data.awayScore)
+            table_loser.goals_against += Number(data.homeScore)
+            const goals_diff2 = Number(data.awayScore) - Number(data.homeScore)
+            table_loser.goals_difference += goals_diff2
+          } // If AwayTeam Win
+          else if (data.winner == data.awayTeam) {
+            let table_winner = table.find(
+              (element) => element.teamName === data.winner
+            )
+            let table_loser = table.find(
+              (element) => element.teamName === data.loser
+            )
+
+            // Update Winner Data
+            table_winner.matches += 1
+            table_winner.win += 1
+            table_winner.points += 3
+            table_winner.goals_for += Number(data.awayScore)
+            table_winner.goals_against += Number(data.homeScore)
+            const goals_diff1 = Number(data.awayScore) - Number(data.homeScore)
+            table_winner.goals_difference += goals_diff1
+
+            // Update Loser Data
+            table_loser.matches += 1
+            table_loser.lost += 1
+            table_loser.goals_for += Number(data.homeScore)
+            table_loser.goals_against += Number(data.awayScore)
+            const goals_diff2 = Number(data.homeScore) - Number(data.awayScore)
+            table_loser.goals_difference += goals_diff2
+          }
+        } // If Draw
+        else {
+          let table_homeTeam = table.find(
+            (element) => element.teamName === data.homeTeam
+          )
+          let table_awayTeam = table.find(
+            (element) => element.teamName === data.awayTeam
+          )
+          // Update HomeTeam Data
+          table_homeTeam.matches += 1
+          table_homeTeam.draw += 1
+          table_homeTeam.points += 1
+          table_homeTeam.goals_for += Number(data.homeScore)
+          table_homeTeam.goals_against += Number(data.awayScore)
+
+          // Update AwayTeam Data
+          table_awayTeam.matches += 1
+          table_awayTeam.draw += 1
+          table_awayTeam.points += 1
+          table_awayTeam.goals_for += Number(data.awayScore)
+          table_awayTeam.goals_against += Number(data.homeScore)
+        }
+
+        switch (fixtureID) {
+          case 'fixture_A':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_A: fixture,
+              })
+              .then(
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_A: table,
+                  })
+              )
+            break
+          case 'fixture_B':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_B: fixture,
+              })
+              .then(
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_B: table,
+                  })
+              )
+            break
+          case 'fixture_C':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_C: fixture,
+              })
+              .then(
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_C: table,
+                  })
+              )
+            break
+          case 'fixture_D':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_D: fixture,
+              })
+              .then(
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_D: table,
+                  })
+              )
+            break
+          case 'fixture_E':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_E: fixture,
+              })
+              .then(
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_E: table,
+                  })
+              )
+            break
+          case 'fixture_F':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_F: fixture,
+              })
+              .then(
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_F: table,
+                  })
+              )
+            break
+          case 'fixture_G':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_G: fixture,
+              })
+              .then(
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_G: table,
+                  })
+              )
+            break
+          case 'fixture_H':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('group-stage')
+              .doc('fixtures')
+              .update({
+                fixture_H: fixture,
+              })
+              .then(
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_H: table,
+                  })
+              )
+            break
+        }
+
+        this.updateResultOverlay = false
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    // To Live Update Result
+    async onLiveUpdate(data, fixture) {
+      let fixtureID = data.fixtureID
+      try {
+        // State Winner, Loser of the Fixture
+        if (data.homeScore > data.awayScore) {
+          // If Home Team Winning
+          data.winner = data.homeTeam
+          data.loser = data.awayTeam
+          data.isTie = false
+        } else if (data.homeScore < data.awayScore) {
+          // If Away Team Winning
+          data.winner = data.awayTeam
+          data.loser = data.homeTeam
+          data.isTie = false
         } else {
           // If Result Draw
           data.isTie = true

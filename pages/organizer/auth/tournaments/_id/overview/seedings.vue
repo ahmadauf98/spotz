@@ -1362,6 +1362,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1385,6 +1387,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                     isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1504,6 +1508,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1527,6 +1533,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1550,6 +1558,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1573,6 +1583,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1768,6 +1780,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1791,6 +1805,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1814,6 +1830,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1837,6 +1855,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1860,6 +1880,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1883,6 +1905,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1906,6 +1930,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -1929,6 +1955,8 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
                     }),
                   })
               })
@@ -2118,7 +2146,6 @@ export default {
           .update({
             isGroupDraw: true,
             isTournamentLive: false,
-            isTournamentFulltime: false,
           })
           .then(() => {
             this.addSeedingsOverlay = false
