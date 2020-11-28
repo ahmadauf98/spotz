@@ -1914,14 +1914,37 @@ export default {
           this.sort_table_H = doc.data().table_H
         }
 
-        this.sort_table_A.sort(this.compare)
-        this.sort_table_B.sort(this.compare)
-        this.sort_table_C.sort(this.compare)
-        this.sort_table_D.sort(this.compare)
-        this.sort_table_E.sort(this.compare)
-        this.sort_table_F.sort(this.compare)
-        this.sort_table_G.sort(this.compare)
-        this.sort_table_H.sort(this.compare)
+        if (this.sort_table_A != null) {
+          this.sort_table_A.sort(this.compare)
+        }
+
+        if (this.sort_table_B != null) {
+          this.sort_table_B.sort(this.compare)
+        }
+
+        if (this.sort_table_C != null) {
+          this.sort_table_C.sort(this.compare)
+        }
+
+        if (this.sort_table_D != null) {
+          this.sort_table_D.sort(this.compare)
+        }
+
+        if (this.sort_table_E != null) {
+          this.sort_table_E.sort(this.compare)
+        }
+
+        if (this.sort_table_F != null) {
+          this.sort_table_F.sort(this.compare)
+        }
+
+        if (this.sort_table_G != null) {
+          this.sort_table_G.sort(this.compare)
+        }
+
+        if (this.sort_table_H != null) {
+          this.sort_table_H.sort(this.compare)
+        }
 
         this.table_A = this.sort_table_A
         this.table_B = this.sort_table_B
