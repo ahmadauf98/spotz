@@ -1151,6 +1151,7 @@
                         Group A
                       </h1>
                       <v-btn
+                        v-show="tournamentRef.isTournamentLive == true"
                         class="ml-auto text-capitalize"
                         @click="getQualifiedTeam(table_A)"
                         dark
@@ -1224,6 +1225,7 @@
                         Group B
                       </h1>
                       <v-btn
+                        v-show="tournamentRef.isTournamentLive == true"
                         class="ml-auto text-capitalize"
                         @click="getQualifiedTeam(table_B)"
                         dark
@@ -1287,9 +1289,24 @@
                     "
                     class="text-center justify-center mt-5"
                   >
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group C
-                    </h1>
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group C
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isTournamentLive == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_C)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
 
                     <v-card outlined>
                       <v-simple-table>
@@ -1343,9 +1360,24 @@
                     "
                     class="text-center justify-center mt-5"
                   >
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group D
-                    </h1>
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group D
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isTournamentLive == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_D)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
 
                     <v-card outlined>
                       <v-simple-table>
@@ -1399,9 +1431,24 @@
                     "
                     class="text-center justify-center mt-5"
                   >
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group E
-                    </h1>
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group E
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isTournamentLive == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_E)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
 
                     <v-card outlined>
                       <v-simple-table>
@@ -1455,9 +1502,24 @@
                     "
                     class="text-center justify-center mt-5"
                   >
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group F
-                    </h1>
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group F
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isTournamentLive == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_F)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
 
                     <v-card outlined>
                       <v-simple-table>
@@ -1511,9 +1573,24 @@
                     "
                     class="text-center justify-center mt-5"
                   >
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group G
-                    </h1>
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group G
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isTournamentLive == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_G)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
 
                     <v-card outlined>
                       <v-simple-table>
@@ -1567,9 +1644,24 @@
                     "
                     class="text-center justify-center mt-5"
                   >
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group H
-                    </h1>
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group H
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isTournamentLive == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_H)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
 
                     <v-card outlined>
                       <v-simple-table>
