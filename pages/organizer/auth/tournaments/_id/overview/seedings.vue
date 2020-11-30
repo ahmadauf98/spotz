@@ -1329,6 +1329,8 @@ export default {
                   table_A: [],
                   table_B: [],
                 })
+
+              
             })
             .then(async () => {
               // Generate Fixture A

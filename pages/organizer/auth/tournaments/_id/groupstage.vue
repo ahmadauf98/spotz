@@ -2224,6 +2224,7 @@ export default {
     // To Update Fulltime Result
     async onUpdateResult(data, fixture, table) {
       let fixtureID = data.fixtureID
+
       try {
         // State Winner, Loser of the Fixture
         if (data.homeScore > data.awayScore) {
