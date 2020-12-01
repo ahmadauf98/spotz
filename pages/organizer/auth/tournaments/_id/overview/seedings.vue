@@ -1330,7 +1330,88 @@ export default {
                   table_B: [],
                 })
 
-              
+              // Initialize Final Stage
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(this.$route.params.id)
+                .collection('final-stage')
+                .doc('fixtures')
+                .set({
+                  semiFinal: [
+                    // Semi Final 1
+                    {
+                      fixtureID: 'semiFinal1',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 1',
+                      homeTeam: 'Group A1',
+                      awayTeam: 'Group B2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFullTime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Semi Final 2
+                    {
+                      fixtureID: 'semiFinal2',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 2',
+                      homeTeam: 'Group B1',
+                      awayTeam: 'Group A2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFullTime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+                  final: [
+                    // Final Place
+                    {
+                      fixtureID: 'final',
+                      bracketID: 'final',
+                      title: 'Final',
+                      homeTeam: 'Semi Final 1 Winner',
+                      awayTeam: 'Semi Final 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFullTime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // 3rd Place
+                    {
+                      fixtureID: '3rdPlace',
+                      bracketID: 'final',
+                      title: '3rd Place',
+                      homeTeam: 'Semi Final 1 Loser',
+                      awayTeam: 'Semi Final 2 Loser',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFullTime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+                })
             })
             .then(async () => {
               // Generate Fixture A
@@ -1389,7 +1470,7 @@ export default {
                       winner: null,
                       loser: null,
                       isTie: false,
-                     isFulltime: false,
+                      isFulltime: false,
                       isMatchStart: false,
                     }),
                   })
@@ -2147,7 +2228,11 @@ export default {
           .doc(this.$route.params.id)
           .update({
             isGroupDraw: true,
-            isTournamentLive: false,
+            isGroupStage: false,
+            isRound16: false,
+            isQuarterFinal: false,
+            isSemiFinal: false,
+            isFinal: false,
           })
           .then(() => {
             this.addSeedingsOverlay = false

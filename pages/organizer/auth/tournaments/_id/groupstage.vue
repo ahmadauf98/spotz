@@ -79,13 +79,13 @@
               </v-row>
             </v-card>
 
+            <!-- If Grouping is Drawed -->
             <v-card
               v-else
               class="mx-auto py-10 mt-n3 mt-lg-0 px-9 mb-5"
               outlined
               tile
             >
-              <!-- If Grouping is Drawed -->
               <div>
                 <div class="d-flex align-center">
                   <h1 class="text-subtitle-1 font-weight-bold">Group Stage</h1>
@@ -320,7 +320,7 @@
                     </h1>
 
                     <v-btn
-                      v-show="tournamentRef.isTournamentLive == false"
+                      v-show="tournamentRef.isGroupStage == false"
                       class="ml-auto"
                       color="primary"
                       outlined
@@ -354,7 +354,7 @@
                           <v-row class="d-flex align-center">
                             <v-btn
                               v-show="
-                                tournamentRef.isTournamentLive == true &&
+                                tournamentRef.isGroupStage == true &&
                                 fixture.isFulltime == false
                               "
                               class="ml-auto mx-3 mb-n8"
@@ -375,7 +375,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
@@ -395,7 +395,7 @@
 
                               <h1
                                 v-show="
-                                  tournamentRef.isTournamentLive == true &&
+                                  tournamentRef.isGroupStage == true &&
                                   fixture.isFulltime == true
                                 "
                                 class="text-caption text-grey"
@@ -421,7 +421,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.awayScore }}
@@ -456,7 +456,7 @@
                           <v-row class="d-flex align-center">
                             <v-btn
                               v-show="
-                                tournamentRef.isTournamentLive == true &&
+                                tournamentRef.isGroupStage == true &&
                                 fixture.isFulltime == false
                               "
                               class="ml-auto mx-3 mb-n8"
@@ -477,7 +477,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
@@ -497,7 +497,7 @@
 
                               <h1
                                 v-show="
-                                  tournamentRef.isTournamentLive == true &&
+                                  tournamentRef.isGroupStage == true &&
                                   fixture.isFulltime == true
                                 "
                                 class="text-caption text-grey"
@@ -523,7 +523,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.awayScore }}
@@ -557,7 +557,7 @@
                           <v-row class="d-flex align-center">
                             <v-btn
                               v-show="
-                                tournamentRef.isTournamentLive == true &&
+                                tournamentRef.isGroupStage == true &&
                                 fixture.isFulltime == false
                               "
                               class="ml-auto mx-3 mb-n8"
@@ -578,7 +578,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
@@ -598,7 +598,7 @@
 
                               <h1
                                 v-show="
-                                  tournamentRef.isTournamentLive == true &&
+                                  tournamentRef.isGroupStage == true &&
                                   fixture.isFulltime == true
                                 "
                                 class="text-caption text-grey"
@@ -624,7 +624,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.awayScore }}
@@ -658,7 +658,7 @@
                           <v-row class="d-flex align-center">
                             <v-btn
                               v-show="
-                                tournamentRef.isTournamentLive == true &&
+                                tournamentRef.isGroupStage == true &&
                                 fixture.isFulltime == false
                               "
                               class="ml-auto mx-3 mb-n8"
@@ -679,7 +679,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
@@ -699,7 +699,7 @@
 
                               <h1
                                 v-show="
-                                  tournamentRef.isTournamentLive == true &&
+                                  tournamentRef.isGroupStage == true &&
                                   fixture.isFulltime == true
                                 "
                                 class="text-caption text-grey"
@@ -725,7 +725,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.awayScore }}
@@ -756,7 +756,7 @@
                           <v-row class="d-flex align-center">
                             <v-btn
                               v-show="
-                                tournamentRef.isTournamentLive == true &&
+                                tournamentRef.isGroupStage == true &&
                                 fixture.isFulltime == false
                               "
                               class="ml-auto mx-3 mb-n8"
@@ -777,7 +777,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
@@ -797,7 +797,7 @@
 
                               <h1
                                 v-show="
-                                  tournamentRef.isTournamentLive == true &&
+                                  tournamentRef.isGroupStage == true &&
                                   fixture.isFulltime == true
                                 "
                                 class="text-caption text-grey"
@@ -823,7 +823,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.awayScore }}
@@ -854,7 +854,7 @@
                           <v-row class="d-flex align-center">
                             <v-btn
                               v-show="
-                                tournamentRef.isTournamentLive == true &&
+                                tournamentRef.isGroupStage == true &&
                                 fixture.isFulltime == false
                               "
                               class="ml-auto mx-3 mb-n8"
@@ -875,7 +875,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
@@ -895,7 +895,7 @@
 
                               <h1
                                 v-show="
-                                  tournamentRef.isTournamentLive == true &&
+                                  tournamentRef.isGroupStage == true &&
                                   fixture.isFulltime == true
                                 "
                                 class="text-caption text-grey"
@@ -921,7 +921,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.awayScore }}
@@ -952,7 +952,7 @@
                           <v-row class="d-flex align-center">
                             <v-btn
                               v-show="
-                                tournamentRef.isTournamentLive == true &&
+                                tournamentRef.isGroupStage == true &&
                                 fixture.isFulltime == false
                               "
                               class="ml-auto mx-3 mb-n8"
@@ -973,7 +973,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
@@ -993,7 +993,7 @@
 
                               <h1
                                 v-show="
-                                  tournamentRef.isTournamentLive == true &&
+                                  tournamentRef.isGroupStage == true &&
                                   fixture.isFulltime == true
                                 "
                                 class="text-caption text-grey"
@@ -1019,7 +1019,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.awayScore }}
@@ -1050,7 +1050,7 @@
                           <v-row class="d-flex align-center">
                             <v-btn
                               v-show="
-                                tournamentRef.isTournamentLive == true &&
+                                tournamentRef.isGroupStage == true &&
                                 fixture.isFulltime == false
                               "
                               class="ml-auto mx-3 mb-n8"
@@ -1071,7 +1071,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
@@ -1091,7 +1091,7 @@
 
                               <h1
                                 v-show="
-                                  tournamentRef.isTournamentLive == true &&
+                                  tournamentRef.isGroupStage == true &&
                                   fixture.isFulltime == true
                                 "
                                 class="text-caption text-grey"
@@ -1117,7 +1117,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isGroupStage == true"
                                 class="text-center"
                               >
                                 {{ fixture.awayScore }}
@@ -1151,7 +1151,7 @@
                         Group A
                       </h1>
                       <v-btn
-                        v-show="tournamentRef.isTournamentLive == true"
+                        v-show="tournamentRef.isGroupStage == true"
                         class="ml-auto text-capitalize"
                         @click="getQualifiedTeam(table_A)"
                         dark
@@ -1225,7 +1225,7 @@
                         Group B
                       </h1>
                       <v-btn
-                        v-show="tournamentRef.isTournamentLive == true"
+                        v-show="tournamentRef.isGroupStage == true"
                         class="ml-auto text-capitalize"
                         @click="getQualifiedTeam(table_B)"
                         dark
@@ -1296,7 +1296,7 @@
                         Group C
                       </h1>
                       <v-btn
-                        v-show="tournamentRef.isTournamentLive == true"
+                        v-show="tournamentRef.isGroupStage == true"
                         class="ml-auto text-capitalize"
                         @click="getQualifiedTeam(table_C)"
                         dark
@@ -1367,7 +1367,7 @@
                         Group D
                       </h1>
                       <v-btn
-                        v-show="tournamentRef.isTournamentLive == true"
+                        v-show="tournamentRef.isGroupStage == true"
                         class="ml-auto text-capitalize"
                         @click="getQualifiedTeam(table_D)"
                         dark
@@ -1438,7 +1438,7 @@
                         Group E
                       </h1>
                       <v-btn
-                        v-show="tournamentRef.isTournamentLive == true"
+                        v-show="tournamentRef.isGroupStage == true"
                         class="ml-auto text-capitalize"
                         @click="getQualifiedTeam(table_E)"
                         dark
@@ -1509,7 +1509,7 @@
                         Group F
                       </h1>
                       <v-btn
-                        v-show="tournamentRef.isTournamentLive == true"
+                        v-show="tournamentRef.isGroupStage == true"
                         class="ml-auto text-capitalize"
                         @click="getQualifiedTeam(table_F)"
                         dark
@@ -1580,7 +1580,7 @@
                         Group G
                       </h1>
                       <v-btn
-                        v-show="tournamentRef.isTournamentLive == true"
+                        v-show="tournamentRef.isGroupStage == true"
                         class="ml-auto text-capitalize"
                         @click="getQualifiedTeam(table_G)"
                         dark
@@ -1651,7 +1651,7 @@
                         Group H
                       </h1>
                       <v-btn
-                        v-show="tournamentRef.isTournamentLive == true"
+                        v-show="tournamentRef.isGroupStage == true"
                         class="ml-auto text-capitalize"
                         @click="getQualifiedTeam(table_H)"
                         dark
@@ -1928,6 +1928,7 @@ export default {
         this.tournamentRef = doc.data()
       })
 
+    // Get list of Official Team
     this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
@@ -1980,7 +1981,7 @@ export default {
       })
 
     // Get Standings Table of Each Group
-    var tables = this.$fire.firestore
+    this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
       .collection('group-stage')
@@ -2004,38 +2005,38 @@ export default {
           this.sort_table_F = doc.data().table_F
           this.sort_table_G = doc.data().table_G
           this.sort_table_H = doc.data().table_H
-        }
 
-        if (this.sort_table_A != null) {
-          this.sort_table_A.sort(this.compare)
-        }
+          if (this.sort_table_A != null) {
+            this.sort_table_A.sort(this.compare)
+          }
 
-        if (this.sort_table_B != null) {
-          this.sort_table_B.sort(this.compare)
-        }
+          if (this.sort_table_B != null) {
+            this.sort_table_B.sort(this.compare)
+          }
 
-        if (this.sort_table_C != null) {
-          this.sort_table_C.sort(this.compare)
-        }
+          if (this.sort_table_C != null) {
+            this.sort_table_C.sort(this.compare)
+          }
 
-        if (this.sort_table_D != null) {
-          this.sort_table_D.sort(this.compare)
-        }
+          if (this.sort_table_D != null) {
+            this.sort_table_D.sort(this.compare)
+          }
 
-        if (this.sort_table_E != null) {
-          this.sort_table_E.sort(this.compare)
-        }
+          if (this.sort_table_E != null) {
+            this.sort_table_E.sort(this.compare)
+          }
 
-        if (this.sort_table_F != null) {
-          this.sort_table_F.sort(this.compare)
-        }
+          if (this.sort_table_F != null) {
+            this.sort_table_F.sort(this.compare)
+          }
 
-        if (this.sort_table_G != null) {
-          this.sort_table_G.sort(this.compare)
-        }
+          if (this.sort_table_G != null) {
+            this.sort_table_G.sort(this.compare)
+          }
 
-        if (this.sort_table_H != null) {
-          this.sort_table_H.sort(this.compare)
+          if (this.sort_table_H != null) {
+            this.sort_table_H.sort(this.compare)
+          }
         }
 
         this.table_A = this.sort_table_A
@@ -2097,7 +2098,7 @@ export default {
           .collection('tournaments')
           .doc(this.$route.params.id)
           .update({
-            isTournamentLive: true,
+            isGroupStage: true,
           })
       } catch (error) {
         console.log(error)
@@ -2605,21 +2606,22 @@ export default {
       }
     },
 
+    // Update Qualified Team
     async getQualifiedTeam(table) {
       try {
         switch (table[0].tableID) {
           case 'table_A':
             this.group_1 = {
               id: 'group_A1',
+              groupName: 'Group A',
               teamName: table[0].teamName,
             }
 
             this.group_2 = {
               id: 'group_A2',
+              groupName: 'Group A',
               teamName: table[1].teamName,
             }
-
-            console.log(this.group_2)
 
             await this.$fire.firestore
               .collection('tournaments')
@@ -2637,11 +2639,13 @@ export default {
           case 'table_B':
             this.group_1 = {
               id: 'group_B1',
+              groupName: 'Group B',
               teamName: table[0].teamName,
             }
 
             this.group_2 = {
               id: 'group_B2',
+              groupName: 'Group B',
               teamName: table[1].teamName,
             }
 
