@@ -1417,17 +1417,32 @@ export default {
                 })
             })
             .then(async () => {
-              // Generate Fixture A
-              const games_A = generator(this.fixture_data_A, {
-                type: 'single-round',
-              })
-              this.fixture_A = games_A.data
+              // If fixture played once, else fixture played home away method
+              if (this.tournamentRef.gRound == 'once') {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'single-round',
+                })
+                this.fixture_A = games_A.data
 
-              // Generate Fixture B
-              const games_B = generator(this.fixture_data_B, {
-                type: 'single-round',
-              })
-              this.fixture_B = games_B.data
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'single-round',
+                })
+                this.fixture_B = games_B.data
+              } else {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'double-round',
+                })
+                this.fixture_A = games_A.data
+
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'double-round',
+                })
+                this.fixture_B = games_B.data
+              }
 
               // Store Fixture A
               await this.fixture_A.forEach((doc) => {
@@ -1551,29 +1566,56 @@ export default {
                 })
             })
             .then(async () => {
-              // Generate Fixture A
-              const games_A = generator(this.fixture_data_A, {
-                type: 'single-round',
-              })
-              this.fixture_A = games_A.data
+              // If fixture played once, else fixture played home away method
+              if (this.tournamentRef.gRound == 'once') {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'single-round',
+                })
+                this.fixture_A = games_A.data
 
-              // Generate Fixture B
-              const games_B = generator(this.fixture_data_B, {
-                type: 'single-round',
-              })
-              this.fixture_B = games_B.data
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'single-round',
+                })
+                this.fixture_B = games_B.data
 
-              // Generate Fixture C
-              const games_C = generator(this.fixture_data_C, {
-                type: 'single-round',
-              })
-              this.fixture_C = games_C.data
+                // Generate Fixture C
+                const games_C = generator(this.fixture_data_C, {
+                  type: 'single-round',
+                })
+                this.fixture_C = games_C.data
 
-              // Generate Fixture D
-              const games_D = generator(this.fixture_data_D, {
-                type: 'single-round',
-              })
-              this.fixture_D = games_D.data
+                // Generate Fixture D
+                const games_D = generator(this.fixture_data_D, {
+                  type: 'single-round',
+                })
+                this.fixture_D = games_D.data
+              } else {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'double-round',
+                })
+                this.fixture_A = games_A.data
+
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'double-round',
+                })
+                this.fixture_B = games_B.data
+
+                // Generate Fixture C
+                const games_C = generator(this.fixture_data_C, {
+                  type: 'double-round',
+                })
+                this.fixture_C = games_C.data
+
+                // Generate Fixture D
+                const games_D = generator(this.fixture_data_D, {
+                  type: 'double-round',
+                })
+                this.fixture_D = games_D.data
+              }
 
               // Store Fixture A
               await this.fixture_A.forEach((doc) => {
@@ -1763,6 +1805,166 @@ export default {
                     }),
                   })
               })
+
+              // Initialize Final Stage
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(this.$route.params.id)
+                .collection('final-stage')
+                .doc('fixtures')
+                .set({
+                  quarterFinal: [
+                    // Quarter Final 1
+                    {
+                      fixtureID: 'quarterFinal1',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 1',
+                      homeTeam: 'Group A1',
+                      awayTeam: 'Group B2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 2
+                    {
+                      fixtureID: 'quarterFinal1',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 1',
+                      homeTeam: 'Group B1',
+                      awayTeam: 'Group A2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 3
+                    {
+                      fixtureID: 'quarterFinal3',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 3',
+                      homeTeam: 'Group C1',
+                      awayTeam: 'Group D2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 4
+                    {
+                      fixtureID: 'quarterFinal4',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 4',
+                      homeTeam: 'Group D1',
+                      awayTeam: 'Group C2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  semiFinal: [
+                    // Semi Final 1
+                    {
+                      fixtureID: 'semiFinal1',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 1',
+                      homeTeam: 'Quarter Final 1 Winner',
+                      awayTeam: 'Quarter Final 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Semi Final 2
+                    {
+                      fixtureID: 'semiFinal2',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 2',
+                      homeTeam: 'Quarter Final 3 Winner',
+                      awayTeam: 'Quarter Final 4 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  thirdPlace: [
+                    // 3rd Place
+                    {
+                      fixtureID: '3rdPlace',
+                      bracketID: 'thirdPlace',
+                      title: '3rd Place',
+                      homeTeam: 'Semi Final 1 Loser',
+                      awayTeam: 'Semi Final 2 Loser',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  final: [
+                    // Final Place
+                    {
+                      fixtureID: 'final',
+                      bracketID: 'final',
+                      title: 'Final',
+                      homeTeam: 'Semi Final 1 Winner',
+                      awayTeam: 'Semi Final 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+                })
             })
         } else if (this.tournamentRef.gGroupNumber == 8) {
           await this.$fire.firestore
@@ -1799,53 +2001,104 @@ export default {
                 })
             })
             .then(async () => {
-              // Generate Fixture A
-              const games_A = generator(this.fixture_data_A, {
-                type: 'single-round',
-              })
-              this.fixture_A = games_A.data
+              // If fixture played once, else fixture played home away method
+              if (this.tournamentRef.gRound == 'once') {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'single-round',
+                })
+                this.fixture_A = games_A.data
 
-              // Generate Fixture B
-              const games_B = generator(this.fixture_data_B, {
-                type: 'single-round',
-              })
-              this.fixture_B = games_B.data
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'single-round',
+                })
+                this.fixture_B = games_B.data
 
-              // Generate Fixture C
-              const games_C = generator(this.fixture_data_C, {
-                type: 'single-round',
-              })
-              this.fixture_C = games_C.data
+                // Generate Fixture C
+                const games_C = generator(this.fixture_data_C, {
+                  type: 'single-round',
+                })
+                this.fixture_C = games_C.data
 
-              // Generate Fixture D
-              const games_D = generator(this.fixture_data_D, {
-                type: 'single-round',
-              })
-              this.fixture_D = games_D.data
+                // Generate Fixture D
+                const games_D = generator(this.fixture_data_D, {
+                  type: 'single-round',
+                })
+                this.fixture_D = games_D.data
 
-              // Generate Fixture E
-              const games_E = generator(this.fixture_data_E, {
-                type: 'single-round',
-              })
-              this.fixture_E = games_E.data
+                // Generate Fixture E
+                const games_E = generator(this.fixture_data_E, {
+                  type: 'single-round',
+                })
+                this.fixture_E = games_E.data
 
-              // Generate Fixture F
-              const games_F = generator(this.fixture_data_F, {
-                type: 'single-round',
-              })
-              this.fixture_F = games_F.data
+                // Generate Fixture F
+                const games_F = generator(this.fixture_data_F, {
+                  type: 'single-round',
+                })
+                this.fixture_F = games_F.data
 
-              // Generate Fixture G
-              const games_G = generator(this.fixture_data_G, {
-                type: 'single-round',
-              })
-              this.fixture_G = games_G.data
+                // Generate Fixture G
+                const games_G = generator(this.fixture_data_G, {
+                  type: 'single-round',
+                })
+                this.fixture_G = games_G.data
 
-              // Generate Fixture H
-              const games_H = generator(this.fixture_data_H, {
-                type: 'single-round',
-              })
-              this.fixture_H = games_H.data
+                // Generate Fixture H
+                const games_H = generator(this.fixture_data_H, {
+                  type: 'single-round',
+                })
+                this.fixture_H = games_H.data
+              } else {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'double-round',
+                })
+                this.fixture_A = games_A.data
+
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'double-round',
+                })
+                this.fixture_B = games_B.data
+
+                // Generate Fixture C
+                const games_C = generator(this.fixture_data_C, {
+                  type: 'double-round',
+                })
+                this.fixture_C = games_C.data
+
+                // Generate Fixture D
+                const games_D = generator(this.fixture_data_D, {
+                  type: 'double-round',
+                })
+                this.fixture_D = games_D.data
+
+                // Generate Fixture E
+                const games_E = generator(this.fixture_data_E, {
+                  type: 'double-round',
+                })
+                this.fixture_E = games_E.data
+
+                // Generate Fixture F
+                const games_F = generator(this.fixture_data_F, {
+                  type: 'double-round',
+                })
+                this.fixture_F = games_F.data
+
+                // Generate Fixture G
+                const games_G = generator(this.fixture_data_G, {
+                  type: 'double-round',
+                })
+                this.fixture_G = games_G.data
+
+                // Generate Fixture H
+                const games_H = generator(this.fixture_data_H, {
+                  type: 'double-round',
+                })
+                this.fixture_H = games_H.data
+              }
 
               // Store Fixture A
               await this.fixture_A.forEach((doc) => {

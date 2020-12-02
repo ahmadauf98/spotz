@@ -184,6 +184,135 @@
                     </h1>
                   </div>
 
+                  <!-- Quarter Final Fixture -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-3"
+                  >
+                    <div class="d-flex">
+                      <h1 class="text-subtitle-2 font-weight-bold text-left">
+                        Quarter Final
+                      </h1>
+
+                      <v-btn
+                        v-show="tournamentRef.isQuarterFinal == false"
+                        class="ml-auto"
+                        color="primary"
+                        outlined
+                        small
+                        @click="onLive('quarterfinal')"
+                      >
+                        <v-icon small>mdi-record</v-icon>Start Match</v-btn
+                      >
+                    </div>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in quarterFinal"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <h1 class="text-caption ml-4 mb-n4 mt-1">
+                              {{ fixture.title }}
+                            </h1>
+                            <v-btn
+                              v-show="
+                                tournamentRef.isQuarterFinal == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, quarterFinal)"
+                              color="grey darken-1"
+                              icon
+                            >
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
+
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isQuarterFinal == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                                <span
+                                  v-show="fixture.isTie == true"
+                                  class="text-subtitle-1"
+                                >
+                                  {{ fixture.homeSet }}
+                                </span>
+                              </h1>
+                            </v-col>
+
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
+
+                              <h1
+                                v-show="
+                                  tournamentRef.isQuarterFinal == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isQuarterFinal == true"
+                                class="text-center"
+                              >
+                                <span
+                                  v-show="fixture.isTie == true"
+                                  class="text-subtitle-1"
+                                >
+                                  {{ fixture.awaySet }}
+                                </span>
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
                   <!-- Semi Final Fixture -->
                   <div
                     v-show="
@@ -860,9 +989,17 @@ export default {
           this.quarterFinal = doc.data().quarterFinal
           this.round16 = doc.data().round16
 
-          this.assign(this.semiFinal, this.finalStageList)
-          this.assign(this.thirdPlace, this.semiFinal)
-          this.assign(this.final, this.semiFinal)
+          // Testing Unit if else
+          if (this.tournamentRef.gGroupNumber == 2) {
+            this.assign(this.semiFinal, this.finalStageList)
+            this.assign(this.thirdPlace, this.semiFinal)
+            this.assign(this.final, this.semiFinal)
+          } else if (this.tournamentRef.gGroupNumber == 4) {
+            this.assign(this.quarterFinal, this.finalStageList)
+            this.assign(this.semiFinal, this.quarterFinal)
+            this.assign(this.thirdPlace, this.semiFinal)
+            this.assign(this.final, this.semiFinal)
+          }
         }
       })
   },
@@ -1036,8 +1173,6 @@ export default {
     // To Update Fulltime Result
     async onUpdateResult(data, fixture) {
       let bracketID = data.bracketID
-
-      console.log(bracketID)
       try {
         // State Winner, Loser of the Fixture
         if (data.homeScore > data.awayScore) {
