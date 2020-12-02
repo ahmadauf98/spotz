@@ -244,7 +244,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isFinalStage == true"
+                                v-show="tournamentRef.isSemiFinal == true"
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
@@ -264,7 +264,7 @@
 
                               <h1
                                 v-show="
-                                  tournamentRef.isFinalStage == true &&
+                                  tournamentRef.isSemiFinal == true &&
                                   fixture.isFullTime == true
                                 "
                                 class="text-caption text-grey"
@@ -290,7 +290,7 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isFinalStage == true"
+                                v-show="tournamentRef.isSemiFinal == true"
                                 class="text-center"
                               >
                                 {{ fixture.awayScore }}
@@ -469,7 +469,7 @@
 
                   <v-col cols="2" class="text-center">
                     <h1 class="text-caption text-grey">
-                      Match {{ resultData.round }}
+                      {{ resultData.title }}
                     </h1>
                     <v-chip
                       class="ma-2"
@@ -507,10 +507,58 @@
                     </v-col>
                   </v-col>
                 </v-row>
+
+                <v-row
+                  v-if="resultData.isTie == true"
+                  class="d-flex justify-center align-center mt-n5 mb-n5"
+                >
+                  <v-col cols="4" class="d-block">
+                    <v-col cols="5" class="mx-auto">
+                      <v-text-field
+                        v-show="resultData.isTie == true"
+                        class="text-subtitle-1 text-grey mt-3 mb-n3"
+                        v-model="resultData.homeSet"
+                        type="number"
+                        min="0"
+                        max="100"
+                        dense
+                        outlined
+                      ></v-text-field>
+                    </v-col>
+                  </v-col>
+
+                  <v-col cols="2" class="text-center">
+                    <h1 class="text-caption">Set Point</h1>
+                  </v-col>
+
+                  <v-col cols="4" class="d-block">
+                    <v-col cols="5" class="mx-auto">
+                      <v-text-field
+                        v-show="resultData.isTie == true"
+                        class="text-subtitle-1 text-grey mt-3 mb-n3"
+                        v-model="resultData.awaySet"
+                        type="number"
+                        min="0"
+                        max="100"
+                        dense
+                        outlined
+                      ></v-text-field>
+                    </v-col>
+                  </v-col>
+                </v-row>
               </v-card>
             </div>
 
-            <div class="d-flex justify-end mb-2">
+            <div class="d-flex align-center justify-end mb-2">
+              <v-switch
+                v-show="resultData.isMatchStart == true"
+                class="mt-n3 mb-n7 mr-auto"
+                v-model="resultData.isTie"
+                small
+                inset
+                label="Tie"
+              ></v-switch>
+
               <v-btn
                 v-show="resultData.isMatchStart == false"
                 class="ml-auto font-weight-regular text-capitalize"
@@ -770,6 +818,8 @@ export default {
       this.updateResultOverlay = true
       this.resultData = data
       this.currentBracketData = fixture
+
+      console.log(this.currentBracketData)
     },
 
     // To Update Fulltime Result
