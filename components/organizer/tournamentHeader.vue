@@ -214,7 +214,6 @@ export default {
           .doc(doc.data().hostName)
           .onSnapshot((docRef) => {
             this.hostnameProf = docRef.data()
-            // console.log(docRef.data())
           })
       })
   },
