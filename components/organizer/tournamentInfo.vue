@@ -1,6 +1,5 @@
 <template>
   <v-card class="mx-auto py-5 px-9 mb-4" outlined tile>
-
     <!-- First Row -->
     <v-row>
       <v-col>
