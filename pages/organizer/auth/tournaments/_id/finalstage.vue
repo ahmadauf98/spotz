@@ -248,6 +248,12 @@
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
+                                <span
+                                  v-show="fixture.isTie == true"
+                                  class="text-subtitle-1"
+                                >
+                                  {{ fixture.homeSet }}
+                                </span>
                               </h1>
                             </v-col>
 
@@ -293,6 +299,12 @@
                                 v-show="tournamentRef.isSemiFinal == true"
                                 class="text-center"
                               >
+                                <span
+                                  v-show="fixture.isTie == true"
+                                  class="text-subtitle-1"
+                                >
+                                  {{ fixture.awaySet }}
+                                </span>
                                 {{ fixture.awayScore }}
                               </h1>
                             </v-col>
