@@ -1374,6 +1374,27 @@ export default {
                       isTie: false,
                     },
                   ],
+
+                  thirdPlace: [
+                    // 3rd Place
+                    {
+                      fixtureID: '3rdPlace',
+                      bracketID: 'thirdPlace',
+                      title: '3rd Place',
+                      homeTeam: 'Semi Final 1 Loser',
+                      awayTeam: 'Semi Final 2 Loser',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
                   final: [
                     // Final Place
                     {
@@ -1389,24 +1410,6 @@ export default {
                       winner: null,
                       loser: null,
                       isFulltime: false,
-                      isMatchStart: false,
-                      isTie: false,
-                    },
-
-                    // 3rd Place
-                    {
-                      fixtureID: '3rdPlace',
-                      bracketID: 'final',
-                      title: '3rd Place',
-                      homeTeam: 'Semi Final 1 Loser',
-                      awayTeam: 'Semi Final 2 Loser',
-                      homeScore: 0,
-                      awayScore: 0,
-                      homeSet: 0,
-                      awaySet: 0,
-                      winner: null,
-                      loser: null,
-                     isFulltime: false,
                       isMatchStart: false,
                       isTie: false,
                     },
@@ -2232,6 +2235,7 @@ export default {
             isRound16: false,
             isQuarterFinal: false,
             isSemiFinal: false,
+            isThirdPlace: false,
             isFinal: false,
           })
           .then(() => {

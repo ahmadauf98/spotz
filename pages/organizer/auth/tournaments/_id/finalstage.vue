@@ -314,6 +314,137 @@
                     </v-row>
                   </div>
 
+                  <!-- 3rd Place Fixture -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 2 ||
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    v-if="tournamentRef.fIs3rdPlace == true"
+                    class="text-center justify-center mt-3"
+                  >
+                    <div class="d-flex">
+                      <h1 class="text-subtitle-2 font-weight-bold text-left">
+                        3rd Place
+                      </h1>
+
+                      <v-btn
+                        v-show="tournamentRef.isThirdPlace == false"
+                        class="ml-auto"
+                        color="primary"
+                        outlined
+                        small
+                        @click="onLive('thirdPlace')"
+                      >
+                        <v-icon small>mdi-record</v-icon>Start Match</v-btn
+                      >
+                    </div>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in thirdPlace"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <h1 class="text-caption ml-4 mb-n4 mt-1">
+                              {{ fixture.title }}
+                            </h1>
+                            <v-btn
+                              v-show="
+                                tournamentRef.isThirdPlace == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, thirdPlace)"
+                              color="grey darken-1"
+                              icon
+                            >
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
+
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isThirdPlace == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                                <span
+                                  v-show="fixture.isTie == true"
+                                  class="text-subtitle-1"
+                                >
+                                  {{ fixture.homeSet }}
+                                </span>
+                              </h1>
+                            </v-col>
+
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
+
+                              <h1
+                                v-show="
+                                  tournamentRef.isThirdPlace == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isThirdPlace == true"
+                                class="text-center"
+                              >
+                                <span
+                                  v-show="fixture.isTie == true"
+                                  class="text-subtitle-1"
+                                >
+                                  {{ fixture.awaySet }}
+                                </span>
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
                   <!-- Final Fixture -->
                   <div
                     v-show="
@@ -325,7 +456,7 @@
                   >
                     <div class="d-flex">
                       <h1 class="text-subtitle-2 font-weight-bold text-left">
-                        Final & 3rd Place
+                        Final
                       </h1>
 
                       <v-btn
@@ -666,6 +797,7 @@ export default {
       round16: '',
       quarterFinal: '',
       semiFinal: '',
+      thirdPlace: '',
       final: '',
 
       // UpdateResult Overlay
@@ -723,11 +855,13 @@ export default {
       .onSnapshot((doc) => {
         if (doc.exists) {
           this.final = doc.data().final
+          this.thirdPlace = doc.data().thirdPlace
           this.semiFinal = doc.data().semiFinal
           this.quarterFinal = doc.data().quarterFinal
           this.round16 = doc.data().round16
 
           this.assign(this.semiFinal, this.finalStageList)
+          this.assign(this.thirdPlace, this.semiFinal)
           this.assign(this.final, this.semiFinal)
         }
       })
@@ -770,6 +904,45 @@ export default {
                     semiFinal: fixture,
                   })
                 break
+              case 'thirdPlace':
+                const thirdPlace_semiFinal1 = participants.find(
+                  (element) => element.fixtureID === 'semiFinal1'
+                )
+
+                const thirdPlace_semiFinal2 = participants.find(
+                  (element) => element.fixtureID === 'semiFinal2'
+                )
+
+                const thirdPlace = fixture.find(
+                  (element) => element.fixtureID === '3rdPlace'
+                )
+
+                // Assign Semi Final 1 Loser Team to Final Bracket
+                if (
+                  thirdPlace_semiFinal1.winner != null &&
+                  thirdPlace_semiFinal1.loser != null
+                ) {
+                  thirdPlace.homeTeam = thirdPlace_semiFinal1.loser
+                }
+
+                // Assign Semi Final 2 Loser Team to Final Bracket
+                if (
+                  thirdPlace_semiFinal2.winner != null &&
+                  thirdPlace_semiFinal2.loser != null
+                ) {
+                  thirdPlace.awayTeam = thirdPlace_semiFinal2.loser
+                }
+
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('final-stage')
+                  .doc('fixtures')
+                  .update({
+                    thirdPlace: fixture,
+                  })
+
+                break
               case 'final':
                 const final_semiFinal1 = participants.find(
                   (element) => element.fixtureID === 'semiFinal1'
@@ -783,26 +956,20 @@ export default {
                   (element) => element.fixtureID === 'final'
                 )
 
-                const thirdPlace = fixture.find(
-                  (element) => element.fixtureID === '3rdPlace'
-                )
-
-                // Assign Semi Final 1 Team to Final Bracket
+                // Assign Semi Final 1 Winner Team to Final Bracket
                 if (
                   final_semiFinal1.winner != null &&
                   final_semiFinal1.loser != null
                 ) {
                   final.homeTeam = final_semiFinal1.winner
-                  thirdPlace.homeTeam = final_semiFinal1.loser
                 }
 
-                // Assign Semi Final 2 Team to Final Bracket
+                // Assign Semi Final 2 Winner Team to Final Bracket
                 if (
                   final_semiFinal2.winner != null &&
                   final_semiFinal2.loser != null
                 ) {
                   final.awayTeam = final_semiFinal2.winner
-                  thirdPlace.awayTeam = final_semiFinal2.loser
                 }
 
                 await this.$fire.firestore
@@ -835,6 +1002,14 @@ export default {
               .doc(this.$route.params.id)
               .update({
                 isSemiFinal: true,
+              })
+            break
+          case 'thirdPlace':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .update({
+                isThirdPlace: true,
               })
             break
           case 'final':
@@ -904,6 +1079,16 @@ export default {
                 semiFinal: fixture,
               })
             break
+          case 'thirdPlace':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                thirdPlace: fixture,
+              })
+            break
           case 'final':
             await this.$fire.firestore
               .collection('tournaments')
@@ -935,6 +1120,16 @@ export default {
               .doc('fixtures')
               .update({
                 semiFinal: fixture,
+              })
+            break
+          case 'thirdPlace':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                thirdPlace: fixture,
               })
             break
           case 'final':
@@ -971,6 +1166,16 @@ export default {
               .doc('fixtures')
               .update({
                 semiFinal: fixture,
+              })
+            break
+          case 'thirdPlace':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                thirdPlace: fixture,
               })
             break
           case 'final':
