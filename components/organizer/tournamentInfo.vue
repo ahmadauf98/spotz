@@ -1,27 +1,15 @@
 <template>
   <v-card class="mx-auto py-5 px-9 mb-4" outlined tile>
+
     <!-- First Row -->
     <v-row>
-      <!-- Left Side -->
       <v-col>
         <v-card class="mx-auto py-3 px-5" outlined>
           <h1
-            class="text-caption font-weight-bold d-flex justify-center align-center"
+            class="text-subtitle-2 font-weight-medium d-flex justify-center align-center"
           >
-            <v-icon class="mr-1">mdi-account-group</v-icon>
-            {{ tournamentProf.participants }} Teams
-          </h1>
-        </v-card>
-      </v-col>
-
-      <!-- Right Side -->
-      <v-col>
-        <v-card class="mx-auto py-3 px-5" outlined>
-          <h1
-            class="text-caption font-weight-bold d-flex justify-center align-center"
-          >
-            <v-icon class="mr-1">mdi-family-tree</v-icon>
-            {{ tournamentProf.sportType }}
+            <v-icon class="mr-1" size="18">mdi-phone</v-icon>
+            {{ tournamentRef.phoneNumber }}
           </h1>
         </v-card>
       </v-col>
@@ -32,12 +20,40 @@
       <v-col>
         <v-card class="mx-auto py-3 px-5" outlined>
           <h1
-            class="text-caption font-weight-bold d-flex justify-center align-center"
+            class="text-subtitle-2 font-weight-medium d-flex justify-center align-center"
           >
-            <v-icon class="mr-1">mdi-calendar</v-icon>
-            {{ tournamentProf.startDate }} &mdash;
-            <v-icon class="mx-1">mdi-calendar-check</v-icon>
-            {{ tournamentProf.endDate }}
+            <v-icon class="mr-1" size="18">mdi-map-marker</v-icon>
+            {{ tournamentRef.location }}
+          </h1>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Third Row -->
+    <v-row>
+      <v-col>
+        <v-card class="mx-auto py-3 px-5" outlined>
+          <h1
+            class="text-subtitle-2 font-weight-medium d-flex justify-center align-center"
+          >
+            <v-icon class="mr-1" size="18">mdi-email</v-icon>
+            {{ tournamentRef.email }}
+          </h1>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Fourth Row -->
+    <v-row>
+      <v-col>
+        <v-card class="mx-auto py-3 px-5" outlined>
+          <h1
+            class="text-subtitle-2 font-weight-medium d-flex justify-center align-center"
+          >
+            <v-icon class="mr-1" size="18">mdi-link-variant</v-icon>
+            <a :href="tournamentRef.websiteURL" target="_blank"
+              >{{ tournamentRef.websiteURL }}
+            </a>
           </h1>
         </v-card>
       </v-col>
@@ -50,7 +66,7 @@ export default {
   data() {
     return {
       // User Input Data
-      tournamentProf: '',
+      tournamentRef: '',
     }
   },
 
@@ -60,7 +76,7 @@ export default {
       .collection('tournaments')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
-        this.tournamentProf = doc.data()
+        this.tournamentRef = doc.data()
       })
   },
 }

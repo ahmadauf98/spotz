@@ -3,7 +3,7 @@
     <v-col>
       <v-card class="mx-auto" outlined tile>
         <!-- Header Picture -->
-        <v-img :src="tournamentProf.headerURL" height="300px">
+        <v-img :src="tournamentRef.headerURL" height="300px">
           <v-btn
             color="#1a202c"
             class="mb-10"
@@ -34,7 +34,7 @@
             <!-- Profile Picture -->
             <div class="mr-5 mt-n7">
               <v-avatar class="mt-n15" size="150" rounded>
-                <img :src="tournamentProf.photoURL" alt="..." />
+                <img :src="tournamentRef.photoURL" alt="..." />
               </v-avatar>
 
               <div class="mt-n8 ml-15">
@@ -66,7 +66,7 @@
                 <!-- Title -->
                 <v-col cols="8" md="7" xl="10">
                   <h1 class="text-h4 font-weight-bold mb-n3">
-                    {{ tournamentProf.title }}
+                    {{ tournamentRef.title }}
                   </h1>
                 </v-col>
 
@@ -92,7 +92,7 @@
                   <h1
                     class="text-subtitle-2 text-justify font-weight-regular mt-n3 mt-md-0 mt-lg-n3"
                   >
-                    {{ tournamentProf.description }}
+                    {{ tournamentRef.description }}
                   </h1>
                 </v-col>
                 <v-col></v-col>
@@ -101,30 +101,28 @@
               <v-divider class="mt-3"></v-divider>
 
               <div class="d-inline-flex mb-3">
-                <!--  -->
-                <h1 class="text-caption font-weight-regular mt-2 mr-5">
-                  <v-icon class="mr-1" size="18">mdi-link-variant</v-icon>
-                  <a :href="tournamentProf.websiteURL" target="_blank"
-                    >{{ tournamentProf.websiteURL }}
-                  </a>
+                <!-- Teams -->
+                <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
+                  <v-icon class="mr-1">mdi-account-group</v-icon>
+                  {{ tournamentRef.participants }} Teams
                 </h1>
 
-                <!--  -->
-                <h1 class="text-caption font-weight-regular mt-2 mr-5">
-                  <v-icon class="mr-1" size="18">mdi-phone</v-icon>
-                  {{ tournamentProf.phoneNumber }}
+                <!-- Sports Type -->
+                <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
+                  <v-icon class="mr-1">mdi-stadium</v-icon>
+                  {{ tournamentRef.sportType }}
                 </h1>
 
-                <!--  -->
-                <h1 class="text-caption font-weight-regular mt-2 mr-5">
-                  <v-icon class="mr-1" size="18">mdi-map-marker</v-icon>
-                  {{ tournamentProf.location }}
+                <!-- Format -->
+                <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
+                  <v-icon class="mr-1">mdi-trophy</v-icon>
+                  {{ tournamentRef.gStage }} &rarr; {{ tournamentRef.fStage }}
                 </h1>
 
-                <!--  -->
-                <h1 class="text-caption font-weight-regular mt-2 mr-5">
-                  <v-icon class="mr-1" size="18">mdi-email</v-icon>
-                  {{ tournamentProf.email }}
+                <!-- Date -->
+                <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
+                  <v-icon class="mr-1">mdi-calendar</v-icon>
+                  {{ startDate }} &rharu; {{ endDate }}
                 </h1>
               </div>
             </v-row>
@@ -151,6 +149,7 @@
 
 <script>
 import firebase from 'firebase'
+import moment from 'moment'
 
 export default {
   data() {
@@ -181,8 +180,10 @@ export default {
       // User Input Data
       photoURL: '',
       headerURL: '',
-      tournamentProf: '',
+      tournamentRef: '',
       hostnameProf: '',
+      startDate: '',
+      endDate: '',
 
       // Profile Picture
       selectedFile: null,
@@ -198,8 +199,15 @@ export default {
       .collection('tournaments')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
-        this.tournamentProf = doc.data()
-        // console.log(doc.data())
+        this.tournamentRef = doc.data()
+
+        // Initialize Date Data into Moment
+        var startDateFormat = moment(doc.data().startDate, 'YYYY-MM-DD')
+        var endDateFormat = moment(doc.data().endDate, 'YYYY-MM-DD')
+
+        // Formating Date (YYYY-MM-DD) to (DD MMMM YYYY)
+        this.startDate = startDateFormat.format('DD MMMM YYYY')
+        this.endDate = endDateFormat.format('DD MMMM YYYY')
 
         this.$fire.firestore
           .collection('users')
