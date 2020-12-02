@@ -2501,22 +2501,6 @@ export default {
     async onLiveUpdate(data, fixture) {
       let fixtureID = data.fixtureID
       try {
-        // State Winner, Loser of the Fixture
-        if (data.homeScore > data.awayScore) {
-          // If Home Team Winning
-          data.winner = data.homeTeam
-          data.loser = data.awayTeam
-          data.isTie = false
-        } else if (data.homeScore < data.awayScore) {
-          // If Away Team Winning
-          data.winner = data.awayTeam
-          data.loser = data.homeTeam
-          data.isTie = false
-        } else {
-          // If Result Draw
-          data.isTie = true
-        }
-
         switch (fixtureID) {
           case 'fixture_A':
             await this.$fire.firestore

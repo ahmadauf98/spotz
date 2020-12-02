@@ -224,7 +224,7 @@
                             <v-btn
                               v-show="
                                 tournamentRef.isSemiFinal == true &&
-                                fixture.isFullTime == false
+                                fixture.isFulltime == false
                               "
                               class="ml-auto mx-3 mb-n8"
                               @click="updateResult(fixture, semiFinal)"
@@ -261,7 +261,7 @@
                               <h1
                                 v-show="
                                   fixture.isMatchStart == true &&
-                                  fixture.isFullTime == false
+                                  fixture.isFulltime == false
                                 "
                                 class="text-caption text-active"
                               >
@@ -271,7 +271,7 @@
                               <h1
                                 v-show="
                                   tournamentRef.isSemiFinal == true &&
-                                  fixture.isFullTime == true
+                                  fixture.isFulltime == true
                                 "
                                 class="text-caption text-grey"
                               >
@@ -323,9 +323,22 @@
                     "
                     class="text-center justify-center mt-3"
                   >
-                    <h1 class="text-subtitle-2 font-weight-bold text-left">
-                      Final <span>& 3rd Place</span>
-                    </h1>
+                    <div class="d-flex">
+                      <h1 class="text-subtitle-2 font-weight-bold text-left">
+                        Final & 3rd Place
+                      </h1>
+
+                      <v-btn
+                        v-show="tournamentRef.isFinal == false"
+                        class="ml-auto"
+                        color="primary"
+                        outlined
+                        small
+                        @click="onLive('final')"
+                      >
+                        <v-icon small>mdi-record</v-icon>Start Match</v-btn
+                      >
+                    </div>
 
                     <v-row>
                       <v-col
@@ -340,7 +353,7 @@
                             </h1>
                             <v-btn
                               v-show="
-                                tournamentRef.isTournamentLive == true &&
+                                tournamentRef.isFinal == true &&
                                 fixture.isFulltime == false
                               "
                               class="ml-auto mx-3 mb-n8"
@@ -361,10 +374,16 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isFinal == true"
                                 class="text-center"
                               >
                                 {{ fixture.homeScore }}
+                                <span
+                                  v-show="fixture.isTie == true"
+                                  class="text-subtitle-1"
+                                >
+                                  {{ fixture.homeSet }}
+                                </span>
                               </h1>
                             </v-col>
 
@@ -381,7 +400,7 @@
 
                               <h1
                                 v-show="
-                                  tournamentRef.isTournamentLive == true &&
+                                  tournamentRef.isFinal == true &&
                                   fixture.isFulltime == true
                                 "
                                 class="text-caption text-grey"
@@ -407,9 +426,15 @@
                               </h1>
 
                               <h1
-                                v-show="tournamentRef.isTournamentLive == true"
+                                v-show="tournamentRef.isFinal == true"
                                 class="text-center"
                               >
+                                <span
+                                  v-show="fixture.isTie == true"
+                                  class="text-subtitle-1"
+                                >
+                                  {{ fixture.awaySet }}
+                                </span>
                                 {{ fixture.awayScore }}
                               </h1>
                             </v-col>
@@ -653,7 +678,9 @@ export default {
   },
 
   // Fetch Notification Data from Vuex
-  computed: { ...mapState(['notification']) },
+  computed: {
+    ...mapState(['notification']),
+  },
 
   // Fetch User's Data
   mounted() {
@@ -712,8 +739,8 @@ export default {
       if (participants != '' && fixture != '') {
         try {
           if (this.tournamentRef.gGroupNumber == 2) {
-            switch (fixture) {
-              case this.semiFinal:
+            switch (fixture[0].bracketID) {
+              case 'semiFinal':
                 const semiFinal1 = fixture.find(
                   (element) => element.fixtureID === 'semiFinal1'
                 )
@@ -743,7 +770,7 @@ export default {
                     semiFinal: fixture,
                   })
                 break
-              case this.final:
+              case 'final':
                 const final_semiFinal1 = participants.find(
                   (element) => element.fixtureID === 'semiFinal1'
                 )
@@ -757,25 +784,24 @@ export default {
                 )
 
                 const thirdPlace = fixture.find(
-                  (element) => element.fixtureID === 'final'
+                  (element) => element.fixtureID === '3rdPlace'
                 )
 
-                // Assign Team to Final Fixture
-                if (final_semiFinal1.winner != null) {
-                  console.log(final_semiFinal1.winner)
+                // Assign Semi Final 1 Team to Final Bracket
+                if (
+                  final_semiFinal1.winner != null &&
+                  final_semiFinal1.loser != null
+                ) {
                   final.homeTeam = final_semiFinal1.winner
-                }
-
-                if (final_semiFinal2.winner != null) {
-                  final.awayTeam = final_semiFinal2.winner
-                }
-
-                // Asign Team to 3rd Place Fixture
-                if (final_semiFinal1.loser != null) {
                   thirdPlace.homeTeam = final_semiFinal1.loser
                 }
 
-                if (final_semiFinal2.loser != null) {
+                // Assign Semi Final 2 Team to Final Bracket
+                if (
+                  final_semiFinal2.winner != null &&
+                  final_semiFinal2.loser != null
+                ) {
+                  final.awayTeam = final_semiFinal2.winner
                   thirdPlace.awayTeam = final_semiFinal2.loser
                 }
 
@@ -830,16 +856,13 @@ export default {
       this.updateResultOverlay = true
       this.resultData = data
       this.currentBracketData = fixture
-
-      console.log(this.currentBracketData)
     },
 
     // To Update Fulltime Result
     async onUpdateResult(data, fixture) {
-      let fixtureID = data.fixtureID
+      let bracketID = data.bracketID
 
-      console.log(fixtureID)
-
+      console.log(bracketID)
       try {
         // State Winner, Loser of the Fixture
         if (data.homeScore > data.awayScore) {
@@ -855,9 +878,75 @@ export default {
           data.isTie = false
           data.isFulltime = true
         } else {
-          // If Result Draw
+          // If Result Draw - Compare with set points
           data.isTie = true
-          data.isFulltime = true
+          if (data.homeSet > data.awaySet) {
+            // If Home Team Winning
+            data.winner = data.homeTeam
+            data.loser = data.awayTeam
+            data.isFulltime = true
+          } else if (data.homeSet < data.awaySet) {
+            // If Away Team Winning
+            data.winner = data.awayTeam
+            data.loser = data.homeTeam
+            data.isFulltime = true
+          }
+        }
+
+        switch (bracketID) {
+          case 'semiFinal':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                semiFinal: fixture,
+              })
+            break
+          case 'final':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                final: fixture,
+              })
+            break
+        }
+
+        this.updateResultOverlay = false
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    // To Live Update Result
+    async onLiveUpdate(data, fixture) {
+      let bracketID = data.bracketID
+      try {
+        switch (bracketID) {
+          case 'semiFinal':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                semiFinal: fixture,
+              })
+            break
+          case 'final':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                final: fixture,
+              })
+            break
         }
 
         this.updateResultOverlay = false
@@ -870,7 +959,6 @@ export default {
     async onStartMatch(data, fixture) {
       let bracketID = data.bracketID
 
-      console.log(bracketID)
       try {
         data.isMatchStart = true
 
