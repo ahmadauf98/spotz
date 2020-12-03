@@ -797,304 +797,316 @@
               <h1 class="text-h6 font-weight-bold mb-3">Group Seedings</h1>
             </div>
 
-            <div class="d-flex align-center mb-4">
-              <!-- Group A -->
-              <v-col
-                v-show="
-                  tournamentRef.gGroupNumber == 2 ||
-                  tournamentRef.gGroupNumber == 4 ||
-                  tournamentRef.gGroupNumber == 8
-                "
-                cols="6"
-              >
-                <v-card outlined>
-                  <v-simple-table>
-                    <template v-slot:default>
-                      <thead>
-                        <tr>
-                          <th class="text-center">Group A</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(gA, index) in selectedData.group_A"
-                          :key="index"
-                          class="text-center"
-                        >
-                          <td class="text-center">
-                            <v-select
-                              class="mt-5"
-                              color="primary"
-                              :placeholder="gA.teamName"
-                              :items="teams"
-                              v-model="gA.teamName"
-                              outlined
-                              dense
-                            ></v-select>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-card>
-              </v-col>
+            <div class="mb-4">
+              <!-- First Row -->
+              <v-row>
+                <!-- Group A -->
+                <v-col
+                  v-show="
+                    tournamentRef.gGroupNumber == 2 ||
+                    tournamentRef.gGroupNumber == 4 ||
+                    tournamentRef.gGroupNumber == 8
+                  "
+                  cols="6"
+                >
+                  <v-card outlined>
+                    <v-simple-table>
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-center">Group A</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(gA, index) in selectedData.group_A"
+                            :key="index"
+                            class="text-center"
+                          >
+                            <td class="text-center">
+                              <v-select
+                                class="mt-5"
+                                color="primary"
+                                :placeholder="gA.teamName"
+                                :items="teams"
+                                v-model="gA.teamName"
+                                outlined
+                                dense
+                              ></v-select>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-card>
+                </v-col>
 
-              <!-- Group B -->
-              <v-col
-                v-show="
-                  tournamentRef.gGroupNumber == 2 ||
-                  tournamentRef.gGroupNumber == 4 ||
-                  tournamentRef.gGroupNumber == 8
-                "
-                cols="6"
-              >
-                <v-card outlined>
-                  <v-simple-table>
-                    <template v-slot:default>
-                      <thead>
-                        <tr>
-                          <th class="text-center">Group B</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(gB, index) in selectedData.group_B"
-                          :key="index"
-                          class="text-center"
-                        >
-                          <td class="text-center">
-                            <v-select
-                              class="mt-5"
-                              color="primary"
-                              :placeholder="gB.teamName"
-                              :items="teams"
-                              v-model="gB.teamName"
-                              outlined
-                              dense
-                            ></v-select>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-card>
-              </v-col>
+                <!-- Group B -->
+                <v-col
+                  v-show="
+                    tournamentRef.gGroupNumber == 2 ||
+                    tournamentRef.gGroupNumber == 4 ||
+                    tournamentRef.gGroupNumber == 8
+                  "
+                  cols="6"
+                >
+                  <v-card outlined>
+                    <v-simple-table>
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-center">Group B</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(gB, index) in selectedData.group_B"
+                            :key="index"
+                            class="text-center"
+                          >
+                            <td class="text-center">
+                              <v-select
+                                class="mt-5"
+                                color="primary"
+                                :placeholder="gB.teamName"
+                                :items="teams"
+                                v-model="gB.teamName"
+                                outlined
+                                dense
+                              ></v-select>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-card>
+                </v-col>
+              </v-row>
 
-              <!-- Group C -->
-              <v-col
-                v-show="
-                  tournamentRef.gGroupNumber == 4 ||
-                  tournamentRef.gGroupNumber == 8
-                "
-                cols="6"
-              >
-                <v-card outlined>
-                  <v-simple-table>
-                    <template v-slot:default>
-                      <thead>
-                        <tr>
-                          <th class="text-center">Group C</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(gC, index) in selectedData.group_C"
-                          :key="index"
-                          class="text-center"
-                        >
-                          <td class="text-center">
-                            <v-select
-                              class="mt-5"
-                              color="primary"
-                              :placeholder="gC.teamName"
-                              :items="teams"
-                              v-model="gC.teamName"
-                              outlined
-                              dense
-                            ></v-select>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-card>
-              </v-col>
+              <!-- Second Row -->
+              <v-row>
+                <!-- Group C -->
+                <v-col
+                  v-show="
+                    tournamentRef.gGroupNumber == 4 ||
+                    tournamentRef.gGroupNumber == 8
+                  "
+                  cols="6"
+                >
+                  <v-card outlined>
+                    <v-simple-table>
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-center">Group C</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(gC, index) in selectedData.group_C"
+                            :key="index"
+                            class="text-center"
+                          >
+                            <td class="text-center">
+                              <v-select
+                                class="mt-5"
+                                color="primary"
+                                :placeholder="gC.teamName"
+                                :items="teams"
+                                v-model="gC.teamName"
+                                outlined
+                                dense
+                              ></v-select>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-card>
+                </v-col>
 
-              <!-- Group D -->
-              <v-col
-                v-show="
-                  tournamentRef.gGroupNumber == 4 ||
-                  tournamentRef.gGroupNumber == 8
-                "
-                cols="6"
-              >
-                <v-card outlined>
-                  <v-simple-table>
-                    <template v-slot:default>
-                      <thead>
-                        <tr>
-                          <th class="text-center">Group D</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(gD, index) in selectedData.group_D"
-                          :key="index"
-                          class="text-center"
-                        >
-                          <td class="text-center">
-                            <v-select
-                              class="mt-5"
-                              color="primary"
-                              :placeholder="gD.teamName"
-                              :items="teams"
-                              v-model="gD.teamName"
-                              outlined
-                              dense
-                            ></v-select>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-card>
-              </v-col>
+                <!-- Group D -->
+                <v-col
+                  v-show="
+                    tournamentRef.gGroupNumber == 4 ||
+                    tournamentRef.gGroupNumber == 8
+                  "
+                  cols="6"
+                >
+                  <v-card outlined>
+                    <v-simple-table>
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-center">Group D</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(gD, index) in selectedData.group_D"
+                            :key="index"
+                            class="text-center"
+                          >
+                            <td class="text-center">
+                              <v-select
+                                class="mt-5"
+                                color="primary"
+                                :placeholder="gD.teamName"
+                                :items="teams"
+                                v-model="gD.teamName"
+                                outlined
+                                dense
+                              ></v-select>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-card>
+                </v-col>
+              </v-row>
 
-              <!-- Group E -->
-              <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
-                <v-card outlined>
-                  <v-simple-table>
-                    <template v-slot:default>
-                      <thead>
-                        <tr>
-                          <th class="text-center">Group E</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(gE, index) in selectedData.group_E"
-                          :key="index"
-                          class="text-center"
-                        >
-                          <td class="text-center">
-                            <v-select
-                              class="mt-5"
-                              color="primary"
-                              :placeholder="gE.teamName"
-                              :items="teams"
-                              v-model="gE.teamName"
-                              outlined
-                              dense
-                            ></v-select>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-card>
-              </v-col>
+              <!-- Third Row -->
+              <v-row>
+                <!-- Group E -->
+                <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
+                  <v-card outlined>
+                    <v-simple-table>
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-center">Group E</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(gE, index) in selectedData.group_E"
+                            :key="index"
+                            class="text-center"
+                          >
+                            <td class="text-center">
+                              <v-select
+                                class="mt-5"
+                                color="primary"
+                                :placeholder="gE.teamName"
+                                :items="teams"
+                                v-model="gE.teamName"
+                                outlined
+                                dense
+                              ></v-select>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-card>
+                </v-col>
 
-              <!-- Group F -->
-              <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
-                <v-card outlined>
-                  <v-simple-table>
-                    <template v-slot:default>
-                      <thead>
-                        <tr>
-                          <th class="text-center">Group F</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(gF, index) in selectedData.group_F"
-                          :key="index"
-                          class="text-center"
-                        >
-                          <td class="text-center">
-                            <v-select
-                              class="mt-5"
-                              color="primary"
-                              :placeholder="gF.teamName"
-                              :items="teams"
-                              v-model="gF.teamName"
-                              outlined
-                              dense
-                            ></v-select>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-card>
-              </v-col>
+                <!-- Group F -->
+                <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
+                  <v-card outlined>
+                    <v-simple-table>
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-center">Group F</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(gF, index) in selectedData.group_F"
+                            :key="index"
+                            class="text-center"
+                          >
+                            <td class="text-center">
+                              <v-select
+                                class="mt-5"
+                                color="primary"
+                                :placeholder="gF.teamName"
+                                :items="teams"
+                                v-model="gF.teamName"
+                                outlined
+                                dense
+                              ></v-select>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-card>
+                </v-col>
+              </v-row>
 
-              <!-- Group G -->
-              <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
-                <v-card outlined>
-                  <v-simple-table>
-                    <template v-slot:default>
-                      <thead>
-                        <tr>
-                          <th class="text-center">Group G</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(gG, index) in selectedData.group_G"
-                          :key="index"
-                          class="text-center"
-                        >
-                          <td class="text-center">
-                            <v-select
-                              class="mt-5"
-                              color="primary"
-                              :placeholder="gG.teamName"
-                              :items="teams"
-                              v-model="gG.teamName"
-                              outlined
-                              dense
-                            ></v-select>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-card>
-              </v-col>
+              <!-- Fourth Row -->
+              <v-row>
+                <!-- Group G -->
+                <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
+                  <v-card outlined>
+                    <v-simple-table>
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-center">Group G</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(gG, index) in selectedData.group_G"
+                            :key="index"
+                            class="text-center"
+                          >
+                            <td class="text-center">
+                              <v-select
+                                class="mt-5"
+                                color="primary"
+                                :placeholder="gG.teamName"
+                                :items="teams"
+                                v-model="gG.teamName"
+                                outlined
+                                dense
+                              ></v-select>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-card>
+                </v-col>
 
-              <!-- Group H -->
-              <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
-                <v-card outlined>
-                  <v-simple-table>
-                    <template v-slot:default>
-                      <thead>
-                        <tr>
-                          <th class="text-center">Group H</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(gH, index) in selectedData.group_H"
-                          :key="index"
-                          class="text-center"
-                        >
-                          <td class="text-center">
-                            <v-select
-                              class="mt-5"
-                              color="primary"
-                              :placeholder="gH.teamName"
-                              :items="teams"
-                              v-model="gH.teamName"
-                              outlined
-                              dense
-                            ></v-select>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-card>
-              </v-col>
+                <!-- Group H -->
+                <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
+                  <v-card outlined>
+                    <v-simple-table>
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-center">Group H</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(gH, index) in selectedData.group_H"
+                            :key="index"
+                            class="text-center"
+                          >
+                            <td class="text-center">
+                              <v-select
+                                class="mt-5"
+                                color="primary"
+                                :placeholder="gH.teamName"
+                                :items="teams"
+                                v-model="gH.teamName"
+                                outlined
+                                dense
+                              ></v-select>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-card>
+                </v-col>
+              </v-row>
             </div>
 
             <div class="d-flex">

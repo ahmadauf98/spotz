@@ -1,5 +1,5 @@
 .text-green {
-  color: #43A047;
+  color: #43a047;
 }
 
 .text-primary {
@@ -23,7 +23,7 @@
 }
 
 .text-active {
-  color: #43A047;
+  color: #43a047;
 }
 
 .text-pending {
@@ -47,10 +47,10 @@
 }
 
 .overflow {
-  overflow: auto;
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+  overflow-y: scroll; /* Add vertical scrollbar */
 }
 
 .relative {
   position: relative;
 }
-
