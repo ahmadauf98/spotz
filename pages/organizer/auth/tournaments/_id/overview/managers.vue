@@ -26,29 +26,39 @@
         <v-row>
           <!-- Left Side -->
           <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
-            <!-- Managers Add -->
+            <!-- Managers List Null -> To add New Manager -->
             <v-card
               v-if="managerlength == 0"
               class="mx-auto py-10 mt-n3 mt-lg-0 px-9"
               outlined
               tile
             >
-              <h1 class="text-subtitle-1 font-weight-bold mb-4">
-                List of Managers
-              </h1>
-              <v-row>
+              <v-row class="d-flex align-center">
                 <v-col cols="12" md="8" order="2" order-md="1">
                   <div>
-                    <h1 class="text-subtitle-1 font-weight-regular mb-5">
+                    <h1 class="text-subtitle-1 font-weight-bold mb-4">
+                      List of Managers
+                    </h1>
+                    <h1
+                      v-show="tournamentProf.isOpen == true"
+                      class="text-subtitle-1 font-weight-regular mb-5"
+                    >
+                      Currently there is no manager yet in your tournament.
+                      Please accept manager request in notification and the list
+                      of manager will be displayed here.
+                    </h1>
+
+                    <h1
+                      v-show="tournamentProf.isOpen == false"
+                      class="text-subtitle-1 font-weight-regular mb-5"
+                    >
                       Currently there is no manager yet in your tournament.
                       Please invite manager by email and the list of manager
                       will be displayed here.
                     </h1>
+
                     <v-btn
-                      v-show="
-                        tournamentProf.isOpen == false &&
-                        this.managerlength < tournamentProf.participants
-                      "
+                      v-show="tournamentProf.isOpen == false"
                       @click="overlay = !overlay"
                       class="font-weight-regular text-capitalize"
                       color="primary"
@@ -65,7 +75,7 @@
                   order="1"
                   order-md="2"
                 >
-                  <div class="px-5 mt-md-n8 mt-lg-n3 mt-xl-n6">
+                  <div class="px-5 mt-md-n8 mt-lg-n3 mt-xl-1">
                     <img
                       src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fmanagers-tournament.svg?alt=media&token=ec47c873-a84d-4353-b823-e0fe7bff619b"
                       width="220px"
