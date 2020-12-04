@@ -75,7 +75,8 @@
                   <v-btn
                     type="submit"
                     class="h6 font-weight-bold"
-                    color="#6B46C1"
+                    color="primary"
+                    depressed
                     large
                     block
                     dark
@@ -122,7 +123,7 @@ export default {
       email: '',
       password: '',
 
-      // Refresh Page
+      // Loading State
       isLoading: false,
     }
   },
@@ -135,7 +136,9 @@ export default {
   methods: {
     // Signin with Email Provider
     async emailLogin() {
+      // Loading state -> true
       this.isLoading = true
+
       try {
         if (this.email === null || this.email === '') {
           this.isLoading = false

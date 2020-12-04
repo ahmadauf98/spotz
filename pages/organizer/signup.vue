@@ -114,10 +114,11 @@
                   <v-btn
                     type="submit"
                     class="h6 font-weight-bold"
+                    color="primary"
+                    depressed
                     large
                     block
                     dark
-                    color="#6B46C1"
                   >
                     <span v-if="isLoading == false">Create an account</span>
 
