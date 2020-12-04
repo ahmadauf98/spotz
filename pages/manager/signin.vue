@@ -76,7 +76,8 @@
                   <v-btn
                     type="submit"
                     class="h6 font-weight-bold"
-                    color="#6B46C1"
+                    color="primary"
+                    depressed
                     large
                     block
                     dark
