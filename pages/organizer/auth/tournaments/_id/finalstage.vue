@@ -197,7 +197,10 @@
                       </h1>
 
                       <v-btn
-                        v-show="tournamentRef.isRound16 == false"
+                        v-show="
+                          tournamentRef.isRound16 == false &&
+                          finalStageList_round16 != ''
+                        "
                         class="ml-auto"
                         color="primary"
                         outlined
@@ -326,7 +329,12 @@
                       </h1>
 
                       <v-btn
-                        v-show="tournamentRef.isQuarterFinal == false"
+                        v-show="
+                          (tournamentRef.isQuarterFinal == false &&
+                            finalStageList_quarter != '') ||
+                          (tournamentRef.isQuarterFinal == false &&
+                            round16Check == true)
+                        "
                         class="ml-auto"
                         color="primary"
                         outlined
@@ -456,7 +464,12 @@
                       </h1>
 
                       <v-btn
-                        v-show="tournamentRef.isSemiFinal == false"
+                        v-show="
+                          (tournamentRef.isSemiFinal == false &&
+                            finalStageList_semi != '') ||
+                          (tournamentRef.isSemiFinal == false &&
+                            quarterCheck == true)
+                        "
                         class="ml-auto"
                         color="primary"
                         outlined
@@ -587,7 +600,10 @@
                       </h1>
 
                       <v-btn
-                        v-show="tournamentRef.isThirdPlace == false"
+                        v-show="
+                          tournamentRef.isThirdPlace == false &&
+                          semiCheck == true
+                        "
                         class="ml-auto"
                         color="primary"
                         outlined
@@ -717,7 +733,9 @@
                       </h1>
 
                       <v-btn
-                        v-show="tournamentRef.isFinal == false"
+                        v-show="
+                          tournamentRef.isFinal == false && semiCheck == true
+                        "
                         class="ml-auto"
                         color="primary"
                         outlined
@@ -1049,6 +1067,9 @@ export default {
 
       // List of Qualified Team
       finalStageList: '',
+      finalStageList_round16: '',
+      finalStageList_quarter: '',
+      finalStageList_semi: '',
 
       // Final Stage Fixture
       round16: '',
@@ -1063,6 +1084,11 @@ export default {
       resultData: '',
       currentBracketData: '',
       isTie: false,
+
+      // Fulltime State
+      round16Check: false,
+      quarterCheck: false,
+      semiCheck: false,
     }
   },
 
@@ -1100,6 +1126,14 @@ export default {
       .onSnapshot((querySnapshot) => {
         if (querySnapshot.exists) {
           this.finalStageList = querySnapshot.data()
+
+          if (this.tournamentRef.gGroupNumber == 2) {
+            this.finalStageList_semi = this.finalStageList
+          } else if (this.tournamentRef.gGroupNumber == 4) {
+            this.finalStageList_quarter = this.finalStageList
+          } else if (this.tournamentRef.gGroupNumber == 8) {
+            this.finalStageList_round16 = this.finalStageList
+          }
         }
       })
 
@@ -1116,6 +1150,50 @@ export default {
           this.semiFinal = doc.data().semiFinal
           this.quarterFinal = doc.data().quarterFinal
           this.round16 = doc.data().round16
+
+          // Check SemiFinal Fixtures Fulltime State
+          if (typeof this.semiFinal != 'undefined') {
+            if (
+              this.semiFinal[0].isFulltime == true &&
+              this.semiFinal[1].isFulltime == true
+            ) {
+              this.semiCheck = true
+            } else {
+              this.semiCheck = false
+            }
+          }
+
+          // Check QuaterFinal Fixtures Fulltime State
+          if (typeof this.quarterFinal != 'undefined') {
+            if (
+              this.quarterFinal[0].isFulltime == true &&
+              this.quarterFinal[1].isFulltime == true &&
+              this.quarterFinal[2].isFulltime == true &&
+              this.quarterFinal[3].isFulltime == true
+            ) {
+              this.quarterCheck = true
+            } else {
+              this.quarterCheck = false
+            }
+          }
+
+          // Check Round16 Fixtures Fulltime State
+          if (typeof this.round16 != 'undefined') {
+            if (
+              this.round16[0].isFulltime == true &&
+              this.round16[1].isFulltime == true &&
+              this.round16[2].isFulltime == true &&
+              this.round16[3].isFulltime == true &&
+              this.round16[4].isFulltime == true &&
+              this.round16[5].isFulltime == true &&
+              this.round16[5].isFulltime == true &&
+              this.round16[7].isFulltime == true
+            ) {
+              this.round16Check = true
+            } else {
+              this.round16Check = false
+            }
+          }
 
           // Testing Unit if else
           if (this.tournamentRef.gGroupNumber == 2) {

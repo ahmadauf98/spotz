@@ -1117,11 +1117,19 @@
               <v-btn
                 class="font-weight-regular mb-4 text-capitalize ml-auto mx-3"
                 @click="onUpdate(selectedData)"
+                width="120"
                 dark
                 depressed
                 color="primary"
               >
-                Submit
+                <span v-if="isLoading == false">Submit</span>
+
+                <v-progress-circular
+                  v-else
+                  :size="20"
+                  indeterminate
+                  color="white"
+                ></v-progress-circular>
               </v-btn>
             </div>
           </v-card>
@@ -1193,6 +1201,9 @@ export default {
       addSeedingsOverlay: false,
       selectedData: '',
       teamName: '',
+
+      // Loading State
+      isLoading: false,
     }
   },
 
@@ -1312,6 +1323,9 @@ export default {
     },
 
     async onUpdate(selectedData) {
+      // Loading state -> true
+      this.isLoading = true
+
       try {
         if (this.tournamentRef.gGroupNumber == 2) {
           await this.$fire.firestore
@@ -2844,9 +2858,13 @@ export default {
             isFinal: false,
           })
           .then(() => {
+            // Loading state -> false
+            this.isLoading = false
             this.addSeedingsOverlay = false
           })
       } catch (error) {
+        // Loading state -> true
+        this.isLoading = false
         console.log(error)
       }
     },
