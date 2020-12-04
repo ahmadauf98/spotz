@@ -1576,6 +1576,179 @@ export default {
                   fixture_C: [],
                   fixture_D: [],
                 })
+
+              // Initialize Table
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(this.$route.params.id)
+                .collection('group-stage')
+                .doc('tables')
+                .set({
+                  table_A: [],
+                  table_B: [],
+                  table_C: [],
+                  table_D: [],
+                })
+
+              // Initialize Final Stage
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(this.$route.params.id)
+                .collection('final-stage')
+                .doc('fixtures')
+                .set({
+                  quarterFinal: [
+                    // Quarter Final 1
+                    {
+                      fixtureID: 'quarterFinal1',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 1',
+                      homeTeam: 'Group A1',
+                      awayTeam: 'Group B2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 2
+                    {
+                      fixtureID: 'quarterFinal2',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 2',
+                      homeTeam: 'Group B1',
+                      awayTeam: 'Group A2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 3
+                    {
+                      fixtureID: 'quarterFinal3',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 3',
+                      homeTeam: 'Group C1',
+                      awayTeam: 'Group D2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 4
+                    {
+                      fixtureID: 'quarterFinal4',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 4',
+                      homeTeam: 'Group D1',
+                      awayTeam: 'Group C2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  semiFinal: [
+                    // Semi Final 1
+                    {
+                      fixtureID: 'semiFinal1',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 1',
+                      homeTeam: 'Quarter Final 1 Winner',
+                      awayTeam: 'Quarter Final 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Semi Final 2
+                    {
+                      fixtureID: 'semiFinal2',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 2',
+                      homeTeam: 'Quarter Final 3 Winner',
+                      awayTeam: 'Quarter Final 4 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  thirdPlace: [
+                    // 3rd Place
+                    {
+                      fixtureID: '3rdPlace',
+                      bracketID: 'thirdPlace',
+                      title: '3rd Place',
+                      homeTeam: 'Semi Final 1 Loser',
+                      awayTeam: 'Semi Final 2 Loser',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  final: [
+                    // Final Place
+                    {
+                      fixtureID: 'final',
+                      bracketID: 'final',
+                      title: 'Final',
+                      homeTeam: 'Semi Final 1 Winner',
+                      awayTeam: 'Semi Final 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+                })
             })
             .then(async () => {
               // If fixture played once, else fixture played home away method
@@ -1817,6 +1990,57 @@ export default {
                     }),
                   })
               })
+            })
+        } else if (this.tournamentRef.gGroupNumber == 8) {
+          await this.$fire.firestore
+            .collection('tournaments')
+            .doc(this.$route.params.id)
+            .collection('group-stage')
+            .doc('seedings')
+            .update({
+              group_A: selectedData.group_A,
+              group_B: selectedData.group_B,
+              group_C: selectedData.group_C,
+              group_D: selectedData.group_D,
+              group_E: selectedData.group_E,
+              group_F: selectedData.group_F,
+              group_G: selectedData.group_G,
+              group_H: selectedData.group_H,
+            })
+            .then(async () => {
+              // Initialize Fixture
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(this.$route.params.id)
+                .collection('group-stage')
+                .doc('fixtures')
+                .set({
+                  fixture_A: [],
+                  fixture_B: [],
+                  fixture_C: [],
+                  fixture_D: [],
+                  fixture_E: [],
+                  fixture_F: [],
+                  fixture_G: [],
+                  fixture_H: [],
+                })
+
+              // Initialize Table
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(this.$route.params.id)
+                .collection('group-stage')
+                .doc('tables')
+                .set({
+                  table_A: [],
+                  table_B: [],
+                  table_C: [],
+                  table_D: [],
+                  table_E: [],
+                  table_F: [],
+                  table_G: [],
+                  table_H: [],
+                })
 
               // Initialize Final Stage
               await this.$fire.firestore
@@ -1825,12 +2049,12 @@ export default {
                 .collection('final-stage')
                 .doc('fixtures')
                 .set({
-                  quarterFinal: [
-                    // Quarter Final 1
+                  round16: [
+                    // Round16 1
                     {
-                      fixtureID: 'quarterFinal1',
-                      bracketID: 'quarterFinal',
-                      title: 'Quarter Final 1',
+                      fixtureID: 'round161',
+                      bracketID: 'round16',
+                      title: 'Round 16 1',
                       homeTeam: 'Group A1',
                       awayTeam: 'Group B2',
                       homeScore: 0,
@@ -1844,13 +2068,159 @@ export default {
                       isTie: false,
                     },
 
-                    // Quarter Final 2
+                    // Round16 2
+                    {
+                      fixtureID: 'round162',
+                      bracketID: 'round16',
+                      title: 'Round 16 2',
+                      homeTeam: 'Group B1',
+                      awayTeam: 'Group A2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 3
+                    {
+                      fixtureID: 'round163',
+                      bracketID: 'round16',
+                      title: 'Round 16 3',
+                      homeTeam: 'Group C1',
+                      awayTeam: 'Group D2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 4
+                    {
+                      fixtureID: 'round164',
+                      bracketID: 'round16',
+                      title: 'Round 16 4',
+                      homeTeam: 'Group D1',
+                      awayTeam: 'Group C2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 5
+                    {
+                      fixtureID: 'round165',
+                      bracketID: 'round16',
+                      title: 'Round 16 5',
+                      homeTeam: 'Group E1',
+                      awayTeam: 'Group F2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 6
+                    {
+                      fixtureID: 'round166',
+                      bracketID: 'round16',
+                      title: 'Round 16 6',
+                      homeTeam: 'Group F1',
+                      awayTeam: 'Group E2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 7
+                    {
+                      fixtureID: 'round167',
+                      bracketID: 'round16',
+                      title: 'Round 16 7',
+                      homeTeam: 'Group G1',
+                      awayTeam: 'Group H2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 7
+                    {
+                      fixtureID: 'round168',
+                      bracketID: 'round16',
+                      title: 'Round 16 8',
+                      homeTeam: 'Group H1',
+                      awayTeam: 'Group G2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  quarterFinal: [
+                    // Quarter Final 1
                     {
                       fixtureID: 'quarterFinal1',
                       bracketID: 'quarterFinal',
                       title: 'Quarter Final 1',
-                      homeTeam: 'Group B1',
-                      awayTeam: 'Group A2',
+                      homeTeam: 'Round 16 1 Winner',
+                      awayTeam: 'Round 16 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 2
+                    {
+                      fixtureID: 'quarterFinal2',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 2',
+                      homeTeam: 'Round 16 3 Winner',
+                      awayTeam: 'Group 16 4 Winner',
                       homeScore: 0,
                       awayScore: 0,
                       homeSet: 0,
@@ -1867,8 +2237,8 @@ export default {
                       fixtureID: 'quarterFinal3',
                       bracketID: 'quarterFinal',
                       title: 'Quarter Final 3',
-                      homeTeam: 'Group C1',
-                      awayTeam: 'Group D2',
+                      homeTeam: 'Round 16 5 Winner',
+                      awayTeam: 'Round 16 6 Winner',
                       homeScore: 0,
                       awayScore: 0,
                       homeSet: 0,
@@ -1885,8 +2255,8 @@ export default {
                       fixtureID: 'quarterFinal4',
                       bracketID: 'quarterFinal',
                       title: 'Quarter Final 4',
-                      homeTeam: 'Group D1',
-                      awayTeam: 'Group C2',
+                      homeTeam: 'Round 16 7 Winner',
+                      awayTeam: 'Round 16 8 Winner',
                       homeScore: 0,
                       awayScore: 0,
                       homeSet: 0,
@@ -1976,40 +2346,6 @@ export default {
                       isTie: false,
                     },
                   ],
-                })
-            })
-        } else if (this.tournamentRef.gGroupNumber == 8) {
-          await this.$fire.firestore
-            .collection('tournaments')
-            .doc(this.$route.params.id)
-            .collection('group-stage')
-            .doc('seedings')
-            .update({
-              group_A: selectedData.group_A,
-              group_B: selectedData.group_B,
-              group_C: selectedData.group_C,
-              group_D: selectedData.group_D,
-              group_E: selectedData.group_E,
-              group_F: selectedData.group_F,
-              group_G: selectedData.group_G,
-              group_H: selectedData.group_H,
-            })
-            .then(async () => {
-              // Initialize Fixture
-              await this.$fire.firestore
-                .collection('tournaments')
-                .doc(this.$route.params.id)
-                .collection('group-stage')
-                .doc('fixtures')
-                .set({
-                  fixture_A: [],
-                  fixture_B: [],
-                  fixture_C: [],
-                  fixture_D: [],
-                  fixture_E: [],
-                  fixture_F: [],
-                  fixture_G: [],
-                  fixture_H: [],
                 })
             })
             .then(async () => {

@@ -184,6 +184,132 @@
                     </h1>
                   </div>
 
+                  <!-- Round 16 Fixture -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-3"
+                  >
+                    <div class="d-flex">
+                      <h1 class="text-subtitle-2 font-weight-bold text-left">
+                        Round 16
+                      </h1>
+
+                      <v-btn
+                        v-show="tournamentRef.isRound16 == false"
+                        class="ml-auto"
+                        color="primary"
+                        outlined
+                        small
+                        @click="onLive('round16')"
+                      >
+                        <v-icon small>mdi-record</v-icon>Start Match</v-btn
+                      >
+                    </div>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in round16"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <h1 class="text-caption ml-4 mb-n4 mt-1">
+                              {{ fixture.title }}
+                            </h1>
+                            <v-btn
+                              v-show="
+                                tournamentRef.isRound16 == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, round16)"
+                              color="grey darken-1"
+                              icon
+                            >
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
+
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isRound16 == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                                <span
+                                  v-show="fixture.isTie == true"
+                                  class="text-subtitle-1"
+                                >
+                                  {{ fixture.homeSet }}
+                                </span>
+                              </h1>
+                            </v-col>
+
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
+
+                              <h1
+                                v-show="
+                                  tournamentRef.isRound16 == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isRound16 == true"
+                                class="text-center"
+                              >
+                                <span
+                                  v-show="fixture.isTie == true"
+                                  class="text-subtitle-1"
+                                >
+                                  {{ fixture.awaySet }}
+                                </span>
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
                   <!-- Quarter Final Fixture -->
                   <div
                     v-show="
@@ -999,6 +1125,12 @@ export default {
             this.assign(this.semiFinal, this.quarterFinal)
             this.assign(this.thirdPlace, this.semiFinal)
             this.assign(this.final, this.semiFinal)
+          } else if (this.tournamentRef.gGroupNumber == 8) {
+            this.assign(this.round16, this.finalStageList)
+            this.assign(this.quarterFinal, this.round16)
+            this.assign(this.semiFinal, this.quarterFinal)
+            this.assign(this.thirdPlace, this.semiFinal)
+            this.assign(this.final, this.semiFinal)
           }
         }
       })
@@ -1021,13 +1153,19 @@ export default {
                 )
 
                 // Assign Team A to Semi Final Fixture
-                if (typeof participants.group_A1 != 'undefined') {
+                if (
+                  typeof participants.group_A1 != 'undefined' &&
+                  typeof participants.group_A2 != 'undefined'
+                ) {
                   semiFinal1.homeTeam = participants.group_A1.teamName
                   semiFinal2.awayTeam = participants.group_A2.teamName
                 }
 
                 // Assign Team B to Semi Final Fixture
-                if (typeof participants.group_B1 != 'undefined') {
+                if (
+                  typeof participants.group_B1 != 'undefined' &&
+                  typeof participants.group_B2 != 'undefined'
+                ) {
                   semiFinal2.homeTeam = participants.group_B1.teamName
                   semiFinal1.awayTeam = participants.group_B2.teamName
                 }
@@ -1120,8 +1258,550 @@ export default {
 
                 break
             }
-          } else {
-            console.log('Not Semi Final')
+          } else if (this.tournamentRef.gGroupNumber == 4) {
+            switch (fixture[0].bracketID) {
+              case 'quarterFinal':
+                const quarterFinal1 = fixture.find(
+                  (element) => element.fixtureID === 'quarterFinal1'
+                )
+
+                const quarterFinal2 = fixture.find(
+                  (element) => element.fixtureID === 'quarterFinal2'
+                )
+
+                const quarterFinal3 = fixture.find(
+                  (element) => element.fixtureID === 'quarterFinal3'
+                )
+
+                const quarterFinal4 = fixture.find(
+                  (element) => element.fixtureID === 'quarterFinal4'
+                )
+
+                // Assign Team A to Quarter Final Fixture
+                if (
+                  typeof participants.group_A1 != 'undefined' &&
+                  typeof participants.group_A2 != 'undefined'
+                ) {
+                  quarterFinal1.homeTeam = participants.group_A1.teamName
+                  quarterFinal2.awayTeam = participants.group_A2.teamName
+                }
+
+                // Assign Team B to Quarter Final Fixture
+                if (
+                  typeof participants.group_B1 != 'undefined' &&
+                  typeof participants.group_B2 != 'undefined'
+                ) {
+                  quarterFinal2.homeTeam = participants.group_B1.teamName
+                  quarterFinal1.awayTeam = participants.group_B2.teamName
+                }
+
+                // Assign Team C to Quarter Final Fixture
+                if (
+                  typeof participants.group_C1 != 'undefined' &&
+                  typeof participants.group_C2 != 'undefined'
+                ) {
+                  quarterFinal3.homeTeam = participants.group_C1.teamName
+                  quarterFinal4.awayTeam = participants.group_C2.teamName
+                }
+
+                // Assign Team D to Quarter Final Fixture
+                if (
+                  typeof participants.group_D1 != 'undefined' &&
+                  typeof participants.group_D2 != 'undefined'
+                ) {
+                  quarterFinal4.homeTeam = participants.group_D1.teamName
+                  quarterFinal3.awayTeam = participants.group_D2.teamName
+                }
+
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('final-stage')
+                  .doc('fixtures')
+                  .update({
+                    quarterFinal: fixture,
+                  })
+                break
+              case 'semiFinal':
+                const semiFinal_quarterFinal1 = participants.find(
+                  (element) => element.fixtureID === 'quarterFinal1'
+                )
+
+                const semiFinal_quarterFinal2 = participants.find(
+                  (element) => element.fixtureID === 'quarterFinal2'
+                )
+
+                const semiFinal_quarterFinal3 = participants.find(
+                  (element) => element.fixtureID === 'quarterFinal3'
+                )
+
+                const semiFinal_quarterFinal4 = participants.find(
+                  (element) => element.fixtureID === 'quarterFinal4'
+                )
+
+                const semiFinal1 = fixture.find(
+                  (element) => element.fixtureID === 'semiFinal1'
+                )
+
+                const semiFinal2 = fixture.find(
+                  (element) => element.fixtureID === 'semiFinal2'
+                )
+
+                // Assign Quarter Final 1 Team to Home Semi Final 1 Bracket
+                if (semiFinal_quarterFinal1.winner != null) {
+                  semiFinal1.homeTeam = semiFinal_quarterFinal1.winner
+                }
+
+                // Assign Quarter Final 2 Team to Away Semi Final 1 Bracket
+                if (semiFinal_quarterFinal2.winner != null) {
+                  semiFinal1.awayTeam = semiFinal_quarterFinal2.winner
+                }
+
+                // Assign Quarter Final 3 Team to Home Semi Final 2 Bracket
+                if (semiFinal_quarterFinal3.winner != null) {
+                  semiFinal2.homeTeam = semiFinal_quarterFinal3.winner
+                }
+
+                // Assign Quarter Final 4 Team to Away Semi Final 2 Bracket
+                if (semiFinal_quarterFinal4.winner != null) {
+                  semiFinal2.awayTeam = semiFinal_quarterFinal4.winner
+                }
+
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('final-stage')
+                  .doc('fixtures')
+                  .update({
+                    semiFinal: fixture,
+                  })
+                break
+              case 'thirdPlace':
+                const thirdPlace_semiFinal1 = participants.find(
+                  (element) => element.fixtureID === 'semiFinal1'
+                )
+
+                const thirdPlace_semiFinal2 = participants.find(
+                  (element) => element.fixtureID === 'semiFinal2'
+                )
+
+                const thirdPlace = fixture.find(
+                  (element) => element.fixtureID === '3rdPlace'
+                )
+
+                // Assign Semi Final 1 Loser Team to Final Bracket
+                if (
+                  thirdPlace_semiFinal1.winner != null &&
+                  thirdPlace_semiFinal1.loser != null
+                ) {
+                  thirdPlace.homeTeam = thirdPlace_semiFinal1.loser
+                }
+
+                // Assign Semi Final 2 Loser Team to Final Bracket
+                if (
+                  thirdPlace_semiFinal2.winner != null &&
+                  thirdPlace_semiFinal2.loser != null
+                ) {
+                  thirdPlace.awayTeam = thirdPlace_semiFinal2.loser
+                }
+
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('final-stage')
+                  .doc('fixtures')
+                  .update({
+                    thirdPlace: fixture,
+                  })
+
+                break
+              case 'final':
+                const final_semiFinal1 = participants.find(
+                  (element) => element.fixtureID === 'semiFinal1'
+                )
+
+                const final_semiFinal2 = participants.find(
+                  (element) => element.fixtureID === 'semiFinal2'
+                )
+
+                const final = fixture.find(
+                  (element) => element.fixtureID === 'final'
+                )
+
+                // Assign Semi Final 1 Winner Team to Final Bracket
+                if (
+                  final_semiFinal1.winner != null &&
+                  final_semiFinal1.loser != null
+                ) {
+                  final.homeTeam = final_semiFinal1.winner
+                }
+
+                // Assign Semi Final 2 Winner Team to Final Bracket
+                if (
+                  final_semiFinal2.winner != null &&
+                  final_semiFinal2.loser != null
+                ) {
+                  final.awayTeam = final_semiFinal2.winner
+                }
+
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('final-stage')
+                  .doc('fixtures')
+                  .update({
+                    final: fixture,
+                  })
+
+                break
+            }
+          } else if (this.tournamentRef.gGroupNumber == 8) {
+            switch (fixture[0].bracketID) {
+              case 'round16':
+                const round161 = fixture.find(
+                  (element) => element.fixtureID === 'round161'
+                )
+
+                const round162 = fixture.find(
+                  (element) => element.fixtureID === 'round162'
+                )
+
+                const round163 = fixture.find(
+                  (element) => element.fixtureID === 'round163'
+                )
+
+                const round164 = fixture.find(
+                  (element) => element.fixtureID === 'round164'
+                )
+
+                const round165 = fixture.find(
+                  (element) => element.fixtureID === 'round165'
+                )
+
+                const round166 = fixture.find(
+                  (element) => element.fixtureID === 'round166'
+                )
+
+                const round167 = fixture.find(
+                  (element) => element.fixtureID === 'round167'
+                )
+
+                const round168 = fixture.find(
+                  (element) => element.fixtureID === 'round168'
+                )
+
+                // Assign Team A to Round16 Fixture
+                if (
+                  typeof participants.group_A1 != 'undefined' &&
+                  typeof participants.group_A2 != 'undefined'
+                ) {
+                  round161.homeTeam = participants.group_A1.teamName
+                  round162.awayTeam = participants.group_A2.teamName
+                }
+
+                // Assign Team B to Round16 Fixture
+                if (
+                  typeof participants.group_B1 != 'undefined' &&
+                  typeof participants.group_B2 != 'undefined'
+                ) {
+                  round162.homeTeam = participants.group_B1.teamName
+                  round161.awayTeam = participants.group_B2.teamName
+                }
+
+                // Assign Team C to Round16 Fixture
+                if (
+                  typeof participants.group_C1 != 'undefined' &&
+                  typeof participants.group_C2 != 'undefined'
+                ) {
+                  round163.homeTeam = participants.group_C1.teamName
+                  round164.awayTeam = participants.group_C2.teamName
+                }
+
+                // Assign Team D to Round16 Fixture
+                if (
+                  typeof participants.group_D1 != 'undefined' &&
+                  typeof participants.group_D2 != 'undefined'
+                ) {
+                  round164.homeTeam = participants.group_D1.teamName
+                  round163.awayTeam = participants.group_D2.teamName
+                }
+
+                // Assign Team E to Round16 Fixture
+                if (
+                  typeof participants.group_E1 != 'undefined' &&
+                  typeof participants.group_E2 != 'undefined'
+                ) {
+                  round165.homeTeam = participants.group_E1.teamName
+                  round166.awayTeam = participants.group_E2.teamName
+                }
+
+                // Assign Team F to Round16 Fixture
+                if (
+                  typeof participants.group_F1 != 'undefined' &&
+                  typeof participants.group_F2 != 'undefined'
+                ) {
+                  round166.homeTeam = participants.group_F1.teamName
+                  round165.awayTeam = participants.group_F2.teamName
+                }
+
+                // Assign Team G to Round16 Fixture
+                if (
+                  typeof participants.group_G1 != 'undefined' &&
+                  typeof participants.group_G2 != 'undefined'
+                ) {
+                  round167.homeTeam = participants.group_G1.teamName
+                  round168.awayTeam = participants.group_G2.teamName
+                }
+
+                // Assign Team H to Round16 Fixture
+                if (
+                  typeof participants.group_H1 != 'undefined' &&
+                  typeof participants.group_H2 != 'undefined'
+                ) {
+                  round168.homeTeam = participants.group_H1.teamName
+                  round167.awayTeam = participants.group_H2.teamName
+                }
+
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('final-stage')
+                  .doc('fixtures')
+                  .update({
+                    round16: fixture,
+                  })
+                break
+              case 'quarterFinal':
+                const quarterFinal_round161 = participants.find(
+                  (element) => element.fixtureID === 'round161'
+                )
+
+                const quarterFinal_round162 = participants.find(
+                  (element) => element.fixtureID === 'round162'
+                )
+
+                const quarterFinal_round163 = participants.find(
+                  (element) => element.fixtureID === 'round163'
+                )
+
+                const quarterFinal_round164 = participants.find(
+                  (element) => element.fixtureID === 'round164'
+                )
+
+                const quarterFinal_round165 = participants.find(
+                  (element) => element.fixtureID === 'round165'
+                )
+
+                const quarterFinal_round166 = participants.find(
+                  (element) => element.fixtureID === 'round166'
+                )
+
+                const quarterFinal_round167 = participants.find(
+                  (element) => element.fixtureID === 'round167'
+                )
+
+                const quarterFinal_round168 = participants.find(
+                  (element) => element.fixtureID === 'round168'
+                )
+
+                const quarterFinal1 = fixture.find(
+                  (element) => element.fixtureID === 'quarterFinal1'
+                )
+
+                const quarterFinal2 = fixture.find(
+                  (element) => element.fixtureID === 'quarterFinal2'
+                )
+
+                const quarterFinal3 = fixture.find(
+                  (element) => element.fixtureID === 'quarterFinal3'
+                )
+
+                const quarterFinal4 = fixture.find(
+                  (element) => element.fixtureID === 'quarterFinal4'
+                )
+
+                // Assign Round 16 1 Team to Home Quarter Final 1 Bracket
+                if (quarterFinal_round161.winner != null) {
+                  quarterFinal1.homeTeam = quarterFinal_round161.winner
+                }
+
+                // Assign Round 16 2 Team to Away Quarter Final 1 Bracket
+                if (quarterFinal_round162.winner != null) {
+                  quarterFinal1.awayTeam = quarterFinal_round162.winner
+                }
+
+                // Assign Round 16 3 Team to Home Quarter Final 2 Bracket
+                if (quarterFinal_round163.winner != null) {
+                  quarterFinal2.homeTeam = quarterFinal_round163.winner
+                }
+
+                // Assign Round 16 4 Team to Away Quarter Final 2 Bracket
+                if (quarterFinal_round164.winner != null) {
+                  quarterFinal2.awayTeam = quarterFinal_round164.winner
+                }
+
+                // Assign Round 16 5 Team to Home Quarter Final 3 Bracket
+                if (quarterFinal_round165.winner != null) {
+                  quarterFinal3.homeTeam = quarterFinal_round165.winner
+                }
+
+                // Assign Round 16 6 Team to Away Quarter Final 3 Bracket
+                if (quarterFinal_round166.winner != null) {
+                  quarterFinal3.awayTeam = quarterFinal_round166.winner
+                }
+
+                // Assign Round 16 7 Team to Home Quarter Final 4 Bracket
+                if (quarterFinal_round167.winner != null) {
+                  quarterFinal4.homeTeam = quarterFinal_round167.winner
+                }
+
+                // Assign Round 16 8 Team to Away Quarter Final 4 Bracket
+                if (quarterFinal_round168.winner != null) {
+                  quarterFinal4.awayTeam = quarterFinal_round168.winner
+                }
+
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('final-stage')
+                  .doc('fixtures')
+                  .update({
+                    quarterFinal: fixture,
+                  })
+                break
+              case 'semiFinal':
+                const semiFinal_quarterFinal1 = participants.find(
+                  (element) => element.fixtureID === 'quarterFinal1'
+                )
+
+                const semiFinal_quarterFinal2 = participants.find(
+                  (element) => element.fixtureID === 'quarterFinal2'
+                )
+
+                const semiFinal_quarterFinal3 = participants.find(
+                  (element) => element.fixtureID === 'quarterFinal3'
+                )
+
+                const semiFinal_quarterFinal4 = participants.find(
+                  (element) => element.fixtureID === 'quarterFinal4'
+                )
+
+                const semiFinal1 = fixture.find(
+                  (element) => element.fixtureID === 'semiFinal1'
+                )
+
+                const semiFinal2 = fixture.find(
+                  (element) => element.fixtureID === 'semiFinal2'
+                )
+
+                // Assign Quarter Final 1 Team to Home Semi Final 1 Bracket
+                if (semiFinal_quarterFinal1.winner != null) {
+                  semiFinal1.homeTeam = semiFinal_quarterFinal1.winner
+                }
+
+                // Assign Quarter Final 2 Team to Away Semi Final 1 Bracket
+                if (semiFinal_quarterFinal2.winner != null) {
+                  semiFinal1.awayTeam = semiFinal_quarterFinal2.winner
+                }
+
+                // Assign Quarter Final 3 Team to Home Semi Final 2 Bracket
+                if (semiFinal_quarterFinal3.winner != null) {
+                  semiFinal2.homeTeam = semiFinal_quarterFinal3.winner
+                }
+
+                // Assign Quarter Final 4 Team to Away Semi Final 2 Bracket
+                if (semiFinal_quarterFinal4.winner != null) {
+                  semiFinal2.awayTeam = semiFinal_quarterFinal4.winner
+                }
+
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('final-stage')
+                  .doc('fixtures')
+                  .update({
+                    semiFinal: fixture,
+                  })
+                break
+              case 'thirdPlace':
+                const thirdPlace_semiFinal1 = participants.find(
+                  (element) => element.fixtureID === 'semiFinal1'
+                )
+
+                const thirdPlace_semiFinal2 = participants.find(
+                  (element) => element.fixtureID === 'semiFinal2'
+                )
+
+                const thirdPlace = fixture.find(
+                  (element) => element.fixtureID === '3rdPlace'
+                )
+
+                // Assign Semi Final 1 Loser Team to Final Bracket
+                if (
+                  thirdPlace_semiFinal1.winner != null &&
+                  thirdPlace_semiFinal1.loser != null
+                ) {
+                  thirdPlace.homeTeam = thirdPlace_semiFinal1.loser
+                }
+
+                // Assign Semi Final 2 Loser Team to Final Bracket
+                if (
+                  thirdPlace_semiFinal2.winner != null &&
+                  thirdPlace_semiFinal2.loser != null
+                ) {
+                  thirdPlace.awayTeam = thirdPlace_semiFinal2.loser
+                }
+
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('final-stage')
+                  .doc('fixtures')
+                  .update({
+                    thirdPlace: fixture,
+                  })
+
+                break
+              case 'final':
+                const final_semiFinal1 = participants.find(
+                  (element) => element.fixtureID === 'semiFinal1'
+                )
+
+                const final_semiFinal2 = participants.find(
+                  (element) => element.fixtureID === 'semiFinal2'
+                )
+
+                const final = fixture.find(
+                  (element) => element.fixtureID === 'final'
+                )
+
+                // Assign Semi Final 1 Winner Team to Final Bracket
+                if (
+                  final_semiFinal1.winner != null &&
+                  final_semiFinal1.loser != null
+                ) {
+                  final.homeTeam = final_semiFinal1.winner
+                }
+
+                // Assign Semi Final 2 Winner Team to Final Bracket
+                if (
+                  final_semiFinal2.winner != null &&
+                  final_semiFinal2.loser != null
+                ) {
+                  final.awayTeam = final_semiFinal2.winner
+                }
+
+                await this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(this.$route.params.id)
+                  .collection('final-stage')
+                  .doc('fixtures')
+                  .update({
+                    final: fixture,
+                  })
+
+                break
+            }
           }
         } catch (error) {
           console.log(error)
@@ -1133,6 +1813,22 @@ export default {
     async onLive(type) {
       try {
         switch (type) {
+          case 'round16':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .update({
+                isRound16: true,
+              })
+            break
+          case 'quarterfinal':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .update({
+                isQuarterFinal: true,
+              })
+            break
           case 'semifinal':
             await this.$fire.firestore
               .collection('tournaments')
@@ -1204,6 +1900,26 @@ export default {
         }
 
         switch (bracketID) {
+          case 'round16':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                round16: fixture,
+              })
+            break
+          case 'quarterFinal':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                quarterFinal: fixture,
+              })
+            break
           case 'semiFinal':
             await this.$fire.firestore
               .collection('tournaments')
@@ -1247,6 +1963,26 @@ export default {
       let bracketID = data.bracketID
       try {
         switch (bracketID) {
+          case 'round16':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                round16: fixture,
+              })
+            break
+          case 'quarterFinal':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                quarterFinal: fixture,
+              })
+            break
           case 'semiFinal':
             await this.$fire.firestore
               .collection('tournaments')
@@ -1293,6 +2029,26 @@ export default {
         data.isMatchStart = true
 
         switch (bracketID) {
+          case 'round16':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                round16: fixture,
+              })
+            break
+          case 'quarterFinal':
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('fixtures')
+              .update({
+                quarterFinal: fixture,
+              })
+            break
           case 'semiFinal':
             await this.$fire.firestore
               .collection('tournaments')
