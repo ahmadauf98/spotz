@@ -1425,10 +1425,7 @@
 
                   <!-- Group E Table -->
                   <div
-                    v-show="
-                      tournamentRef.gGroupNumber == 4 ||
-                      tournamentRef.gGroupNumber == 8
-                    "
+                    v-show="tournamentRef.gGroupNumber == 8"
                     class="text-center justify-center mt-5"
                   >
                     <div class="d-flex align-center">
@@ -1496,10 +1493,7 @@
 
                   <!-- Group F Table -->
                   <div
-                    v-show="
-                      tournamentRef.gGroupNumber == 4 ||
-                      tournamentRef.gGroupNumber == 8
-                    "
+                    v-show="tournamentRef.gGroupNumber == 8"
                     class="text-center justify-center mt-5"
                   >
                     <div class="d-flex align-center">
@@ -1567,10 +1561,7 @@
 
                   <!-- Group G Table -->
                   <div
-                    v-show="
-                      tournamentRef.gGroupNumber == 4 ||
-                      tournamentRef.gGroupNumber == 8
-                    "
+                    v-show="tournamentRef.gGroupNumber == 8"
                     class="text-center justify-center mt-5"
                   >
                     <div class="d-flex align-center">
@@ -1638,10 +1629,7 @@
 
                   <!-- Group H Table -->
                   <div
-                    v-show="
-                      tournamentRef.gGroupNumber == 4 ||
-                      tournamentRef.gGroupNumber == 8
-                    "
+                    v-show="tournamentRef.gGroupNumber == 8"
                     class="text-center justify-center mt-5"
                   >
                     <div class="d-flex align-center">
@@ -2065,6 +2053,10 @@ export default {
       const gdA = Number(a.goals_difference)
       const gdB = Number(b.goals_difference)
 
+      // Compare by Goal_For
+      const gfA = Number(a.goals_for)
+      const gfB = Number(b.goals_for)
+
       let comparison = 0
 
       // Compare by Points
@@ -2079,11 +2071,18 @@ export default {
         } else if (gdA < gdB) {
           comparison = 1
         } else {
-          // Compare by TeamName
-          if (teamNameA > teamNameB) {
-            comparison = 1
-          } else if (teamNameA < teamNameB) {
+          // Compare by Goal_For
+          if (gfA > gfB) {
             comparison = -1
+          } else if (gfA < gfB) {
+            comparison = 1
+          } else {
+            // Compare by TeamName
+            if (teamNameA > teamNameB) {
+              comparison = 1
+            } else if (teamNameA < teamNameB) {
+              comparison = -1
+            }
           }
         }
       }
@@ -2647,22 +2646,160 @@ export default {
               )
             break
           case 'table_C':
-            // code block
+            this.group_1 = {
+              id: 'group_C1',
+              groupName: 'Group C',
+              teamName: table[0].teamName,
+            }
+
+            this.group_2 = {
+              id: 'group_C2',
+              groupName: 'Group C',
+              teamName: table[1].teamName,
+            }
+
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('participants')
+              .set(
+                {
+                  group_C1: this.group_1,
+                  group_C2: this.group_2,
+                },
+                { merge: true }
+              )
             break
           case 'table_D':
-            // code block
+            this.group_1 = {
+              id: 'group_D1',
+              groupName: 'Group D',
+              teamName: table[0].teamName,
+            }
+
+            this.group_2 = {
+              id: 'group_D2',
+              groupName: 'Group D',
+              teamName: table[1].teamName,
+            }
+
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('participants')
+              .set(
+                {
+                  group_D1: this.group_1,
+                  group_D2: this.group_2,
+                },
+                { merge: true }
+              )
             break
           case 'table_E':
-            // code block
+            this.group_1 = {
+              id: 'group_E1',
+              groupName: 'Group E',
+              teamName: table[0].teamName,
+            }
+
+            this.group_2 = {
+              id: 'group_E2',
+              groupName: 'Group E',
+              teamName: table[1].teamName,
+            }
+
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('participants')
+              .set(
+                {
+                  group_E1: this.group_1,
+                  group_E2: this.group_2,
+                },
+                { merge: true }
+              )
             break
           case 'table_F':
-            // code block
+            this.group_1 = {
+              id: 'group_F1',
+              groupName: 'Group F',
+              teamName: table[0].teamName,
+            }
+
+            this.group_2 = {
+              id: 'group_F2',
+              groupName: 'Group F',
+              teamName: table[1].teamName,
+            }
+
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('participants')
+              .set(
+                {
+                  group_F1: this.group_1,
+                  group_F2: this.group_2,
+                },
+                { merge: true }
+              )
             break
           case 'table_G':
-            // code block
+            this.group_1 = {
+              id: 'group_G1',
+              groupName: 'Group G',
+              teamName: table[0].teamName,
+            }
+
+            this.group_2 = {
+              id: 'group_G2',
+              groupName: 'Group G',
+              teamName: table[1].teamName,
+            }
+
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('participants')
+              .set(
+                {
+                  group_G1: this.group_1,
+                  group_G2: this.group_2,
+                },
+                { merge: true }
+              )
             break
           case 'table_H':
-            // code block
+            this.group_1 = {
+              id: 'group_H1',
+              groupName: 'Group H',
+              teamName: table[0].teamName,
+            }
+
+            this.group_2 = {
+              id: 'group_H2',
+              groupName: 'Group H',
+              teamName: table[1].teamName,
+            }
+
+            await this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.$route.params.id)
+              .collection('final-stage')
+              .doc('participants')
+              .set(
+                {
+                  group_H1: this.group_1,
+                  group_H2: this.group_2,
+                },
+                { merge: true }
+              )
             break
         }
       } catch (error) {
