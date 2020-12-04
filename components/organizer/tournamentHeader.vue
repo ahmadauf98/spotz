@@ -65,7 +65,7 @@
               <v-row class="d-flex align-center mt-n6">
                 <!-- Title -->
                 <v-col cols="8" md="7" xl="10">
-                  <h1 class="text-h4 font-weight-bold mb-n3">
+                  <h1 class="text-h4 font-weight-bold mb-md-n3">
                     {{ tournamentRef.title }}
                   </h1>
                 </v-col>

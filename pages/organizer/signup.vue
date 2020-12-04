@@ -165,7 +165,7 @@ export default {
       confirmPassword: '',
       checkbox: false,
 
-      // Refresh Page
+      // Loading State
       isLoading: false,
     }
   },
@@ -178,6 +178,7 @@ export default {
   methods: {
     // Signup a user email
     async emailSignup() {
+      // Loading State -> true
       this.isLoading = true
       try {
         if (this.name === null || this.name === '') {

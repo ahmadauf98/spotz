@@ -38,7 +38,7 @@
                         Status
                       </h1>
                       <v-chip
-                        v-if="tournamentProf.status == false"
+                        v-if="tournamentRef.status == false"
                         class="ml-auto mr-2 font-weight-medium"
                         color="warning"
                         label
@@ -71,22 +71,32 @@
                         class="text-subtitle-1 text-justify font-weight-regular"
                       >
                         Whether your tournament is public (visible to everyone)
-                        or draft (only accessible by host). Use the publish
-                        button to change the status.
+                        or draft (only accessible by host & team managers). Use
+                        the publish button to change the status.
                       </h1>
                     </div>
 
                     <v-card-actions class="mt-2 d-flex">
                       <v-btn
-                        v-if="tournamentProf.status == false"
+                        v-if="tournamentRef.status == false"
                         @click="changeStatus"
                         color="green darken-1"
                         class="ml-auto px-5 font-weight-regular text-capitalize"
+                        width="120"
                         depressed
                         dark
                       >
-                        Publish
-                        <v-icon size="20" class="ml-1">mdi-send</v-icon>
+                        <span v-if="isLoading == false">
+                          Publish
+                          <v-icon size="20" class="ml-1">mdi-send</v-icon>
+                        </span>
+
+                        <v-progress-circular
+                          v-else
+                          :size="20"
+                          indeterminate
+                          color="white"
+                        ></v-progress-circular>
                       </v-btn>
 
                       <v-btn
@@ -94,11 +104,21 @@
                         @click="changeStatus"
                         color="yellow darken-2"
                         class="ml-auto px-5 font-weight-regular text-capitalize"
+                        width="120"
                         depressed
                         dark
                       >
-                        Draft
-                        <v-icon size="20" class="ml-1">mdi-archive</v-icon>
+                        <span v-if="isLoading == false">
+                          Draft
+                          <v-icon size="20" class="ml-1">mdi-archive</v-icon>
+                        </span>
+
+                        <v-progress-circular
+                          v-else
+                          :size="20"
+                          indeterminate
+                          color="white"
+                        ></v-progress-circular>
                       </v-btn>
                     </v-card-actions>
                   </v-card>
@@ -117,8 +137,8 @@
 
                       <v-btn
                         v-show="
-                          tournamentProf.isOpen == false &&
-                          this.managerlength < tournamentProf.participants
+                          tournamentRef.isOpen == false &&
+                          this.managerlength < tournamentRef.participants
                         "
                         @click="overlay = !overlay"
                         class="ml-auto mt-n2"
@@ -127,15 +147,38 @@
                       >
                         <v-icon>mdi-account-multiple-plus</v-icon>
                       </v-btn>
+
+                      <v-chip
+                        v-show="
+                          this.managerlength == tournamentRef.participants
+                        "
+                        class="ml-auto mr-2 font-weight-medium"
+                        color="green darken-1"
+                        label
+                        small
+                        dark
+                      >
+                        Full</v-chip
+                      >
                     </div>
 
                     <div class="d-flex mt-5 mx-1">
                       <h1
+                        v-show="tournamentRef.isOpen == true"
+                        class="text-subtitle-1 text-justify font-weight-regular mb-7 mb-md-0 mb-lg-7 mb-xl-0"
+                      >
+                        You can accept team manager request in the notifications
+                        list, then their name will be in the list of managers
+                        (one manager per team).
+                      </h1>
+
+                      <h1
+                        v-show="tournamentRef.isOpen == false"
                         class="text-subtitle-1 text-justify font-weight-regular"
                       >
-                        You can invite team managers by email, once they approve
-                        to participate in your tournament, their name will be in
-                        the list of managers (one manager per team).
+                        You can invite team manager by their email, once they
+                        accept to participate in your tournament, their name
+                        will be in the list of managers (one manager per team).
                       </h1>
                     </div>
 
@@ -170,12 +213,23 @@
 
                     <div class="d-flex mt-5 mx-1">
                       <h1
-                        class="text-subtitle-1 text-justify font-weight-regular"
+                        v-show="tournamentRef.isGroupDraw == true"
+                        class="text-subtitle-1 text-justify font-weight-regular mb-7 mb-md-7 mb-lg-0"
+                      >
+                        The tournament already have fixtures. You can view the
+                        team draw here. To update any fixtures of tournament,
+                        kindly go to the <strong>group stage</strong> and
+                        <strong>final stage</strong> section.
+                      </h1>
+
+                      <h1
+                        v-show="tournamentRef.isGroupDraw == false"
+                        class="text-subtitle-1 text-justify font-weight-regular mb-7 mb-md-7 mb-lg-0"
                       >
                         The tournament does not have fixtures yet. You should
-                        make a draw of teams after <strong>approve</strong> all
-                        registration application by
-                        <strong>all managers of the teams.</strong>
+                        make a team draw after <strong>approve</strong> all
+                        registration application from
+                        <strong>all manager of the team.</strong>
                       </h1>
                     </div>
 
@@ -183,14 +237,23 @@
                       <v-btn
                         :to="`/organizer/auth/tournaments/${this.$route.params.id}/overview/seedings`"
                         color="primary"
-                        :disabled="
-                          tournamentProf.participants != teamListNumber
-                        "
-                        class="ml-auto text-capitalize"
+                        :disabled="tournamentRef.participants != teamListNumber"
+                        class="ml-auto text-capitalize mb-n7 mb-md-0"
                         text
                       >
-                        <v-icon size="20" class="mr-1">mdi-pencil</v-icon>
-                        Tournament Draw
+                        <span v-show="tournamentRef.isGroupDraw == true">
+                          <v-icon size="20" class="mr-1"
+                            >mdi-clipboard-outline</v-icon
+                          >
+                          View Tournament
+                        </span>
+
+                        <span v-show="tournamentRef.isGroupDraw == false">
+                          <v-icon size="20" class="mr-1"
+                            >mdi-clipboard-edit-outline</v-icon
+                          >
+                          Draw Tournament
+                        </span>
                       </v-btn>
                     </v-card-actions>
                   </v-card>
@@ -221,16 +284,14 @@
 
                     <v-card-actions class="mt-2 d-flex">
                       <v-btn
-                        v-if="tournamentProf.registrationStatus == false"
+                        v-if="tournamentRef.registrationStatus == false"
                         :to="`/organizer/auth/tournaments/${this.$route.params.id}/overview/registration`"
                         color="primary"
-                        class="ml-auto"
+                        class="ml-auto text-capitalize"
                         text
                       >
-                        <v-icon size="20" class="mr-2"
-                          >mdi-ticket-account</v-icon
-                        >
-                        Setup
+                        <v-icon size="20" class="mr-2">mdi-equal-box </v-icon>
+                        Setup Format
                       </v-btn>
 
                       <v-btn
@@ -241,9 +302,9 @@
                         text
                       >
                         <v-icon size="20" class="mr-1"
-                          >mdi-ticket-account</v-icon
+                          >mdi-check-box-multiple-outline</v-icon
                         >
-                        Approval
+                        Registration Approval
                       </v-btn>
                     </v-card-actions>
                   </v-card>
@@ -329,7 +390,7 @@ export default {
   data() {
     return {
       // User Input Data
-      tournamentProf: '',
+      tournamentRef: '',
       tournamentStatus: false,
       userEmail: '',
       getUser: '',
@@ -339,6 +400,9 @@ export default {
       // Manager Invitation Overlay
       opacity: 0.5,
       overlay: false,
+
+      // Loading State
+      isLoading: false,
     }
   },
 
@@ -353,7 +417,7 @@ export default {
       .collection('tournaments')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
-        this.tournamentProf = doc.data()
+        this.tournamentRef = doc.data()
         this.managerlength = doc.data().managerRef.length
       })
 
@@ -370,6 +434,8 @@ export default {
   methods: {
     // Update Status in Database
     changeStatus() {
+      // Loading State -> true
+      this.isLoading = true
       this.tournamentStatus = !this.tournamentStatus
       this.onChangeStatus()
     },
@@ -382,7 +448,13 @@ export default {
           .update({
             status: this.tournamentStatus,
           })
+          .then(() => {
+            // Loading State -> false
+            this.isLoading = false
+          })
       } catch (error) {
+        // Loading State -> false
+        this.isLoading = false
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
@@ -410,16 +482,15 @@ export default {
           .update({
             notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
               messages:
-                'You are invited to participate in ' +
-                this.tournamentProf.title,
-              tournamentID: this.tournamentProf.tournamentID,
+                'You are invited to participate in ' + this.tournamentRef.title,
+              tournamentID: this.tournamentRef.tournamentID,
               isAction: true,
             }),
           })
           .then(
             await this.$fire.firestore
               .collection('tournaments')
-              .doc(this.tournamentProf.tournamentID)
+              .doc(this.tournamentRef.tournamentID)
               .update({
                 managerRef: firebase.firestore.FieldValue.arrayUnion({
                   uid: this.getUser[0].uid,

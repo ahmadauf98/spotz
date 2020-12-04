@@ -33,14 +33,16 @@
               outlined
               tile
             >
-              <v-row class="d-flex align-center">
+              <v-row class="mt-n4 mb-n5 d-flex align-center">
                 <v-col cols="12" md="8" order="2" order-md="1">
                   <div>
-                    <h1 class="text-subtitle-1 font-weight-bold mb-4">
+                    <h1
+                      class="text-center text-md-left text-subtitle-1 font-weight-bold mb-4"
+                    >
                       List of Managers
                     </h1>
                     <h1
-                      v-show="tournamentProf.isOpen == true"
+                      v-show="tournamentRef.isOpen == true"
                       class="text-subtitle-1 font-weight-regular mb-5"
                     >
                       Currently there is no manager yet in your tournament.
@@ -49,7 +51,7 @@
                     </h1>
 
                     <h1
-                      v-show="tournamentProf.isOpen == false"
+                      v-show="tournamentRef.isOpen == false"
                       class="text-subtitle-1 font-weight-regular mb-5"
                     >
                       Currently there is no manager yet in your tournament.
@@ -58,7 +60,7 @@
                     </h1>
 
                     <v-btn
-                      v-show="tournamentProf.isOpen == false"
+                      v-show="tournamentRef.isOpen == false"
                       @click="overlay = !overlay"
                       class="font-weight-regular text-capitalize"
                       color="primary"
@@ -100,8 +102,8 @@
 
                 <v-btn
                   v-show="
-                    tournamentProf.isOpen == false &&
-                    this.managerlength < tournamentProf.participants
+                    tournamentRef.isOpen == false &&
+                    this.managerlength < tournamentRef.participants
                   "
                   @click="overlay = !overlay"
                   class="ml-auto mt-n2"
@@ -116,6 +118,7 @@
                 <template v-slot:default>
                   <thead>
                     <tr>
+                      <th class="text-center">No</th>
                       <th class="text-left">Account Name</th>
                       <th class="text-center">Email</th>
                       <th class="text-center">Status</th>
@@ -124,40 +127,41 @@
                   </thead>
                   <tbody>
                     <tr
-                      v-for="tournament in tournamentRef"
-                      :key="tournament.uid"
+                      v-for="(manager, index) in managerList"
+                      :key="manager.uid"
                       class="text-center"
                     >
-                      <td class="text-left">{{ tournament.name }}</td>
-                      <td>{{ tournament.email }}</td>
+                      <td class="text-center">{{ index + 1 }}</td>
+                      <td class="text-left">{{ manager.name }}</td>
+                      <td>{{ manager.email }}</td>
                       <td
-                        v-if="tournament.status === 'pending'"
+                        v-if="manager.status === 'pending'"
                         class="text-capitalize text-pending"
                       >
-                        {{ tournament.status }}
+                        {{ manager.status }}
                       </td>
                       <td
-                        v-else-if="tournament.status === 'active'"
+                        v-else-if="manager.status === 'active'"
                         class="text-capitalize text-active"
                       >
-                        {{ tournament.status }}
+                        {{ manager.status }}
                       </td>
                       <td
-                        v-else-if="tournament.status === 'disabled'"
+                        v-else-if="manager.status === 'disabled'"
                         class="text-capitalize text-disabled"
                       >
-                        {{ tournament.status }}
+                        {{ manager.status }}
                       </td>
                       <td>
                         <!-- Disable/ Activate Account -->
-                        <v-menu v-if="tournament.status == 'active'">
+                        <v-menu v-if="manager.status == 'active'">
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn v-bind="attrs" v-on="on" icon>
                               <v-icon>mdi-square-edit-outline</v-icon>
                             </v-btn>
                           </template>
                           <v-list>
-                            <v-list-item @click="onDisabled(tournament.uid)">
+                            <v-list-item @click="onDisabled(manager.uid)">
                               <v-list-item-title>
                                 Disabled Account
                               </v-list-item-title>
@@ -168,7 +172,7 @@
                         <v-menu v-else>
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
-                              :disabled="tournament.status == 'pending'"
+                              :disabled="manager.status == 'pending'"
                               v-bind="attrs"
                               v-on="on"
                               icon
@@ -177,7 +181,7 @@
                             </v-btn>
                           </template>
                           <v-list>
-                            <v-list-item @click="onEnable(tournament.uid)">
+                            <v-list-item @click="onEnable(manager.uid)">
                               <v-list-item-title>
                                 Enable Account
                               </v-list-item-title>
@@ -188,8 +192,8 @@
                         <!-- Delete Account -->
                         <v-menu
                           v-if="
-                            tournament.status == 'active' ||
-                            tournament.status == 'disabled'
+                            manager.status == 'active' ||
+                            manager.status == 'disabled'
                           "
                         >
                           <template v-slot:activator="{ on, attrs }">
@@ -200,10 +204,7 @@
                           <v-list>
                             <v-list-item
                               @click="
-                                onDeleteActive(
-                                  tournament.uid,
-                                  tournament.status
-                                )
+                                onDeleteActive(manager.uid, manager.status)
                               "
                             >
                               <v-list-item-title>
@@ -223,11 +224,11 @@
                             <v-list-item
                               @click="
                                 onDeletePending(
-                                  tournament.uid,
-                                  tournament.isAction,
-                                  tournament.messages,
-                                  tournament.tournamentID,
-                                  tournament.status
+                                  manager.uid,
+                                  manager.isAction,
+                                  manager.messages,
+                                  manager.tournamentID,
+                                  manager.status
                                 )
                               "
                             >
@@ -336,9 +337,8 @@ export default {
   data() {
     return {
       // User Input Data
-      tournamentProf: '',
-      tournamentTempRef: [],
-      tournamentRef: [],
+      tournamentRef: '',
+      managerList: [],
       isAction: '',
       messages: '',
       tournamentID: '',
@@ -364,7 +364,7 @@ export default {
       .collection('tournaments')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
-        this.tournamentProf = doc.data()
+        this.tournamentRef = doc.data()
         this.managerlength = doc.data().managerRef.length
         this.tournamentTempRef = []
 
@@ -393,8 +393,7 @@ export default {
               })
             })
         })
-        this.tournamentRef = this.tournamentTempRef
-        // console.log(this.tournamentTempRef)
+        this.managerList = this.tournamentTempRef
       })
   },
 
@@ -417,16 +416,15 @@ export default {
           .update({
             notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
               messages:
-                'You are invited to participate in ' +
-                this.tournamentProf.title,
-              tournamentID: this.tournamentProf.tournamentID,
+                'You are invited to participate in ' + this.tournamentRef.title,
+              tournamentID: this.tournamentRef.tournamentID,
               isAction: true,
             }),
           })
           .then(
             await this.$fire.firestore
               .collection('tournaments')
-              .doc(this.tournamentProf.tournamentID)
+              .doc(this.tournamentRef.tournamentID)
               .update({
                 managerRef: firebase.firestore.FieldValue.arrayUnion({
                   uid: this.getUser[0].uid,
@@ -481,13 +479,13 @@ export default {
           .doc(uid)
           .update({
             tournamentsMgr: firebase.firestore.FieldValue.arrayRemove(
-              this.tournamentProf.tournamentID
+              this.tournamentRef.tournamentID
             ),
           })
           .then(
             await this.$fire.firestore
               .collection('tournaments')
-              .doc(this.tournamentProf.tournamentID)
+              .doc(this.tournamentRef.tournamentID)
               .update({
                 managerRef: firebase.firestore.FieldValue.arrayRemove({
                   status: status,
@@ -528,7 +526,7 @@ export default {
           .then(
             await this.$fire.firestore
               .collection('tournaments')
-              .doc(this.tournamentProf.tournamentID)
+              .doc(this.tournamentRef.tournamentID)
               .update({
                 managerRef: firebase.firestore.FieldValue.arrayRemove({
                   status: status,
@@ -558,7 +556,7 @@ export default {
       try {
         await this.$fire.firestore
           .collection('tournaments')
-          .doc(this.tournamentProf.tournamentID)
+          .doc(this.tournamentRef.tournamentID)
           .update({
             managerRef: firebase.firestore.FieldValue.arrayUnion({
               status: 'disabled',
@@ -568,7 +566,7 @@ export default {
           .then(
             await this.$fire.firestore
               .collection('tournaments')
-              .doc(this.tournamentProf.tournamentID)
+              .doc(this.tournamentRef.tournamentID)
               .update({
                 managerRef: firebase.firestore.FieldValue.arrayRemove({
                   status: 'active',
@@ -598,7 +596,7 @@ export default {
       try {
         await this.$fire.firestore
           .collection('tournaments')
-          .doc(this.tournamentProf.tournamentID)
+          .doc(this.tournamentRef.tournamentID)
           .update({
             managerRef: firebase.firestore.FieldValue.arrayUnion({
               status: 'active',
@@ -608,7 +606,7 @@ export default {
           .then(
             await this.$fire.firestore
               .collection('tournaments')
-              .doc(this.tournamentProf.tournamentID)
+              .doc(this.tournamentRef.tournamentID)
               .update({
                 managerRef: firebase.firestore.FieldValue.arrayRemove({
                   status: 'disabled',

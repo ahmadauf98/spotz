@@ -33,14 +33,13 @@
               outlined
               tile
             >
-              <div class="d-flex">
-                <h1 class="text-h6 font-weight-bold mb-1">
-                  List of Official Team
-                </h1>
-              </div>
-
-              <v-row class="mb-n5 d-flex align-center">
+              <v-row class="mt-n4 mb-n5 d-flex align-center">
                 <v-col cols="12" md="8" order="2" order-md="1">
+                  <h1
+                    class="mb-2 text-center text-md-left text-subtitle-1 font-weight-bold"
+                  >
+                    List of Official Team
+                  </h1>
                   <div>
                     <h1
                       class="text-subtitle-1 font-weight-regular text-center text-md-left mb-5"
@@ -59,7 +58,7 @@
                   order="1"
                   order-md="2"
                 >
-                  <div class="px-5 mt-md-n8 mt-lg-n3 mt-xl-n6">
+                  <div class="px-5">
                     <img
                       src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fmanagers-tournament.svg?alt=media&token=ec47c873-a84d-4353-b823-e0fe7bff619b"
                       width="220px"
@@ -85,6 +84,7 @@
                 <template v-slot:default>
                   <thead>
                     <tr>
+                      <th class="text-center">No</th>
                       <th class="text-left">Team Name</th>
                       <th class="text-center">Manager Name</th>
                       <th class="text-center">Manager Email</th>
@@ -93,14 +93,15 @@
                   </thead>
                   <tbody>
                     <tr
-                      v-for="list in officialList"
+                      v-for="(list, index) in officialList"
                       :key="list.uid"
                       class="text-center"
                     >
+                      <td class="text-center">{{ index + 1 }}</td>
                       <td class="text-left">{{ list.teamName }}</td>
-                      <td>{{ list.managerName }}</td>
-                      <td>{{ list.managerEmail }}</td>
-                      <td>
+                      <td class="text-center">{{ list.managerName }}</td>
+                      <td class="text-center">{{ list.managerEmail }}</td>
+                      <td class="text-center">
                         <v-btn @click="updateTeam(list)" icon>
                           <v-icon>mdi-square-edit-outline</v-icon>
                         </v-btn>
@@ -117,7 +118,7 @@
 
           <!-- Right Side -->
           <v-col cols="12" lg="4" xl="3" order="1" order-lg="2">
-            <tournamentBtn />
+            <tournamentInfo />
           </v-col>
         </v-row>
 
@@ -232,7 +233,7 @@
 <script>
 import { mapState } from 'vuex'
 import tournamentHeader from '~/components/organizer/tournamentHeader'
-import tournamentBtn from '~/components/organizer/tournamentBtn'
+import tournamentInfo from '~/components/organizer/tournamentInfo'
 
 export default {
   middleware: 'authenticated',
@@ -241,7 +242,7 @@ export default {
 
   components: {
     tournamentHeader,
-    tournamentBtn,
+    tournamentInfo,
   },
 
   data() {

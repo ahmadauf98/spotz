@@ -43,6 +43,7 @@
                 <template v-slot:default>
                   <thead>
                     <tr>
+                      <th class="text-center">No</th>
                       <th class="text-left">Team Name</th>
                       <th class="text-center">Manager Name</th>
                       <th class="text-center">Manager Email</th>
@@ -50,13 +51,14 @@
                   </thead>
                   <tbody>
                     <tr
-                      v-for="list in officialList"
+                      v-for="(list, index) in officialList"
                       :key="list.uid"
                       class="text-center"
                     >
+                      <td class="text-center">{{ index + 1 }}</td>
                       <td class="text-left">{{ list.teamName }}</td>
-                      <td>{{ list.managerName }}</td>
-                      <td>{{ list.managerEmail }}</td>
+                      <td class="text-center">{{ list.managerName }}</td>
+                      <td class="text-center">{{ list.managerEmail }}</td>
                     </tr>
                   </tbody>
                 </template>
@@ -87,15 +89,17 @@
                         ensure you pick the right team.
                       </h1>
 
-                      <v-btn
-                        class="font-weight-regular mb-4 text-capitalize"
-                        @click="onView(groupStageData)"
-                        dark
-                        depressed
-                        color="primary"
-                      >
-                        Draw Group
-                      </v-btn>
+                      <div class="d-flex justify-center justify-md-start">
+                        <v-btn
+                          class="font-weight-regular mb-4 text-capitalize"
+                          @click="onView(groupStageData)"
+                          dark
+                          depressed
+                          color="primary"
+                        >
+                          Draw Group
+                        </v-btn>
+                      </div>
                     </div>
                   </v-col>
                   <v-col

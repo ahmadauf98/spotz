@@ -248,7 +248,7 @@
 
           <!-- Right Side -->
           <v-col cols="12" lg="4" xl="3" order="1" order-lg="2">
-            <tournamentBtn />
+            <tournamentInfo />
           </v-col>
         </v-row>
       </v-container>
@@ -258,8 +258,8 @@
 
 <script>
 import { mapState } from 'vuex'
-import tournamentHeader from '~/components/organizer/tournamentHeader.vue'
-import tournamentBtn from '~/components/organizer/tournamentBtn.vue'
+import tournamentHeader from '~/components/organizer/tournamentHeader'
+import tournamentInfo from '~/components/organizer/tournamentInfo'
 
 export default {
   middleware: 'authenticated',
@@ -268,7 +268,7 @@ export default {
 
   components: {
     tournamentHeader,
-    tournamentBtn,
+    tournamentInfo,
   },
 
   data() {

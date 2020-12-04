@@ -33,15 +33,16 @@
               outlined
               tile
             >
-              <div class="d-flex">
-                <h1 class="text-subtitle-1 font-weight-bold">Final Stage</h1>
-              </div>
-
-              <v-row class="mb-n5 d-flex align-center">
+              <v-row class="mt-n4 mb-n5 d-flex align-center">
                 <v-col cols="12" md="8" order="2" order-md="1">
+                  <h1
+                    class="mb-2 text-center text-md-left text-subtitle-1 font-weight-bold"
+                  >
+                    Final Stage
+                  </h1>
                   <div>
                     <h1
-                      class="text-subtitle-2 font-weight-regular text-center text-md-left mb-5"
+                      class="text-subtitle-1 font-weight-regular text-center text-md-left mb-5"
                     >
                       Currently there is no group draw yet. Kindly click on
                       <strong>Draw Group</strong> button to draw team in a
@@ -49,16 +50,17 @@
                       ensure you pick the right team.
                     </h1>
 
-                    <v-btn
-                      class="font-weight-regular mb-4 text-capitalize"
-                      :to="`/organizer/auth/tournaments/${this.$route.params.id}/overview/seedings`"
-                      :disabled="tournamentRef.participants != teamListNumber"
-                      dark
-                      depressed
-                      color="primary"
-                    >
-                      Manage Seedings
-                    </v-btn>
+                    <div class="d-flex justify-center justify-md-start">
+                      <v-btn
+                        class="font-weight-regular mb-4 text-capitalize"
+                        :to="`/organizer/auth/tournaments/${this.$route.params.id}/overview/seedings`"
+                        :disabled="tournamentRef.participants != teamListNumber"
+                        color="primary"
+                        depressed
+                      >
+                        Manage Seedings
+                      </v-btn>
+                    </div>
                   </div>
                 </v-col>
                 <v-col
@@ -68,7 +70,7 @@
                   order="1"
                   order-md="2"
                 >
-                  <div class="px-5 mt-md-n8 mt-lg-n3 mt-xl-n6">
+                  <div class="px-5">
                     <img
                       src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fmanagers-tournament.svg?alt=media&token=ec47c873-a84d-4353-b823-e0fe7bff619b"
                       width="220px"

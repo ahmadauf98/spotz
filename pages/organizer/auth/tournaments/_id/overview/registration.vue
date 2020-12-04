@@ -30,7 +30,7 @@
             <v-card class="mx-auto py-10 mt-n3 mt-lg-0 px-9 mb-5" outlined tile>
               <div class="d-flex">
                 <h1 class="text-h6 font-weight-bold mb-1">
-                  Team Registration Setup
+                  Team Registration Format Setup
                 </h1>
               </div>
 
@@ -56,7 +56,7 @@
                   </h1>
                 </div>
 
-                <v-col cols="1" class="mt-8 ml-auto">
+                <v-col cols="2" xl="1" class="mt-8 ml-auto">
                   <v-text-field
                     type="number"
                     v-model="numPlayers"
