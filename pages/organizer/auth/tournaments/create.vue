@@ -552,7 +552,13 @@
                     block
                     dark
                   >
-                    Continue
+                    <span v-if="isLoading == false"> Create </span>
+                    <v-progress-circular
+                      v-else
+                      :size="20"
+                      indeterminate
+                      color="white"
+                    ></v-progress-circular>
                   </v-btn>
                 </v-col>
               </v-row>
@@ -612,6 +618,9 @@ export default {
     // Calendar Selection
     menuStart: false,
     menuEnd: false,
+
+    // Loading State
+    isLoading: false,
   }),
 
   // Fetch Notification Data from Vuex
@@ -622,7 +631,7 @@ export default {
     },
   },
 
-  // GET - Fetch User's Data
+  // Fetch & Refresh User's Data
   mounted() {
     var userId = this.$fire.auth.currentUser.uid
     this.hostName = userId
@@ -694,8 +703,11 @@ export default {
 
     // Create Tournament
     async createTournament() {
+      // Loading state -> true
+      this.isLoading = true
+
       try {
-        // Generate permalink for OrganizerID
+        // Generate permalink for tournamentID
         function doDashes(str) {
           var re = /[^a-z0-9]+/gi
           var re2 = /^-*|-*$/g
@@ -704,6 +716,9 @@ export default {
         }
 
         if (this.gTeamNumbers < 3 || this.gTeamNumbers > 6) {
+          // Loading State -> False
+          this.isLoading = false
+          // Notify User -> Form Validation Error
           this.$store.commit('SET_NOTIFICATION', {
             alert:
               'Please pick number of teams compete in each group between 3 to 6 only.',
@@ -713,11 +728,12 @@ export default {
             snackbar: true,
           })
         } else {
-          // Create Tournament Collection
+          // Create & Store Tournament to Firestore
           await this.$fire.firestore
             .collection('tournaments')
             .doc(doDashes(this.title))
             .set({
+              // Basic Details
               tournamentID: doDashes(this.title),
               title: this.title,
               description: this.description,
@@ -735,10 +751,12 @@ export default {
               status: false,
               isOpen: this.isOpen,
               gender: this.gender,
+
+              // Registration Data
               managerRef: [],
               registrationStatus: false,
 
-              // Single Tournament Data
+              // Tournament Data
               gStage: this.gStage,
               participants: this.participants,
               gRound: this.gRound,
@@ -747,7 +765,7 @@ export default {
               gQualifyTeam: this.gQualifyTeam,
               fStage: this.fStage,
               fIs3rdPlace: this.fIs3rdPlace,
-              isGroupDraw: false, 
+              isGroupDraw: false,
             })
 
           // Create New Seedings
@@ -882,6 +900,9 @@ export default {
               ),
             })
             .then(() => {
+              // Loading State -> False
+              this.isLoading = false
+              // Push Current Page -> Tournament List
               this.$router.push('/organizer/auth/tournaments')
             })
         }
