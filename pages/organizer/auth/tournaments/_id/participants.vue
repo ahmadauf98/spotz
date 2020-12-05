@@ -102,7 +102,11 @@
                       <td class="text-center">{{ list.managerName }}</td>
                       <td class="text-center">{{ list.managerEmail }}</td>
                       <td class="text-center">
-                        <v-btn @click="updateTeam(list)" icon>
+                        <v-btn
+                          @click="updateTeam(list)"
+                          :disabled="tournamentRef.isGroupDraw == true"
+                          icon
+                        >
                           <v-icon>mdi-square-edit-outline</v-icon>
                         </v-btn>
                         <v-btn @click="deleteTeam(list)" icon>
@@ -247,6 +251,9 @@ export default {
 
   data() {
     return {
+      // Tournament Data
+      tournamentRef: '',
+
       // User Input Data
       tempList: [],
       officialList: '',
@@ -269,6 +276,15 @@ export default {
 
   // Fetch Data from Firestore
   mounted() {
+    // Tournament Data
+    this.$fire.firestore
+      .collection('tournaments')
+      .doc(this.$route.params.id)
+      .onSnapshot((doc) => {
+        this.tournamentRef = doc.data()
+      })
+
+    // Official List Data
     this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
