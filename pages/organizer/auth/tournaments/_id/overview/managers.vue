@@ -156,7 +156,12 @@
                         <!-- Disable/ Activate Account -->
                         <v-menu v-if="manager.status == 'active'">
                           <template v-slot:activator="{ on, attrs }">
-                            <v-btn v-bind="attrs" v-on="on" icon>
+                            <v-btn
+                              v-bind="attrs"
+                              v-on="on"
+                              :disabled="tournamentRef.isGroupDraw == true"
+                              icon
+                            >
                               <v-icon>mdi-square-edit-outline</v-icon>
                             </v-btn>
                           </template>
@@ -197,7 +202,14 @@
                           "
                         >
                           <template v-slot:activator="{ on, attrs }">
-                            <v-btn v-bind="attrs" v-on="on" icon>
+                            <v-btn
+                              v-bind="attrs"
+                              v-on="on"
+                              :disabled="
+                                tournamentRef.registrationStatus == true
+                              "
+                              icon
+                            >
                               <v-icon>mdi-delete</v-icon>
                             </v-btn>
                           </template>
@@ -216,7 +228,14 @@
 
                         <v-menu v-else>
                           <template v-slot:activator="{ on, attrs }">
-                            <v-btn v-bind="attrs" v-on="on" icon>
+                            <v-btn
+                              v-bind="attrs"
+                              v-on="on"
+                              :disabled="
+                                tournamentRef.registrationStatus == true
+                              "
+                              icon
+                            >
                               <v-icon>mdi-delete</v-icon>
                             </v-btn>
                           </template>
@@ -359,7 +378,7 @@ export default {
   // Fetch Notification Data from Vuex
   computed: { ...mapState(['notification']) },
 
-  created() {
+  mounted() {
     return this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
@@ -369,13 +388,11 @@ export default {
         this.tournamentTempRef = []
 
         doc.data().managerRef.forEach((docref) => {
-          // console.log(docref)
 
           this.$fire.firestore
             .collection('users')
             .doc(docref.uid)
             .onSnapshot((doc) => {
-              // console.log(doc.data())
 
               doc.data().notificationsMgr.forEach((docmgr) => {
                 this.isAction = docmgr.isAction

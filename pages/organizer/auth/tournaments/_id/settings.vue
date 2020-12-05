@@ -62,6 +62,7 @@
                       v-model="isOpen"
                       color="primary"
                       label="Open Tournament"
+                      :disabled="tournamentRef.isGroupDraw == true"
                       inset
                       hide-details
                     ></v-switch>
@@ -273,6 +274,9 @@ export default {
 
   data() {
     return {
+      // Tournament Data
+      tournamentRef: '',
+
       //Selection Data
       genderList: ['Male', 'Female'],
 
@@ -297,9 +301,17 @@ export default {
   // Fetch Notification Data from Vuex
   computed: { ...mapState(['notification']) },
 
-  // Fetch Data from Database
   created() {
-    return this.$fire.firestore
+    // Tournament Data
+    this.$fire.firestore
+      .collection('tournaments')
+      .doc(this.$route.params.id)
+      .onSnapshot((doc) => {
+        this.tournamentRef = doc.data()
+      })
+
+    // Fetch Tournament Data from Database
+    this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {

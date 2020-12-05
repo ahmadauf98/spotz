@@ -343,7 +343,6 @@ export default {
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
         this.tournamentProf = doc.data()
-        console.log(this.tournamentProf)
       })
   },
 

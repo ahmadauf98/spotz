@@ -286,6 +286,9 @@
                       <v-btn
                         v-if="tournamentRef.registrationStatus == false"
                         :to="`/organizer/auth/tournaments/${this.$route.params.id}/overview/registration`"
+                        :disabled="
+                          managerlength_active != tournamentRef.participants
+                        "
                         color="primary"
                         class="ml-auto text-capitalize"
                         text
@@ -395,6 +398,7 @@ export default {
       userEmail: '',
       getUser: '',
       managerlength: '',
+      managerlength_active: null,
       teamListNumber: null,
 
       // Manager Invitation Overlay
@@ -419,6 +423,12 @@ export default {
       .onSnapshot((doc) => {
         this.tournamentRef = doc.data()
         this.managerlength = doc.data().managerRef.length
+
+        var manager_list = doc.data().managerRef
+        var manager_active = manager_list.filter(
+          (element) => element.status === 'active'
+        )
+        this.managerlength_active = manager_active.length
       })
 
     this.$fire.firestore
@@ -429,6 +439,8 @@ export default {
       .onSnapshot((querySnapshot) => {
         this.teamListNumber = querySnapshot.size
       })
+
+    this.$fire.firestore.collection('tournaments').doc(this.$route.params.id)
   },
 
   methods: {

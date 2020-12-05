@@ -109,7 +109,11 @@
                         >
                           <v-icon>mdi-square-edit-outline</v-icon>
                         </v-btn>
-                        <v-btn @click="deleteTeam(list)" icon>
+                        <v-btn
+                          @click="deleteTeam(list)"
+                          :disabled="tournamentRef.isGroupDraw == true"
+                          icon
+                        >
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
                       </td>
