@@ -140,23 +140,23 @@ export default {
       tabs: [
         {
           name: 'Participants',
-          route: `/manager/auth/browseTournaments/${this.$route.params.id}/participants`,
+          route: `participants`,
         },
         {
           name: 'Group Seedings',
-          route: `/manager/auth/browseTournaments/${this.$route.params.id}/groupseedings`,
+          route: `groupseedings`,
         },
         {
           name: 'Standings',
-          route: `/manager/auth/browseTournaments/${this.$route.params.id}/standings`,
+          route: `standings`,
         },
         {
           name: 'Group Stage',
-          route: `/manager/auth/browseTournaments/${this.$route.params.id}/groupstage`,
+          route: `groupstage`,
         },
         {
           name: 'Final Stage',
-          route: `/manager/auth/browseTournaments/${this.$route.params.id}/finalstage`,
+          route: `finalstage`,
         },
       ],
 

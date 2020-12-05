@@ -29,7 +29,9 @@
                 </v-list-item>
               </template>
               <template v-slot:item="{ item }">
-                <v-list-item :to="`browseTournaments/${item.tournamentID}`">
+                <v-list-item
+                  :to="`browseTournaments/${item.tournamentID}/participants`"
+                >
                   <!-- Photo Avatar -->
                   <v-list-item-avatar>
                     <v-img :src="item.photoURL"></v-img>
@@ -126,11 +128,11 @@
                     <v-icon class="mr-2" color="grey darken-1" size="20">
                       mdi-calendar
                     </v-icon>
-                    {{ tournament.startDate }} &mdash; {{ tournament.endDate }}
+                    {{ startDate }} &mdash; {{ endDate }}
                   </h1>
 
                   <v-btn
-                    :to="`browseTournaments/${tournament.tournamentID}`"
+                    :to="`browseTournaments/${tournament.tournamentID}/participants`"
                     class="mt-5"
                     color="primary"
                     block
@@ -180,6 +182,8 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
   layout: 'homepage',
 
@@ -201,6 +205,8 @@ export default {
       tournamentsTrans: [],
       sportType: 'All',
       genderType: 'All',
+      startDate: '',
+      endDate: '',
 
       //Search Data
       isLoading: false,
@@ -222,6 +228,21 @@ export default {
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           this.tournamentsRef.push(doc.data())
+
+          // Initialize Date Data into Moment
+          var startDateFormat = moment(doc.data().startDate, 'YYYY-MM-DD')
+          var endDateFormat = moment(doc.data().endDate, 'YYYY-MM-DD')
+
+          // Formating Date (YYYY-MM-DD) to (DD MMMM YYYY)
+          this.startDate = startDateFormat.format('DD MMMM YYYY')
+          this.endDate = endDateFormat.format('DD MMMM YYYY')
+
+          this.$fire.firestore
+            .collection('users')
+            .doc(doc.data().hostName)
+            .onSnapshot((docRef) => {
+              this.hostnameProf = docRef.data()
+            })
         })
       })
   },
