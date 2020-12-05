@@ -113,16 +113,24 @@ export default {
           route: `/manager/auth/tournaments/${this.$route.params.id}/overview`,
         },
         {
+          name: 'Participants',
+          route: `/manager/auth/tournaments/${this.$route.params.id}/participants`,
+        },
+        {
+          name: 'Group Seedings',
+          route: `/manager/auth/tournaments/${this.$route.params.id}/groupseedings`,
+        },
+        {
+          name: 'Standings',
+          route: `/manager/auth/tournaments/${this.$route.params.id}/standings`,
+        },
+        {
           name: 'Group Stage',
           route: `/manager/auth/tournaments/${this.$route.params.id}/groupstage`,
         },
         {
           name: 'Final Stage',
           route: `/manager/auth/tournaments/${this.$route.params.id}/finalstage`,
-        },
-        {
-          name: 'Participants',
-          route: `/manager/auth/tournaments/${this.$route.params.id}/participants`,
         },
       ],
 

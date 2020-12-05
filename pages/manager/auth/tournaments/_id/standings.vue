@@ -552,7 +552,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import tournamentHeader from '~/components/tournamentHeader'
+import tournamentHeader from '~/components/manager/tournamentHeader'
 import tournamentInfo from '~/components/manager/tournamentInfo'
 
 export default {

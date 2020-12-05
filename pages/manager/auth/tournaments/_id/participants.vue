@@ -33,22 +33,21 @@
               outlined
               tile
             >
-              <div class="d-flex">
-                <h1 class="text-h6 font-weight-bold mb-1">
-                  List of Official Team
-                </h1>
-              </div>
-
-              <v-row class="mb-n5 d-flex align-center">
+              <v-row class="mt-n4 mb-n5 d-flex align-center">
                 <v-col cols="12" md="8" order="2" order-md="1">
+                  <h1
+                    class="mb-2 text-center text-md-left text-subtitle-1 font-weight-bold"
+                  >
+                    List of Official Team
+                  </h1>
                   <div>
                     <h1
                       class="text-subtitle-1 font-weight-regular text-center text-md-left mb-5"
                     >
-                      Currently there is no official team yet. Kindly go to the
-                      approval team registration page to approve or reject team.
-                      Once team being approved, that particular team will be
-                      displayed here.
+                      Currently there is no official team yet. Kindly contact
+                      the organizer to manage registration of the teams. After
+                      organizer approve registration application from the
+                      managers, the team info will be displayed here.
                     </h1>
                   </div>
                 </v-col>
@@ -59,7 +58,7 @@
                   order="1"
                   order-md="2"
                 >
-                  <div class="px-5 mt-md-n8 mt-lg-n3 mt-xl-n6">
+                  <div class="px-5">
                     <img
                       src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fmanagers-tournament.svg?alt=media&token=ec47c873-a84d-4353-b823-e0fe7bff619b"
                       width="220px"
@@ -85,32 +84,24 @@
                 <template v-slot:default>
                   <thead>
                     <tr>
+                      <th class="text-center">No</th>
                       <th class="text-left">Team Name</th>
                       <th class="text-center">Manager Name</th>
                       <th class="text-center">Manager Email</th>
-                      <th class="text-center">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr
-                      v-for="list in officialList"
+                      v-for="(list, index) in officialList"
                       :key="list.uid"
                       class="text-center"
                     >
+                      <td class="text-center">{{ index + 1 }}</td>
                       <td class="text-left">{{ list.teamName }}</td>
-                      <td>{{ list.managerName }}</td>
-                      <td>{{ list.managerEmail }}</td>
-                      <td>
-                        <v-btn
-                          @click="onView(list)"
-                          class="text-capitalize"
-                          color="primary"
-                          small
-                          depressed
-                        >
-                          View
-                        </v-btn>
+                      <td v-if="list.managerName != ''" class="text-center">
+                        {{ list.managerName }}
                       </td>
+                      <td class="text-center">{{ list.managerEmail }}</td>
                     </tr>
                   </tbody>
                 </template>
@@ -120,97 +111,9 @@
 
           <!-- Right Side -->
           <v-col cols="12" lg="4" xl="3" order="1" order-lg="2">
-            <tournamentBtn />
+            <tournamentInfo />
           </v-col>
         </v-row>
-
-        <!-- View Player Overlay -->
-        <v-overlay :opacity="opacity" :value="viewPlayerOverlay">
-          <v-card
-            class="mx-auto py-5 px-10 black--text d-block align-center overflow"
-            max-height="470"
-            width="700"
-            color="white"
-            light
-            outlined
-          >
-            <div>
-              <v-btn
-                @click="viewPlayerOverlay = false"
-                class="mt-n3 ml-n8"
-                icon
-              >
-                <v-icon>mdi-close-circle</v-icon>
-              </v-btn>
-            </div>
-
-            <div v-for="list in selectedTeam" :key="list.identificationID">
-              <div class="d-flex justify-center">
-                <v-avatar
-                  v-show="list.passportPhoto != ''"
-                  class="profile"
-                  color="grey"
-                  size="114"
-                >
-                  <v-img :src="list.passportPhoto"></v-img>
-                </v-avatar>
-              </div>
-
-              <div v-show="list.name != ''" class="d-flex justify-center mt-4">
-                <h1 class="text-h4 font-weight-light">{{ list.name }}</h1>
-              </div>
-
-              <div
-                v-show="list.identificationID != ''"
-                class="d-flex justify-center"
-              >
-                <h1 class="text-h6 font-weight-light text-grey">
-                  {{ list.identificationID }}
-                </h1>
-              </div>
-
-              <div class="d-flex justify-center mt-4">
-                <div v-show="list.gender != ''" class="text-center mx-5">
-                  <h1 class="text-h6 font-weight-light text-grey">Gender</h1>
-                  <h1 class="text-body-1 mt-n1">{{ list.gender }}</h1>
-                </div>
-
-                <div v-show="list.numAthelete != ''" class="text-center mx-5">
-                  <h1 class="text-h6 font-weight-light text-grey">
-                    Athelete ID
-                  </h1>
-                  <h1 class="text-body-1 mt-n1">{{ list.numAthelete }}</h1>
-                </div>
-
-                <div v-show="list.numMatric != ''" class="text-center mx-5">
-                  <h1 class="text-h6 font-weight-light text-grey">Matric ID</h1>
-                  <h1 class="text-body-1 mt-n1">{{ list.numMatric }}</h1>
-                </div>
-              </div>
-
-              <div
-                v-show="list.address != ''"
-                class="d-flex justify-center mt-4"
-              >
-                <h1 class="text-h6 font-weight-light text-grey text-center">
-                  {{ list.address }}
-                </h1>
-              </div>
-
-              <div class="d-flex justify-center mt-3">
-                <v-chip
-                  v-show="list.phoneNumber != ''"
-                  class="ma-2"
-                  color="primary"
-                >
-                  {{ list.phoneNumber }}
-                </v-chip>
-              </div>
-
-              <v-divider class="mt-5 mb-7"></v-divider>
-            </div>
-          </v-card>
-        </v-overlay>
       </v-container>
     </v-main>
   </v-app>
@@ -219,7 +122,7 @@
 <script>
 import { mapState } from 'vuex'
 import tournamentHeader from '~/components/manager/tournamentHeader'
-import tournamentBtn from '~/components/manager/tournamentBtn'
+import tournamentInfo from '~/components/manager/tournamentInfo'
 
 export default {
   middleware: 'authenticated',
@@ -228,7 +131,7 @@ export default {
 
   components: {
     tournamentHeader,
-    tournamentBtn,
+    tournamentInfo,
   },
 
   data() {
@@ -274,12 +177,6 @@ export default {
       })
   },
 
-  methods: {
-    // View Application
-    onView(data) {
-      this.viewPlayerOverlay = true
-      this.selectedTeam = data.listplayers
-    },
-  },
+  methods: {},
 }
 </script>
