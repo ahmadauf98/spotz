@@ -239,7 +239,7 @@ export default {
     }
   },
 
-  created() {
+  mounted() {
     this.userId = this.$fire.auth.currentUser.uid
     return this.$fire.firestore
       .collection('users')
@@ -290,23 +290,12 @@ export default {
                 }),
               })
           )
-          .then(
-            await this.$fire.firestore
-              .collection('users')
-              .doc(this.hostName)
-              .update({
-                notificationsRef: firebase.firestore.FieldValue.arrayUnion({
-                  messages: this.name + ' has accepted your invitation.',
-                  isAction: false,
-                }),
-              })
-          )
           .then(() => {
-            this.$router.push('/tournaments')
+            this.$router.push('/manager/auth/tournaments')
           })
         // Route to my tournament
       } catch (error) {
-        console.log(error.code)
+        console.log(error)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
