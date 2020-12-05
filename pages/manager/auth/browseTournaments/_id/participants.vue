@@ -98,7 +98,9 @@
                     >
                       <td class="text-center">{{ index + 1 }}</td>
                       <td class="text-left">{{ list.teamName }}</td>
-                      <td class="text-center">{{ list.managerName }}</td>
+                      <td v-if="list.managerName != ''" class="text-center">
+                        {{ list.managerName }}
+                      </td>
                       <td class="text-center">{{ list.managerEmail }}</td>
                     </tr>
                   </tbody>

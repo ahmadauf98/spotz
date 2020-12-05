@@ -29,7 +29,9 @@
                 </v-list-item>
               </template>
               <template v-slot:item="{ item }">
-                <v-list-item :to="`browseTournaments/${item.tournamentID}`">
+                <v-list-item
+                  :to="`browseTournaments/${item.tournamentID}/participants`"
+                >
                   <!-- Photo Avatar -->
                   <v-list-item-avatar>
                     <v-img :src="item.photoURL"></v-img>
