@@ -11,7 +11,20 @@
         <v-row>
           <!-- Left Side -->
           <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
-            <standingscomp />
+            <div style="position: relative">
+              <v-overlay
+                :absolute="absolute"
+                :value="overlay"
+                :opacity="opacity"
+                color="#583f97"
+                class="text-center"
+              >
+                <v-icon size="50">mdi-lock</v-icon>
+                <h1>Content Locked</h1>
+                <h1 class="text-subtitle-1">Login to see more info</h1>
+              </v-overlay>
+              <standingscomp />
+            </div>
           </v-col>
 
           <!-- Right Side -->
@@ -39,5 +52,11 @@ export default {
     standingscomp,
     notifications,
   },
+
+  data: () => ({
+    overlay: true,
+    opacity: 1,
+    absolute: true,
+  }),
 }
 </script>
