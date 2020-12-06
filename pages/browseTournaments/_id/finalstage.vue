@@ -11,7 +11,7 @@
         <v-row>
           <!-- Left Side -->
           <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
-            <div style="position: sticky">
+            <div style="position: sticky; min-height: 316px">
               <v-overlay
                 :absolute="absolute"
                 :value="overlay"
@@ -22,6 +22,17 @@
                 <v-icon size="50">mdi-lock</v-icon>
                 <h1>Content Locked</h1>
                 <h1 class="text-subtitle-1">Login to see more info</h1>
+
+                <v-btn
+                  class="font-weight-regular text-capitalize my-2"
+                  :to="`signin`"
+                  outlined
+                  dark
+                  depressed
+                  small
+                >
+                  Login
+                </v-btn>
               </v-overlay>
               <finalstagecomp />
             </div>

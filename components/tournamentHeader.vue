@@ -41,6 +41,7 @@
 
                     <v-btn
                       class="font-weight-regular text-capitalize"
+                      v-if="authStatus == true"
                       v-show="tournamentRef.isOpen == true"
                       :disabled="
                         managerlength_active == tournamentRef.participants ||
@@ -53,6 +54,22 @@
                         >mdi-account-plus-outline</v-icon
                       >
                       Register
+                    </v-btn>
+
+                    <v-btn
+                      class="font-weight-regular text-capitalize"
+                      v-else
+                      v-show="tournamentRef.isOpen == true"
+                      :disabled="
+                        managerlength_active == tournamentRef.participants ||
+                        tournamentRef.isGroupDraw == true
+                      "
+                      :to="`signin`"
+                      color="green darken-1"
+                      dark
+                      depressed
+                    >
+                      Login to Register
                     </v-btn>
 
                     <v-btn
@@ -168,12 +185,13 @@ export default {
       startDate: '',
       endDate: '',
       managerlength_active: null,
+      authStatus: false,
     }
   },
 
-  // Fetch User's Data
-  created() {
-    return this.$fire.firestore
+  mounted() {
+    // Fetch User's Data
+    this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
@@ -201,6 +219,15 @@ export default {
         )
         this.managerlength_active = manager_active.length
       })
+
+    // Get User Authentication Status
+    this.$fire.auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.authStatus = true
+      } else {
+        this.authStatus = false
+      }
+    })
   },
 }
 </script>

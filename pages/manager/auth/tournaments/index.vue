@@ -148,7 +148,6 @@ export default {
       .onSnapshot((doc) => {
         this.tournamentsMgrTemp = []
         doc.data().tournamentsMgr.forEach((docref) => {
-          // console.log(docref)
           this.$fire.firestore
             .collection('tournaments')
             .doc(docref)
