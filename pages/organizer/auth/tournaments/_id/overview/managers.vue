@@ -316,19 +316,6 @@
             </div>
           </v-card>
         </v-overlay>
-
-        <v-overlay
-          :opacity="opacityLoading"
-          :value="overlayLoading"
-          color="white"
-        >
-          <v-progress-circular
-            :size="70"
-            :width="7"
-            color="primary"
-            indeterminate
-          ></v-progress-circular>
-        </v-overlay>
       </v-container>
     </v-main>
   </v-app>
@@ -365,10 +352,6 @@ export default {
       // Manager Invitation Overlay
       opacity: 0.5,
       overlay: false,
-
-      // Refresh Overlay
-      opacityLoading: 1,
-      overlayLoading: false,
     }
   },
 
