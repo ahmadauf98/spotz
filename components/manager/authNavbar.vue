@@ -175,7 +175,7 @@
 
         <v-card
           v-else
-          v-for="(notification, index) in notificationsMgr"
+          v-for="(notification, index) in notificationsMgr.slice().reverse()"
           :key="index"
           class="mx-3 px-5 my-4"
           outlined
@@ -297,13 +297,8 @@ export default {
         this.name = doc.data().name
         this.email = doc.data().email
         this.photoURL = doc.data().photoURL
-        let notificationsMgr_sort = doc.data().notificationsMgr
+        this.notificationsMgr = doc.data().notificationsMgr
         let organizerInv_sort = doc.data().organizerInv
-
-        // Sort notification manager
-        if (typeof notificationsMgr_sort != 'undefined') {
-          this.notificationsMgr = notificationsMgr_sort.reverse()
-        }
 
         // Sort organizer invitation
         if (typeof organizerInv_sort != 'undefined') {

@@ -380,6 +380,7 @@ export default {
               })
             })
         })
+
         this.managerList = this.tournamentTempRef
       })
   },
