@@ -128,7 +128,7 @@
                   <tbody>
                     <tr
                       v-for="(manager, index) in managerList"
-                      :key="manager.uid"
+                      :key="index"
                       class="text-center"
                     >
                       <td class="text-center">{{ index + 1 }}</td>
@@ -166,7 +166,9 @@
                             </v-btn>
                           </template>
                           <v-list>
-                            <v-list-item @click="onDisabled(manager.uid)">
+                            <v-list-item
+                              @click="onDisabled(manager, managerList)"
+                            >
                               <v-list-item-title>
                                 Disabled Account
                               </v-list-item-title>
@@ -186,7 +188,9 @@
                             </v-btn>
                           </template>
                           <v-list>
-                            <v-list-item @click="onEnable(manager.uid)">
+                            <v-list-item
+                              @click="onEnable(manager, managerList)"
+                            >
                               <v-list-item-title>
                                 Enable Account
                               </v-list-item-title>
@@ -216,7 +220,10 @@
                           <v-list>
                             <v-list-item
                               @click="
-                                onDeleteActive(manager.uid, manager.status)
+                                onDeleteActive(
+                                  manager,
+                                  this.tournamentRef.tournamentID
+                                )
                               "
                             >
                               <v-list-item-title>
@@ -240,17 +247,7 @@
                             </v-btn>
                           </template>
                           <v-list>
-                            <v-list-item
-                              @click="
-                                onDeletePending(
-                                  manager.uid,
-                                  manager.isAction,
-                                  manager.messages,
-                                  manager.tournamentID,
-                                  manager.status
-                                )
-                              "
-                            >
+                            <v-list-item @click="onDeletePending(manager)">
                               <v-list-item-title>
                                 Delete Account
                               </v-list-item-title>
@@ -388,25 +385,15 @@ export default {
         this.tournamentTempRef = []
 
         doc.data().managerRef.forEach((docref) => {
-
           this.$fire.firestore
             .collection('users')
             .doc(docref.uid)
             .onSnapshot((doc) => {
-
-              doc.data().notificationsMgr.forEach((docmgr) => {
-                this.isAction = docmgr.isAction
-                this.messages = docmgr.messages
-                this.tournamentID = docmgr.tournamentID
-              })
               this.tournamentTempRef.push({
                 status: docref.status,
                 uid: docref.uid,
                 name: doc.data().name,
                 email: doc.data().email,
-                isAction: this.isAction,
-                messages: this.messages,
-                tournamentID: this.tournamentID,
               })
             })
         })
@@ -417,7 +404,6 @@ export default {
   methods: {
     // Invite Manager
     async onInvite() {
-      this.overlayLoading = true
       try {
         const snapshot = await this.$fire.firestore
           .collection('users')
@@ -425,47 +411,48 @@ export default {
           .get()
 
         this.getUser = snapshot.docs.map((doc) => doc.data())
-        // console.log(this.getUser[0].uid)
 
+        // Initialize ManagerID & OrganizerID
+        let managerID = this.getUser[0].uid
+        let organizerID = this.tournamentRef.hostName
+        let tournamentID = this.tournamentRef.tournamentID
+        let tournamentName = this.tournamentRef.title
+
+        // Send Invitation to Manager
         await this.$fire.firestore
           .collection('users')
-          .doc(this.getUser[0].uid)
+          .doc(managerID)
           .update({
-            notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
-              messages:
-                'You are invited to participate in ' + this.tournamentRef.title,
-              tournamentID: this.tournamentRef.tournamentID,
-              isAction: true,
+            organizerInv: firebase.firestore.FieldValue.arrayUnion({
+              organizerID: organizerID,
+              tournamentID: tournamentID,
+              tournamentName: tournamentName,
+              type: 'managerInv',
             }),
           })
-          .then(
-            await this.$fire.firestore
-              .collection('tournaments')
-              .doc(this.tournamentRef.tournamentID)
-              .update({
-                managerRef: firebase.firestore.FieldValue.arrayUnion({
-                  uid: this.getUser[0].uid,
-                  status: 'pending',
-                }),
-              })
-          )
+
+        // Add Pending Status to Manager List
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.tournamentRef.tournamentID)
+          .update({
+            managerRef: firebase.firestore.FieldValue.arrayUnion({
+              uid: managerID,
+              status: 'pending',
+            }),
+          })
           .then(() => {
             this.overlay = false
             this.userEmail = ''
             this.$store.commit('SET_NOTIFICATION', {
-              alert: 'Invitation has been sent.',
+              alert: 'Invitation has been sent',
               alertIcon: 'mdi-email-send',
               alertIconStyle: 'mr-2 align-self-top',
               colorIcon: 'green darken-1',
               snackbar: true,
             })
           })
-          .then(() => {
-            this.overlayLoading = false
-            this.$router.go(-1)
-          })
       } catch (error) {
-        this.overlayLoading = false
         console.log(error.code)
         if (error.code == undefined) {
           this.$store.commit('SET_NOTIFICATION', {
@@ -488,34 +475,29 @@ export default {
     },
 
     // Delete Active or Disabled Account
-    async onDeleteActive(uid, status) {
-      this.overlayLoading = true
+    async onDeleteActive(mgr, tournamentID) {
       try {
+        // Remove tournamentID from manager
         await this.$fire.firestore
           .collection('users')
           .doc(uid)
           .update({
             tournamentsMgr: firebase.firestore.FieldValue.arrayRemove(
-              this.tournamentRef.tournamentID
+              tournamentID
             ),
           })
-          .then(
-            await this.$fire.firestore
-              .collection('tournaments')
-              .doc(this.tournamentRef.tournamentID)
-              .update({
-                managerRef: firebase.firestore.FieldValue.arrayRemove({
-                  status: status,
-                  uid: uid,
-                }),
-              })
-          )
-          .then(() => {
-            this.overlayLoading = false
-            this.$router.go(-1)
+
+        // Remove managerID from tournament
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.tournamentRef.tournamentID)
+          .update({
+            managerRef: firebase.firestore.FieldValue.arrayRemove({
+              status: mgr.status,
+              uid: mgr.uid,
+            }),
           })
       } catch (error) {
-        this.overlayLoading = false
         console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
@@ -527,36 +509,52 @@ export default {
     },
 
     // Delete Pending Account
-    async onDeletePending(uid, isAction, messages, tournamentID, status) {
-      this.overlayLoading = true
+    async onDeletePending(mgr) {
       try {
+        // Remove manager invitation from organizerInv
         await this.$fire.firestore
           .collection('users')
-          .doc(uid)
+          .doc(mgr.uid)
+          .get()
+          .then((doc) => {
+            const currentOrganizerInvListTemp = doc.data().organizerInv
+
+            // Get current organizerInv (tournamentID)
+            const currentOrganizerInvListFiltered = currentOrganizerInvListTemp.find(
+              (element) =>
+                element.tournamentID === this.tournamentRef.tournamentID
+            )
+
+            // Create current organizerInv
+            const currentOrganizerInv = {
+              organizerID: currentOrganizerInvListFiltered.organizerID,
+              tournamentID: currentOrganizerInvListFiltered.tournamentID,
+              tournamentName: currentOrganizerInvListFiltered.tournamentName,
+              type: currentOrganizerInvListFiltered.type,
+            }
+
+            // Delete current organizerInv
+            this.$fire.firestore
+              .collection('users')
+              .doc(mgr.uid)
+              .update({
+                organizerInv: firebase.firestore.FieldValue.arrayRemove(
+                  currentOrganizerInv
+                ),
+              })
+          })
+
+        // Remove managerID from tournament
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.tournamentRef.tournamentID)
           .update({
-            notificationsMgr: firebase.firestore.FieldValue.arrayRemove({
-              messages: messages,
-              tournamentID: tournamentID,
-              isAction: isAction,
+            managerRef: firebase.firestore.FieldValue.arrayRemove({
+              status: mgr.status,
+              uid: mgr.uid,
             }),
           })
-          .then(
-            await this.$fire.firestore
-              .collection('tournaments')
-              .doc(this.tournamentRef.tournamentID)
-              .update({
-                managerRef: firebase.firestore.FieldValue.arrayRemove({
-                  status: status,
-                  uid: uid,
-                }),
-              })
-          )
-          .then(() => {
-            this.overlayLoading = false
-            this.$router.go(-1)
-          })
       } catch (error) {
-        this.overlayLoading = false
         console.log(error.message)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
@@ -568,35 +566,19 @@ export default {
     },
 
     // Disabled Account
-    async onDisabled(uid) {
-      this.overlayLoading = true
+    async onDisabled(selectedData, list) {
       try {
+        // Change status selected managerRef
+        selectedData.status = 'disabled'
+
+        // Update managerRef from tournament
         await this.$fire.firestore
           .collection('tournaments')
           .doc(this.tournamentRef.tournamentID)
           .update({
-            managerRef: firebase.firestore.FieldValue.arrayUnion({
-              status: 'disabled',
-              uid: uid,
-            }),
-          })
-          .then(
-            await this.$fire.firestore
-              .collection('tournaments')
-              .doc(this.tournamentRef.tournamentID)
-              .update({
-                managerRef: firebase.firestore.FieldValue.arrayRemove({
-                  status: 'active',
-                  uid: uid,
-                }),
-              })
-          )
-          .then(() => {
-            this.$router.go(-1)
-            this.overlayLoading = false
+            managerRef: list,
           })
       } catch (error) {
-        this.overlayLoading = false
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
@@ -608,32 +590,17 @@ export default {
     },
 
     // Enabled Account
-    async onEnable(uid) {
-      this.overlayLoading = true
+    async onEnable(selectedData, list) {
       try {
+        // Change status selected managerRef
+        selectedData.status = 'active'
+
+        // Update managerRef from tournament
         await this.$fire.firestore
           .collection('tournaments')
           .doc(this.tournamentRef.tournamentID)
           .update({
-            managerRef: firebase.firestore.FieldValue.arrayUnion({
-              status: 'active',
-              uid: uid,
-            }),
-          })
-          .then(
-            await this.$fire.firestore
-              .collection('tournaments')
-              .doc(this.tournamentRef.tournamentID)
-              .update({
-                managerRef: firebase.firestore.FieldValue.arrayRemove({
-                  status: 'disabled',
-                  uid: uid,
-                }),
-              })
-          )
-          .then(() => {
-            this.$router.go(-1)
-            this.overlayLoading = false
+            managerRef: list,
           })
       } catch (error) {
         this.overlayLoading = false

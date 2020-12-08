@@ -193,9 +193,9 @@ export default {
     }
   },
 
-  // Fetch User's Data
-  created() {
-    return this.$fire.firestore
+  mounted() {
+    // Fetch User's Data
+    this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
@@ -216,6 +216,7 @@ export default {
             this.hostnameProf = docRef.data()
           })
       })
+
   },
 
   methods: {

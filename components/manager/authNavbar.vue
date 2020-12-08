@@ -32,7 +32,7 @@
 
     <v-spacer></v-spacer>
 
-    <!-- Notification Dropdown -->
+    <!-- Invitation & Request Dropdown -->
     <v-menu offset-y left>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -42,14 +42,110 @@
           v-bind="attrs"
           v-on="on"
         >
-          <v-icon v-if="notificationsMgr == null || notificationsMgr == ''"
+          <v-icon v-if="organizerInv == null || organizerInv == ''" size="32"
+            >mdi-account-supervisor</v-icon
+          >
+
+          <v-badge
+            v-else
+            color="primary"
+            :content="organizerInv.length"
+            overlap
+          >
+            <v-icon size="32">mdi-account-supervisor</v-icon>
+          </v-badge>
+        </v-btn>
+      </template>
+      <v-list dense width="400px" max-height="500px">
+        <!-- Invitation & Request Header-->
+        <v-list-item>
+          <v-list-item-title class="text-body-2 text-center"
+            >Invitation & Request</v-list-item-title
+          >
+        </v-list-item>
+
+        <v-divider class="mx-3"></v-divider>
+
+        <v-card
+          v-if="organizerInv == null || organizerInv == ''"
+          class="mx-3 px-5 my-4"
+          color="white"
+          outlined
+        >
+          <h1 class="text-caption font-weight-medium text-center">
+            <i>No Invitation or Request</i>
+          </h1>
+        </v-card>
+
+        <v-card
+          v-else
+          v-for="(request, index) in organizerInv"
+          :key="index"
+          class="mx-3 px-5 my-4"
+          outlined
+        >
+          <v-row class="d-flex align-center">
+            <v-col
+              v-if="request.type == 'managerInv'"
+              cols="9"
+              class="d-block align-center"
+            >
+              <h1
+                class="text-caption font-weight-regular text-justify text-grey"
+              >
+                You are <span class="font-weight-bold">invited</span> to
+                participate in
+                <span class="font-weight-bold"
+                  >{{ request.tournamentName }}
+                </span>
+              </h1>
+            </v-col>
+
+            <v-col v-if="request.type == 'managerInv'" cols="3">
+              <v-btn
+                @click="onAcceptInv(request, organizerInv)"
+                color="green darken-1"
+                width="60"
+                x-small
+                dark
+                depressed
+                >Accept</v-btn
+              >
+              <v-btn
+                @click="onRejectInv(request, organizerInv)"
+                color="red darken-1"
+                width="60"
+                x-small
+                dark
+                depressed
+                >Reject</v-btn
+              >
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-list>
+    </v-menu>
+
+    <!-- General Notification Dropdown -->
+    <v-menu offset-y left>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          class="text-capitalize"
+          @click="onChangeStatus(unreadNotificationMgr, notificationsMgr)"
+          icon
+          color="#1A202C"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon
+            v-if="unreadNotificationMgr == null || unreadNotificationMgr == ''"
             >mdi-bell</v-icon
           >
 
           <v-badge
             v-else
             color="primary"
-            :content="notificationsMgr.length"
+            :content="unreadNotificationMgr.length"
             overlap
           >
             <v-icon>mdi-bell</v-icon>
@@ -57,10 +153,10 @@
         </v-btn>
       </template>
       <v-list dense width="400px" max-height="500px">
-        <!-- Notifications Header-->
+        <!-- General Notification Header-->
         <v-list-item>
           <v-list-item-title class="text-body-2 text-center"
-            >Notifications</v-list-item-title
+            >General Notifications</v-list-item-title
           >
         </v-list-item>
 
@@ -79,67 +175,18 @@
 
         <v-card
           v-else
-          v-for="notification in notificationsMgr"
-          :key="notification.tournamentID"
+          v-for="(notification, index) in notificationsMgr"
+          :key="index"
           class="mx-3 px-5 my-4"
           outlined
         >
           <v-row>
-            <v-col cols="9" class="d-flex align-center">
-              <h1 class="text-caption font-weight-medium">
-                {{ notification.messages }}
+            <v-col class="d-flex align-center">
+              <h1
+                class="text-caption font-weight-medium text-justify text-grey"
+              >
+                {{ notification.message }}
               </h1>
-            </v-col>
-
-            <v-col cols="3" v-if="notification.isAction == false">
-              <v-btn
-                @click="
-                  onRemove(
-                    notification.tournamentID,
-                    notification.messages,
-                    notification.isAction
-                  )
-                "
-                color="yellow darken-2"
-                width="60"
-                class="text-capitalize"
-                x-small
-                dark
-                >Close</v-btn
-              >
-            </v-col>
-
-            <v-col v-else cols="3">
-              <v-btn
-                @click="
-                  onAccept(
-                    notification.tournamentID,
-                    notification.messages,
-                    notification.isAction
-                  )
-                "
-                color="green darken-1"
-                width="60"
-                class="text-capitalize"
-                x-small
-                dark
-                >Accept</v-btn
-              >
-              <v-btn
-                @click="
-                  onReject(
-                    notification.tournamentID,
-                    notification.messages,
-                    notification.isAction
-                  )
-                "
-                color="red darken-1"
-                class="text-capitalize"
-                width="60"
-                x-small
-                dark
-                >Reject</v-btn
-              >
             </v-col>
           </v-row>
         </v-card>
@@ -233,6 +280,8 @@ export default {
       email: '',
       photoURL: '',
       notificationsMgr: '',
+      unreadNotificationMgr: '',
+      organizerInv: '',
 
       // User Authentication
       userId: '',
@@ -248,76 +297,157 @@ export default {
         this.name = doc.data().name
         this.email = doc.data().email
         this.photoURL = doc.data().photoURL
-        this.notificationsMgr = doc.data().notificationsMgr
+        let notificationsMgr_sort = doc.data().notificationsMgr
+        let organizerInv_sort = doc.data().organizerInv
+
+        // Sort notification manager
+        if (typeof notificationsMgr_sort != 'undefined') {
+          this.notificationsMgr = notificationsMgr_sort.reverse()
+        }
+
+        // Sort organizer invitation
+        if (typeof organizerInv_sort != 'undefined') {
+          this.organizerInv = organizerInv_sort.reverse()
+        }
+
+        // Filter unread notification manager
+        const manager_unread_list = this.notificationsMgr
+
+        if (
+          typeof manager_unread_list != 'undefined' ||
+          manager_unread_list != ''
+        ) {
+          const manager_unread = manager_unread_list.filter(
+            (element) => element.status === 'unread'
+          )
+          this.unreadNotificationMgr = manager_unread
+        }
       })
   },
 
   methods: {
-    async onAccept(tournamentID, message, isAction) {
+    // To change status of manager notifications
+    async onChangeStatus(list, notifications) {
       try {
+        // Change status of every unread list
+        for (var i = 0; i < list.length; i++) {
+          list[i].status = 'read'
+        }
+
+        await this.$fire.firestore.collection('users').doc(this.userId).update({
+          notificationsMgr: notifications,
+        })
+      } catch (error) {
+        console.log(error.code)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
+    },
+
+    // To Accept Organizer Invitation
+    async onAcceptInv(inv, list) {
+      try {
+        // Initialize deletedOrganizerInv object
+        const deletedOrganizerInv = {
+          organizerID: inv.organizerID,
+          tournamentID: inv.tournamentID,
+          tournamentName: inv.tournamentName,
+          type: inv.type,
+        }
+
+        // Create acceptedMsg
+        const acceptedMsg = {
+          status: 'unread',
+          message:
+            this.name +
+            ' has accepted your manager invitation in ' +
+            inv.tournamentName +
+            '.',
+        }
+
+        // Add tournamentID to tournamentsMgr (ManagerID)
         await this.$fire.firestore
           .collection('users')
           .doc(this.userId)
           .update({
             tournamentsMgr: firebase.firestore.FieldValue.arrayUnion(
-              tournamentID
+              inv.tournamentID
             ),
-            notificationsMgr: firebase.firestore.FieldValue.arrayRemove({
-              messages: message,
-              tournamentID: tournamentID,
-              isAction: isAction,
-            }),
           })
-          .then(
-            await this.$fire.firestore
+
+        // Delete inv from organizerInv (ManagerID)
+        await this.$fire.firestore
+          .collection('users')
+          .doc(this.userId)
+          .update({
+            organizerInv: firebase.firestore.FieldValue.arrayRemove(
+              deletedOrganizerInv
+            ),
+          })
+
+        // Send notification to notificationsRef (OrganizerID)
+        await this.$fire.firestore
+          .collection('users')
+          .doc(inv.organizerID)
+          .update({
+            notificationsRef: firebase.firestore.FieldValue.arrayUnion(
+              acceptedMsg
+            ),
+          })
+
+        // Update manager to tournament manager list (TournamentID)
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(inv.tournamentID)
+          .get()
+          .then((doc) => {
+            const currentManagerRefTemp = doc.data().managerRef
+
+            // Get current managerRef
+            const currentManagerRefFiltered = currentManagerRefTemp.find(
+              (element) => element.uid === this.userId
+            )
+
+            // Create current managerRef
+            const currentManagerRef = {
+              uid: currentManagerRefFiltered.uid,
+              status: currentManagerRefFiltered.status,
+            }
+
+            // Create updated managerRef
+            const updatedManagerRef = {
+              uid: this.userId,
+              status: 'active',
+            }
+
+            // Delete current managerRef
+            this.$fire.firestore
               .collection('tournaments')
-              .doc(tournamentID)
+              .doc(inv.tournamentID)
               .update({
-                managerRef: firebase.firestore.FieldValue.arrayRemove({
-                  uid: this.userId,
-                  status: 'pending',
-                }),
+                managerRef: firebase.firestore.FieldValue.arrayRemove(
+                  currentManagerRef
+                ),
               })
-          )
-          .then(
-            await this.$fire.firestore
+
+            // Add updated managerRef
+            this.$fire.firestore
               .collection('tournaments')
-              .doc(tournamentID)
+              .doc(inv.tournamentID)
               .update({
-                managerRef: firebase.firestore.FieldValue.arrayUnion({
-                  uid: this.userId,
-                  status: 'active',
-                }),
+                managerRef: firebase.firestore.FieldValue.arrayUnion(
+                  updatedManagerRef
+                ),
               })
-          )
+          })
           .then(() => {
             this.$router.push('/manager/auth/tournaments')
           })
-        // Route to my tournament
-      } catch (error) {
-        console.log(error)
-        this.$store.commit('SET_NOTIFICATION', {
-          alert: error.message,
-          alertIcon: 'mdi-alert-circle',
-          alertIconStyle: 'mr-2 align-self-top',
-          colorIcon: 'red darken-1',
-          snackbar: true,
-        })
-      }
-    },
-
-    async onReject(tournamentID, message, isAction) {
-      try {
-        await this.$fire.firestore
-          .collection('users')
-          .doc(this.userId)
-          .update({
-            notificationsMgr: firebase.firestore.FieldValue.arrayRemove({
-              messages: message,
-              tournamentID: tournamentID,
-              isAction: isAction,
-            }),
-          })
       } catch (error) {
         console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
@@ -330,30 +460,88 @@ export default {
       }
     },
 
-    async onRemove(tournamentID, message, isAction) {
-      try {
-        await this.$fire.firestore
-          .collection('users')
-          .doc(this.userId)
-          .update({
-            notificationsMgr: firebase.firestore.FieldValue.arrayRemove({
-              messages: message,
-              tournamentID: tournamentID,
-              isAction: isAction,
-            }),
-          })
-      } catch (error) {
-        console.log(error.code)
-        this.$store.commit('SET_NOTIFICATION', {
-          alert: error.message,
-          alertIcon: 'mdi-alert-circle',
-          alertIconStyle: 'mr-2 align-self-top',
-          colorIcon: 'red darken-1',
-          snackbar: true,
-        })
+    // To Reject Organizer Invitation
+    async onRejectInv(inv, list) {
+      // Initialize deletedOrganizerInv object
+      const deletedOrganizerInv = {
+        organizerID: inv.organizerID,
+        tournamentID: inv.tournamentID,
+        tournamentName: inv.tournamentName,
+        type: inv.type,
       }
+
+      // Create rejectedMsg
+      const rejectedMsg = {
+        status: 'unread',
+        message:
+          this.name +
+          ' has rejected your manager invitation in ' +
+          inv.tournamentName +
+          '.',
+      }
+
+      // Delete inv from organizerInv (ManagerID)
+      await this.$fire.firestore
+        .collection('users')
+        .doc(this.userId)
+        .update({
+          organizerInv: firebase.firestore.FieldValue.arrayRemove(
+            deletedOrganizerInv
+          ),
+        })
+
+      // Send notification to notificationsRef (OrganizerID)
+      await this.$fire.firestore
+        .collection('users')
+        .doc(inv.organizerID)
+        .update({
+          notificationsRef: firebase.firestore.FieldValue.arrayUnion(
+            rejectedMsg
+          ),
+        })
+
+      // Delete manager pending to tournament manager list (TournamentID)
+      await this.$fire.firestore
+        .collection('tournaments')
+        .doc(inv.tournamentID)
+        .get()
+        .then((doc) => {
+          const currentManagerRefTemp = doc.data().managerRef
+
+          // Get current managerRef
+          const currentManagerRefFiltered = currentManagerRefTemp.find(
+            (element) => element.uid === this.userId
+          )
+
+          // Create current managerRef
+          const currentManagerRef = {
+            uid: currentManagerRefFiltered.uid,
+            status: currentManagerRefFiltered.status,
+          }
+
+          // Delete current managerRef
+          this.$fire.firestore
+            .collection('tournaments')
+            .doc(inv.tournamentID)
+            .update({
+              managerRef: firebase.firestore.FieldValue.arrayRemove(
+                currentManagerRef
+              ),
+            })
+        })
+        .then(() => {
+          this.$store.commit('SET_NOTIFICATION', {
+            alert:
+              'You have rejected manager invitation from ' + inv.tournamentName,
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
+            snackbar: true,
+          })
+        })
     },
 
+    // To Sign Out Account
     async logout() {
       try {
         await this.$fire.auth.signOut().then(() => {

@@ -77,8 +77,8 @@
             <!-- Tournaments Listing -->
             <v-row
               v-else
-              v-for="tournament in tournamentsMgr"
-              :key="tournament.tournamentID"
+              v-for="(tournament, index) in tournamentsMgr"
+              :key="index"
               class="mb-n2"
             >
               <v-col>

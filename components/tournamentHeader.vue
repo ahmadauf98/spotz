@@ -42,18 +42,56 @@
                     <v-btn
                       class="font-weight-regular text-capitalize"
                       v-if="authStatus == true"
-                      v-show="tournamentRef.isOpen == true"
+                      v-show="
+                        tournamentRef.isOpen == true &&
+                        requestStatus == 'request'
+                      "
                       :disabled="
                         managerlength_active == tournamentRef.participants ||
                         tournamentRef.isGroupDraw == true
                       "
+                      @click="requestManager = !requestManager"
                       color="primary"
                       depressed
                     >
                       <v-icon size="20" class="mr-1"
-                        >mdi-account-plus-outline</v-icon
+                        >mdi-account-arrow-right-outline</v-icon
                       >
                       Register
+                    </v-btn>
+
+                    <v-btn
+                      class="font-weight-regular text-capitalize"
+                      v-if="authStatus == true"
+                      v-show="
+                        tournamentRef.isOpen == true &&
+                        requestStatus == 'pending'
+                      "
+                      color="yellow darken-2"
+                      depressed
+                      dark
+                    >
+                      <v-icon size="20" class="mr-1"
+                        >mdi-account-arrow-right-outline</v-icon
+                      >
+                      Pending
+                    </v-btn>
+
+                    <v-btn
+                      class="font-weight-regular text-capitalize"
+                      v-if="authStatus == true"
+                      v-show="
+                        tournamentRef.isOpen == true &&
+                        requestStatus == 'accepted'
+                      "
+                      disabled
+                      color="yellow darken-2"
+                      depressed
+                    >
+                      <v-icon size="20" class="mr-1"
+                        >mdi-account-arrow-right-outline</v-icon
+                      >
+                      Joined
                     </v-btn>
 
                     <v-btn
@@ -142,6 +180,61 @@
             </v-tab>
           </v-tabs>
         </v-row>
+
+        <!-- Request To be Manager overlay-->
+        <v-overlay :opacity="opacity" :value="requestManager">
+          <v-card
+            class="mx-auto py-5 px-10 black--text d-block align-center"
+            height="300"
+            width="700"
+            color="white"
+            light
+            outlined
+          >
+            <v-btn
+              @click="requestManager = false"
+              disabled
+              class="mt-n3 ml-n8"
+              dark
+              icon
+            >
+              <v-icon>mdi-close-circle</v-icon>
+            </v-btn>
+            <!-- Title -->
+            <div class="text-center">
+              <v-icon class="mb-3" color="primary" size="60"
+                >mdi-account-arrow-right-outline</v-icon
+              >
+              <h1 class="text-center text-h5 font-weight-medium">
+                Are you sure want to become team manager and participate in this
+                tournament?
+              </h1>
+            </div>
+
+            <div class="d-flex justify-center mt-8 mb-n8">
+              <v-btn
+                @click="requestManager = false"
+                class="px-10 mx-3 text-capitalize"
+                color="grey darken-1"
+                height="40"
+                depressed
+                dark
+              >
+                Cancel</v-btn
+              >
+              <v-btn
+                class="px-10 mx-3 text-capitalize"
+                color="green darken-1"
+                @click="onRequest"
+                height="40"
+                depressed
+                dark
+              >
+                Request</v-btn
+              >
+            </div>
+          </v-card>
+        </v-overlay>
       </v-card>
     </v-col>
   </v-row>
@@ -186,6 +279,12 @@ export default {
       endDate: '',
       managerlength_active: null,
       authStatus: false,
+      requestStatus: 'request',
+      requestListMgr: '',
+
+      // Manager Request requestManager
+      opacity: 0.5,
+      requestManager: false,
     }
   },
 
@@ -228,6 +327,112 @@ export default {
         this.authStatus = false
       }
     })
+
+    // Get ManagerID
+    let managerID = ''
+    managerID = this.$fire.auth.currentUser.uid
+
+    // Get Request Status
+    this.$fire.firestore
+      .collection('tournaments')
+      .doc(this.$route.params.id)
+      .onSnapshot((doc) => {
+        if (doc.exists) {
+          this.requestListMgr = doc.data().requestListMgr
+          const requestListMgr = this.requestListMgr.find(
+            (element) => element.managerID === managerID
+          )
+
+          if (typeof requestListMgr != 'undefined') {
+            if (requestListMgr.status == 'pending') {
+              this.requestStatus = 'pending'
+            } else if (requestListMgr.status == 'accepted') {
+              this.requestStatus = 'accepted'
+            }
+          }
+        }
+      })
+  },
+
+  methods: {
+    async onRequest() {
+      try {
+        // Initialize ManagerID & OrganizerID
+        let managerID = ''
+        let managerName = ''
+        let organizerID = ''
+        let tournamentID = this.$route.params.id
+        let tournamentName = ''
+
+        // Get ManagerID
+        managerID = await this.$fire.auth.currentUser.uid
+
+        // Get User Info
+        await this.$fire.firestore
+          .collection('users')
+          .doc(managerID)
+          .get()
+          .then((doc) => {
+            managerName = doc.data().name
+          })
+
+        // Get OrganizerID
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .get()
+          .then((doc) => {
+            organizerID = doc.data().hostName
+            tournamentName = doc.data().title
+          })
+
+        // Update List of Request
+        await this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .update({
+            requestListMgr: firebase.firestore.FieldValue.arrayUnion({
+              managerID: managerID,
+              tournamentID: tournamentID,
+              status: 'pending',
+            }),
+          })
+
+        // Send Manager Request to Organizer
+        await this.$fire.firestore
+          .collection('users')
+          .doc(organizerID)
+          .update({
+            managerReq: firebase.firestore.FieldValue.arrayUnion({
+              managerID: managerID,
+              managerName: managerName,
+              tournamentID: tournamentID,
+              tournamentName: tournamentName,
+              type: 'tournamentRequest',
+            }),
+          })
+          .then(() => {
+            this.requestManager = false
+            this.userEmail = ''
+            this.$store.commit('SET_NOTIFICATION', {
+              alert: 'Request has been sent to the organizer',
+              alertIcon: 'mdi-email-send',
+              alertIconStyle: 'mr-2 align-self-top',
+              colorIcon: 'green darken-1',
+              snackbar: true,
+            })
+          })
+      } catch (error) {
+        console.log(error)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
+    },
   },
 }
 </script>

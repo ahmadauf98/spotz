@@ -756,6 +756,9 @@ export default {
               managerRef: [],
               registrationStatus: false,
 
+              // List Requested Manager
+              requestListMgr: [],
+
               // Tournament Data
               gStage: this.gStage,
               participants: this.participants,
