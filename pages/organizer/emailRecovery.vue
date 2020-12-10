@@ -3,22 +3,7 @@
     <v-main class="align-center">
       <v-container class="p-0" fluid>
         <!-- Notifications -->
-        <v-snackbar
-          v-show="notification.alert != '' || notification.alert != null"
-          v-model="notification.snackbar"
-          :timeout="notification.timeout"
-          dark
-          top
-        >
-          <div class="d-flex justify-center align-center">
-            <v-icon
-              :class="notification.alertIconStyle"
-              :color="notification.colorIcon"
-              >{{ notification.alertIcon }}</v-icon
-            >
-            {{ notification.alert }}
-          </div>
-        </v-snackbar>
+        <notifications />
 
         <v-card width="450px" class="py-4 px-8 mx-auto" outlined>
           <!-- Images Logo -->
@@ -99,10 +84,15 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import notifications from '~/components/notifications'
 
 export default {
   layout: 'auth',
+
+  components: {
+    notifications,
+  },
+
   data() {
     return {
       // User Input Data
@@ -111,11 +101,6 @@ export default {
       // Refresh Page
       isLoading: false,
     }
-  },
-
-  // Fetch Notification Data from Vuex
-  computed: {
-    ...mapState(['notification']),
   },
 
   methods: {

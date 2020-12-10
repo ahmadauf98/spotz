@@ -4,22 +4,7 @@
       <v-container class="p-0" fluid>
         <div class="mx-xl-15 px-xl-15">
           <!-- Notifications -->
-          <v-snackbar
-            v-show="notification.alert != '' || notification.alert != null"
-            v-model="notification.snackbar"
-            :timeout="notification.timeout"
-            dark
-            top
-          >
-            <div class="d-flex justify-center align-center">
-              <v-icon
-                :class="notification.alertIconStyle"
-                :color="notification.colorIcon"
-                >{{ notification.alertIcon }}</v-icon
-              >
-              {{ notification.alert }}
-            </div>
-          </v-snackbar>
+          <notifications />
 
           <!-- Title -->
           <h1 class="my-5">Settings</h1>
@@ -266,12 +251,16 @@
 <script>
 import firebase from 'firebase'
 import countryList from '~/countries.json'
-import { mapState } from 'vuex'
+import notifications from '~/components/notifications'
 
 export default {
   middleware: 'authenticated',
 
   layout: 'organizer',
+
+  components: {
+    notifications,
+  },
 
   data() {
     return {
@@ -300,11 +289,6 @@ export default {
       // Authentication Data
       userId: '',
     }
-  },
-
-  // Fetch Notification Data from Vuex
-  computed: {
-    ...mapState(['notification']),
   },
 
   // Calendar Data

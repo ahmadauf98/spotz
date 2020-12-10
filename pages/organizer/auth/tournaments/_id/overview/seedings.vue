@@ -2,23 +2,8 @@
   <v-app>
     <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
       <v-container class="p-0 my-0" fluid>
-        <!-- Notifications -->
-        <v-snackbar
-          v-show="notification.alert != '' || notification.alert != null"
-          v-model="notification.snackbar"
-          :timeout="notification.timeout"
-          dark
-          top
-        >
-          <div class="d-flex justify-center align-center">
-            <v-icon
-              :class="notification.alertIconStyle"
-              :color="notification.colorIcon"
-              >{{ notification.alertIcon }}</v-icon
-            >
-            {{ notification.alert }}
-          </div>
-        </v-snackbar>
+         <!-- Notifications -->
+        <notifications />
 
         <!-- Organization Details Part -->
         <tournamentHeader />
@@ -52,7 +37,7 @@
                   <tbody>
                     <tr
                       v-for="(list, index) in officialList"
-                      :key="list.uid"
+                      :key="index"
                       class="text-center"
                     >
                       <td class="text-center">{{ index + 1 }}</td>
@@ -1143,7 +1128,7 @@
 import firebase from 'firebase'
 import tournamentHeader from '~/components/organizer/tournamentHeader'
 import tournamentInfo from '~/components/organizer/tournamentInfo'
-import { mapState } from 'vuex'
+import notifications from '~/components/notifications'
 import generator from 'tournament-generator'
 
 export default {
@@ -1154,6 +1139,7 @@ export default {
   components: {
     tournamentHeader,
     tournamentInfo,
+    notifications,
   },
 
   data() {
@@ -1206,9 +1192,6 @@ export default {
       isLoading: false,
     }
   },
-
-  // Fetch Notification Data from Vuex
-  computed: { ...mapState(['notification']) },
 
   mounted() {
     // Tournament Data

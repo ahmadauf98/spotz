@@ -3,22 +3,7 @@
     <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
       <v-container class="p-0 my-0" fluid>
         <!-- Notifications -->
-        <v-snackbar
-          v-show="notification.alert != '' || notification.alert != null"
-          v-model="notification.snackbar"
-          :timeout="notification.timeout"
-          dark
-          top
-        >
-          <div class="d-flex justify-center align-center">
-            <v-icon
-              :class="notification.alertIconStyle"
-              :color="notification.colorIcon"
-              >{{ notification.alertIcon }}</v-icon
-            >
-            {{ notification.alert }}
-          </div>
-        </v-snackbar>
+        <notifications />
 
         <!-- Organization Details Part -->
         <tournamentHeader />
@@ -325,7 +310,7 @@
 import firebase from 'firebase'
 import tournamentHeader from '~/components/organizer/tournamentHeader'
 import tournamentInfo from '~/components/organizer/tournamentInfo'
-import { mapState } from 'vuex'
+import notifications from '~/components/notifications'
 
 export default {
   middleware: 'authenticated',
@@ -335,6 +320,7 @@ export default {
   components: {
     tournamentHeader,
     tournamentInfo,
+    notifications,
   },
 
   data() {
@@ -354,9 +340,6 @@ export default {
       overlay: false,
     }
   },
-
-  // Fetch Notification Data from Vuex
-  computed: { ...mapState(['notification']) },
 
   mounted() {
     return this.$fire.firestore

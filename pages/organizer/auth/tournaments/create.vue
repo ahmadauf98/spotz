@@ -6,22 +6,7 @@
           <div class="mx-xl-15 px-xl-15">
             <div class="mx-xl-15 px-xl-15">
               <!-- Notifications -->
-              <v-snackbar
-                v-show="notification.alert != '' || notification.alert != null"
-                v-model="notification.snackbar"
-                :timeout="notification.timeout"
-                dark
-                top
-              >
-                <div class="d-flex justify-center align-center">
-                  <v-icon
-                    :class="notification.alertIconStyle"
-                    :color="notification.colorIcon"
-                    >{{ notification.alertIcon }}</v-icon
-                  >
-                  {{ notification.alert }}
-                </div>
-              </v-snackbar>
+              <notifications />
 
               <!-- Tournament registration title -->
               <h1 class="text-h4 font-weight-black text-center mt-6 mb-3">
@@ -572,12 +557,16 @@
 
 <script>
 import firebase from 'firebase'
-import { mapState } from 'vuex'
+import notifications from '~/components/notifications'
 
 export default {
   middleware: 'authenticated',
 
   layout: 'organizer',
+
+  components: {
+    notifications,
+  },
 
   data: () => ({
     // Basic Details Info
@@ -625,7 +614,6 @@ export default {
 
   // Fetch Notification Data from Vuex
   computed: {
-    ...mapState(['notification']),
     result: function () {
       return (this.participants = this.gTeamNumbers * this.gGroupNumber)
     },
