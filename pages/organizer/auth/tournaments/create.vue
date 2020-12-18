@@ -124,7 +124,7 @@
                               ></v-select>
                             </v-col>
 
-                            <!-- Tournament Switch -->
+                            <!-- Open Tournament Switch -->
                             <v-col cols="12" class="mt-n10 mb-6 d-flex">
                               <v-switch
                                 v-model="isOpen"
@@ -151,7 +151,7 @@
                                   >
                                     <template v-slot:activator="{ on, attrs }">
                                       <v-text-field
-                                        v-model="startDate"
+                                        v-model="startDate_Format"
                                         label="Start Date"
                                         readonly
                                         dense
@@ -162,6 +162,7 @@
                                     </template>
                                     <v-date-picker
                                       v-model="startDate"
+                                      :allowed-dates="allowedDates_Start"
                                       no-title
                                       scrollable
                                     >
@@ -200,7 +201,7 @@
                                   >
                                     <template v-slot:activator="{ on, attrs }">
                                       <v-text-field
-                                        v-model="endDate"
+                                        v-model="endDate_Format"
                                         label="End Date"
                                         readonly
                                         dense
@@ -211,6 +212,7 @@
                                     </template>
                                     <v-date-picker
                                       v-model="endDate"
+                                      :allowed-dates="allowedDates_End"
                                       no-title
                                       scrollable
                                     >
@@ -557,6 +559,7 @@
 
 <script>
 import firebase from 'firebase'
+import moment from 'moment'
 import notifications from '~/components/notifications'
 
 export default {
@@ -612,10 +615,28 @@ export default {
     isLoading: false,
   }),
 
-  // Fetch Notification Data from Vuex
   computed: {
+    // Get Number of Participants
     result: function () {
       return (this.participants = this.gTeamNumbers * this.gGroupNumber)
+    },
+
+    // Formating Date (YYYY-MM-DD) to (DD MMMM YYYY)
+    startDate_Format: function () {
+      if (this.startDate == '') {
+        return null
+      } else {
+        return moment(this.startDate, 'YYYY-MM-DD').format('DD MMMM YYYY')
+      }
+    },
+
+    // Formating Date (YYYY-MM-DD) to (DD MMMM YYYY)
+    endDate_Format: function () {
+      if (this.endDate == '') {
+        return null
+      } else {
+        return moment(this.endDate, 'YYYY-MM-DD').format('DD MMMM YYYY')
+      }
     },
   },
 
@@ -626,7 +647,18 @@ export default {
   },
 
   methods: {
-    // POST - Store User's Data
+    allowedDates_Start(val) {
+      return val >= moment().format('YYYY-MM-DD')
+    },
+
+    allowedDates_End(val) {
+      if (this.startDate == '') {
+        return val >= moment().format('YYYY-MM-DD')
+      } else {
+        return val >= this.startDate
+      }
+    },
+
     // Upload Profile Photo
     choosePhoto() {
       this.$refs.photoChoosen.click()
@@ -634,7 +666,6 @@ export default {
 
     onFileSelected(event) {
       this.selectedFile = event.target.files[0]
-      // console.log(this.selectedFile)
       this.onUploadProfilePhoto()
     },
 
@@ -898,6 +929,8 @@ export default {
             })
         }
       } catch (error) {
+        // Loading State -> False
+        this.isLoading = false
         console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,

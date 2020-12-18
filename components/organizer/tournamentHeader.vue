@@ -149,7 +149,6 @@
 
 <script>
 import firebase from 'firebase'
-import moment from 'moment'
 
 export default {
   data() {
@@ -201,13 +200,8 @@ export default {
       .onSnapshot((doc) => {
         this.tournamentRef = doc.data()
 
-        // Initialize Date Data into Moment
-        var startDateFormat = moment(doc.data().startDate, 'YYYY-MM-DD')
-        var endDateFormat = moment(doc.data().endDate, 'YYYY-MM-DD')
-
-        // Formating Date (YYYY-MM-DD) to (DD MMMM YYYY)
-        this.startDate = startDateFormat.format('DD MMMM YYYY')
-        this.endDate = endDateFormat.format('DD MMMM YYYY')
+        this.startDate = doc.data().startDate
+        this.endDate = doc.data().endDate
 
         this.$fire.firestore
           .collection('users')
@@ -216,7 +210,6 @@ export default {
             this.hostnameProf = docRef.data()
           })
       })
-
   },
 
   methods: {
