@@ -421,8 +421,6 @@ export default {
       .onSnapshot((querySnapshot) => {
         this.teamListNumber = querySnapshot.size
       })
-
-    this.$fire.firestore.collection('tournaments').doc(this.$route.params.id)
   },
 
   methods: {

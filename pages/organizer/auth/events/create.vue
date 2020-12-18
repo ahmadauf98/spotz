@@ -414,7 +414,7 @@ export default {
       }
       var storageRef = this.$fire.storage
         .ref()
-        .child('tournamentPhotos/' + this.selectedFile.name)
+        .child('eventPhotos/' + this.selectedFile.name)
       var uploadTask = storageRef.put(this.selectedFile, metadata)
       uploadTask.on(
         'state_changed',
@@ -449,7 +449,7 @@ export default {
         (complete) => {
           const storageRef = this.$fire.storage
             .ref()
-            .child('tournamentPhotos/' + this.selectedFile.name)
+            .child('eventPhotos/' + this.selectedFile.name)
           const url = storageRef.getDownloadURL().then((url) => {
             this.photoURL = url
           })
@@ -473,13 +473,13 @@ export default {
           return str.replace(re2, '').toLowerCase()
         }
 
-        // Create & Store Tournament to Firestore
+        // Create & Store Event to Firestore
         await this.$fire.firestore
           .collection('events')
           .doc(doDashes(this.title))
           .set({
             // Basic Details
-            tournamentID: doDashes(this.title),
+            eventID: doDashes(this.title),
             title: this.title,
             description: this.description,
             startDate: this.startDate_Format,
@@ -519,7 +519,7 @@ export default {
           .then(() => {
             // Loading State -> False
             this.isLoading = false
-            // Push Current Page -> Tournament List
+            // Push Current Page -> Event List
             this.$router.push('/organizer/auth/events')
           })
       } catch (error) {

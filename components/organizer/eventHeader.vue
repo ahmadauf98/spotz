@@ -3,7 +3,7 @@
     <v-col>
       <v-card class="mx-auto" outlined tile>
         <!-- Header Picture -->
-        <v-img :src="tournamentRef.headerURL" height="300px">
+        <v-img :src="eventRef.headerURL" height="300px">
           <v-btn
             color="#1a202c"
             class="mb-10"
@@ -34,7 +34,7 @@
             <!-- Profile Picture -->
             <div class="mr-5 mt-n7">
               <v-avatar class="mt-n15" size="150" rounded>
-                <img :src="tournamentRef.photoURL" alt="..." />
+                <img :src="eventRef.photoURL" alt="..." />
               </v-avatar>
 
               <div class="mt-n8 ml-15">
@@ -66,7 +66,7 @@
                 <!-- Title -->
                 <v-col cols="8" md="7" xl="10">
                   <h1 class="text-h4 font-weight-bold mb-md-n3">
-                    {{ tournamentRef.title }}
+                    {{ eventRef.title }}
                   </h1>
                 </v-col>
 
@@ -92,7 +92,7 @@
                   <h1
                     class="text-subtitle-2 text-justify font-weight-regular mt-n3 mt-md-0 mt-lg-n0 mt-xl-n3"
                   >
-                    {{ tournamentRef.description }}
+                    {{ eventRef.description }}
                   </h1>
                 </v-col>
                 <v-col></v-col>
@@ -101,28 +101,28 @@
               <v-divider class="mt-3"></v-divider>
 
               <div class="d-inline-flex mb-3">
-                <!-- Teams -->
+                <!-- Email -->
                 <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
-                  <v-icon class="mr-1">mdi-account-group</v-icon>
-                  {{ tournamentRef.participants }} Teams
+                  <v-icon class="mr-1" size="18">mdi-email</v-icon>
+                  {{ eventRef.email }}
                 </h1>
 
-                <!-- Sports Type -->
+                <!-- Location -->
                 <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
-                  <v-icon class="mr-1">mdi-stadium</v-icon>
-                  {{ tournamentRef.sportType }}
-                </h1>
-
-                <!-- Format -->
-                <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
-                  <v-icon class="mr-1">mdi-trophy</v-icon>
-                  {{ tournamentRef.gStage }} &rarr; {{ tournamentRef.fStage }}
+                  <v-icon class="mr-1" size="18">mdi-map-marker</v-icon>
+                  {{ eventRef.location }}
                 </h1>
 
                 <!-- Date -->
                 <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
                   <v-icon class="mr-1">mdi-calendar</v-icon>
                   {{ startDate }} &rharu; {{ endDate }}
+                </h1>
+
+                <!-- Phone Number -->
+                <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
+                  <v-icon class="mr-1" size="18">mdi-phone</v-icon>
+                  {{ eventRef.phoneNumber }}
                 </h1>
               </div>
             </v-row>
@@ -156,30 +156,22 @@ export default {
       tabs: [
         {
           name: 'Overview',
-          route: `/organizer/auth/tournaments/${this.$route.params.id}/overview`,
+          route: `/organizer/auth/events/${this.$route.params.id}/overview`,
         },
         {
-          name: 'Group Stage',
-          route: `/organizer/auth/tournaments/${this.$route.params.id}/groupstage`,
-        },
-        {
-          name: 'Final Stage',
-          route: `/organizer/auth/tournaments/${this.$route.params.id}/finalstage`,
-        },
-        {
-          name: 'Participants',
-          route: `/organizer/auth/tournaments/${this.$route.params.id}/participants`,
+          name: 'Organizer Collaboration',
+          route: `/organizer/auth/events/${this.$route.params.id}/organizercollaboration`,
         },
         {
           name: 'Settings',
-          route: `/organizer/auth/tournaments/${this.$route.params.id}/settings`,
+          route: `/organizer/auth/events/${this.$route.params.id}/settings`,
         },
       ],
 
       // User Input Data
       photoURL: '',
       headerURL: '',
-      tournamentRef: '',
+      eventRef: '',
       hostnameProf: '',
       startDate: '',
       endDate: '',
@@ -195,10 +187,10 @@ export default {
   mounted() {
     // Fetch User's Data
     this.$fire.firestore
-      .collection('tournaments')
+      .collection('events')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
+        this.eventRef = doc.data()
 
         this.startDate = doc.data().startDate
         this.endDate = doc.data().endDate
@@ -373,7 +365,7 @@ export default {
     async updatePhoto() {
       try {
         await this.$fire.firestore
-          .collection('tournaments')
+          .collection('events')
           .doc(this.$route.params.id)
           .update({
             photoURL: this.photoURL,
@@ -393,7 +385,7 @@ export default {
     async updateHeader() {
       try {
         await this.$fire.firestore
-          .collection('tournaments')
+          .collection('events')
           .doc(this.$route.params.id)
           .update({
             headerURL: this.headerURL,
