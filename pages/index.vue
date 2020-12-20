@@ -144,9 +144,7 @@
     <!-- Fourth Section -->
     <div id="section4" class="py-15">
       <div class="px-2 nav-mx">
-        <h1
-          class="text-h4 font-weight-black mb-5 text-center mt-10 text-white"
-        >
+        <h1 class="text-h4 font-weight-black mb-5 text-center mt-10 text-white">
           Become a manager to participate in tournaments
         </h1>
 
@@ -219,13 +217,6 @@ export default {
 </script>
 
 <style scoped>
-#section4 {
-  background-image: url(~static/img/background-join-desktop.svg);
-  background-color: #6243ad;
-  background-repeat: no-repeat;
-  background-size: 130%;
-}
-
 .illustration {
   pointer-events: none;
 }
@@ -247,6 +238,13 @@ export default {
   .illustration {
     width: 350px;
   }
+
+  #section4 {
+    background-image: url(~static/img/background-join-mobile.svg);
+    background-color: #6243ad;
+    background-repeat: no-repeat;
+    background-size: 100%;
+  }
 }
 
 /* Medium devices (landscape tablets, 960px and up) */
@@ -261,6 +259,13 @@ export default {
 
   .card {
     height: 310px;
+  }
+
+  #section4 {
+    background-image: url(~static/img/background-join-desktop.svg);
+    background-color: #6243ad;
+    background-repeat: no-repeat;
+    background-size: 170%;
   }
 }
 
