@@ -4,19 +4,21 @@
       <!-- Navigation Bar -->
       <navbar />
       <!-- Body Content -->
-      <v-container>
-        <nuxt />
-      </v-container>
+      <nuxt />
+      <!-- Footer -->
+      <pubFooter />
     </v-main>
   </v-app>
 </template>
 
 <script>
 import navbar from '~/components/navbar'
+import pubFooter from '~/components/footer'
 
 export default {
   components: {
     navbar,
+    pubFooter,
   },
 }
 </script>
