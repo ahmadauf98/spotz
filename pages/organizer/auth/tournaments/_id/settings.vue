@@ -284,7 +284,7 @@ export default {
     }
   },
 
-  created() {
+  mounted() {
     // Tournament Data
     this.$fire.firestore
       .collection('tournaments')
