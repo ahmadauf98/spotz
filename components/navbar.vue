@@ -36,7 +36,7 @@
 
     <v-btn
       to="/organizer/signin"
-      class="text-body-1 text-capitalize font-weight-bold px-8 py-5"
+      class="text-body-1 text-capitalize font-weight-bold px-8 py-5 mr-1"
       color="#1A202C"
       rounded
       text
@@ -47,7 +47,7 @@
     <v-btn
       to="/manager/signin"
       color="primary"
-      class="text-body-1 text-capitalize font-weight-medium px-8 py-5"
+      class="text-body-1 text-capitalize font-weight-medium px-8 py-5 ml-1"
       rounded
       depressed
     >

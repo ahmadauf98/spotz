@@ -160,15 +160,15 @@ export default {
         },
         {
           name: 'Group Stage',
-          route: `/organizer/auth/tournaments/${this.$route.params.id}/groupstage`,
+          route: `/organizer/auth/tournaments/${this.$route.params.id}/${this.$route.params.tournamentID}/groupstage`,
         },
         {
           name: 'Final Stage',
-          route: `/organizer/auth/tournaments/${this.$route.params.id}/finalstage`,
+          route: `/organizer/auth/tournaments/${this.$route.params.id}/${this.$route.params.tournamentID}/finalstage`,
         },
         {
           name: 'Participants',
-          route: `/organizer/auth/tournaments/${this.$route.params.id}/participants`,
+          route: `/organizer/auth/tournaments/${this.$route.params.id}/${this.$route.params.tournamentID}/participants`,
         },
         {
           name: 'Settings',

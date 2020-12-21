@@ -156,15 +156,15 @@ export default {
       tabs: [
         {
           name: 'Overview',
-          route: `/organizer/auth/events/${this.$route.params.id}/overview`,
+          route: `overview`,
         },
         {
-          name: 'Organizer Collaboration',
-          route: `/organizer/auth/events/${this.$route.params.id}/organizercollaboration`,
+          name: 'Collaborator',
+          route: `collaborator`,
         },
         {
           name: 'Settings',
-          route: `/organizer/auth/events/${this.$route.params.id}/settings`,
+          route: `settings`,
         },
       ],
 
