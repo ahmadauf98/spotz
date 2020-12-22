@@ -22,6 +22,7 @@
                         <v-icon class="mr-1">mdi-information</v-icon>
                         Status
                       </h1>
+
                       <v-chip
                         v-if="tournamentRef.status == false"
                         class="ml-auto mr-2 font-weight-medium"
@@ -41,6 +42,7 @@
                       >
                         Public</v-chip
                       >
+
                       <v-btn
                         class="mt-n2"
                         color="primary"
@@ -123,7 +125,7 @@
                       <v-btn
                         v-show="
                           tournamentRef.isOpen == false &&
-                          this.managerlength < tournamentRef.participants
+                          managerlength < tournamentRef.participants
                         "
                         @click="overlay = !overlay"
                         class="ml-auto mt-n2"
@@ -134,9 +136,7 @@
                       </v-btn>
 
                       <v-chip
-                        v-show="
-                          this.managerlength == tournamentRef.participants
-                        "
+                        v-show="managerlength == tournamentRef.participants"
                         class="ml-auto mr-2 font-weight-medium"
                         color="green darken-1"
                         label
@@ -484,6 +484,7 @@ export default {
               tournamentID: tournamentID,
               tournamentName: tournamentName,
               type: 'managerInv',
+              category: 'tournamentsMgr',
             }),
           })
 

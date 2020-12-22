@@ -11,7 +11,7 @@
         <v-row>
           <!-- Left Side -->
           <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
-            <!-- Managers List Null -> To add New Manager -->
+            <!-- Card displayed if manager list is empty -->
             <v-card
               v-if="managerlength == 0"
               class="mx-auto py-10 mt-n3 mt-lg-0 px-9"
@@ -73,7 +73,7 @@
               </v-row>
             </v-card>
 
-            <!-- Managers Listing -->
+            <!-- Card displayed if manager list is not empty -->
             <v-card
               v-else
               class="mx-auto py-10 mt-n3 mt-lg-0 px-9"
@@ -151,9 +151,7 @@
                             </v-btn>
                           </template>
                           <v-list>
-                            <v-list-item
-                              @click="onDisabled(manager, managerList)"
-                            >
+                            <v-list-item @click="onDisabled(manager)">
                               <v-list-item-title>
                                 Disabled Account
                               </v-list-item-title>
@@ -173,9 +171,7 @@
                             </v-btn>
                           </template>
                           <v-list>
-                            <v-list-item
-                              @click="onEnable(manager, managerList)"
-                            >
+                            <v-list-item @click="onEnable(manager)">
                               <v-list-item-title>
                                 Enable Account
                               </v-list-item-title>
@@ -203,14 +199,7 @@
                             </v-btn>
                           </template>
                           <v-list>
-                            <v-list-item
-                              @click="
-                                onDeleteActive(
-                                  manager,
-                                  this.tournamentRef.tournamentID
-                                )
-                              "
-                            >
+                            <v-list-item @click="onDeleteActive(manager)">
                               <v-list-item-title>
                                 Delete Account
                               </v-list-item-title>
@@ -327,9 +316,7 @@ export default {
     return {
       // User Input Data
       tournamentRef: '',
-      managerList: [],
-      isAction: '',
-      messages: '',
+      managerList: '',
       tournamentID: '',
       managerlength: '',
       userEmail: '',
@@ -348,14 +335,14 @@ export default {
       .onSnapshot((doc) => {
         this.tournamentRef = doc.data()
         this.managerlength = doc.data().managerRef.length
-        this.tournamentTempRef = []
+        this.managerListTemp = []
 
         doc.data().managerRef.forEach((docref) => {
           this.$fire.firestore
             .collection('users')
             .doc(docref.uid)
             .onSnapshot((doc) => {
-              this.tournamentTempRef.push({
+              this.managerListTemp.push({
                 status: docref.status,
                 uid: docref.uid,
                 name: doc.data().name,
@@ -364,7 +351,7 @@ export default {
             })
         })
 
-        this.managerList = this.tournamentTempRef
+        this.managerList = this.managerListTemp
       })
   },
 
@@ -395,6 +382,7 @@ export default {
               tournamentID: tournamentID,
               tournamentName: tournamentName,
               type: 'managerInv',
+              category: 'tournamentsMgr',
             }),
           })
 
@@ -442,12 +430,13 @@ export default {
     },
 
     // Delete Active or Disabled Account
-    async onDeleteActive(mgr, tournamentID) {
+    async onDeleteActive(mgr) {
       try {
+        var tournamentID = this.tournamentRef.tournamentID
         // Remove tournamentID from manager
         await this.$fire.firestore
           .collection('users')
-          .doc(uid)
+          .doc(mgr.uid)
           .update({
             tournamentsMgr: firebase.firestore.FieldValue.arrayRemove(
               tournamentID
@@ -522,7 +511,7 @@ export default {
             }),
           })
       } catch (error) {
-        console.log(error.message)
+        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
@@ -533,17 +522,30 @@ export default {
     },
 
     // Disabled Account
-    async onDisabled(selectedData, list) {
+    async onDisabled(selectedData) {
       try {
-        // Change status selected managerRef
-        selectedData.status = 'disabled'
-
-        // Update managerRef from tournament
         await this.$fire.firestore
           .collection('tournaments')
           .doc(this.tournamentRef.tournamentID)
-          .update({
-            managerRef: list,
+          .get()
+          .then((doc) => {
+            const currentManagerRefTemp = doc.data().managerRef
+
+            // Get current managerRef
+            const currentManagerRefFiltered = currentManagerRefTemp.find(
+              (element) => element.uid === selectedData.uid
+            )
+
+            // Change status active to disabled
+            currentManagerRefFiltered.status = 'disabled'
+
+            // Updated managerRef
+            this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.tournamentRef.tournamentID)
+              .update({
+                managerRef: currentManagerRefTemp,
+              })
           })
       } catch (error) {
         this.$store.commit('SET_NOTIFICATION', {
@@ -557,20 +559,33 @@ export default {
     },
 
     // Enabled Account
-    async onEnable(selectedData, list) {
+    async onEnable(selectedData) {
       try {
-        // Change status selected managerRef
-        selectedData.status = 'active'
-
-        // Update managerRef from tournament
         await this.$fire.firestore
           .collection('tournaments')
           .doc(this.tournamentRef.tournamentID)
-          .update({
-            managerRef: list,
+          .get()
+          .then((doc) => {
+            const currentManagerRefTemp = doc.data().managerRef
+
+            // Get current managerRef
+            const currentManagerRefFiltered = currentManagerRefTemp.find(
+              (element) => element.uid === selectedData.uid
+            )
+
+            // Change status disabled to active
+            currentManagerRefFiltered.status = 'active'
+
+            // Updated managerRef
+            this.$fire.firestore
+              .collection('tournaments')
+              .doc(this.tournamentRef.tournamentID)
+              .update({
+                managerRef: currentManagerRefTemp,
+              })
           })
       } catch (error) {
-        this.overlayLoading = false
+        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',

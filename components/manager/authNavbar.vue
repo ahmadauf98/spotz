@@ -66,6 +66,7 @@
 
         <v-divider class="mx-3"></v-divider>
 
+        <!-- Card if organizerInv list is empty -->
         <v-card
           v-if="organizerInv == null || organizerInv == ''"
           class="mx-3 px-5 my-4"
@@ -77,6 +78,7 @@
           </h1>
         </v-card>
 
+        <!-- Card if organizerInv list is not empty -->
         <v-card
           v-else
           v-for="(request, index) in organizerInv"
@@ -85,8 +87,12 @@
           outlined
         >
           <v-row class="d-flex align-center">
+            <!-- Invitation if category is tournamentsRef -->
             <v-col
-              v-if="request.type == 'managerInv'"
+              v-if="
+                request.type == 'managerInv' &&
+                request.category == 'tournamentsMgr'
+              "
               cols="9"
               class="d-block align-center"
             >
@@ -97,6 +103,26 @@
                 participate in
                 <span class="font-weight-bold"
                   >{{ request.tournamentName }}
+                </span>
+              </h1>
+            </v-col>
+
+            <!-- Invitation if category is eventsRef -->
+            <v-col
+              v-if="
+                request.type == 'managerInv' && request.category == 'eventsMgr'
+              "
+              cols="9"
+              class="d-block align-center"
+            >
+              <h1
+                class="text-caption font-weight-regular text-justify text-grey"
+              >
+                You are <span class="font-weight-bold">invited</span> to
+                participate in
+                <span class="font-weight-bold"
+                  >{{ request.eventName }} Event &mdash; Category:
+                  {{ request.sportType }} ({{ request.gender }})
                 </span>
               </h1>
             </v-col>
@@ -347,102 +373,216 @@ export default {
     // To Accept Organizer Invitation
     async onAcceptInv(inv, list) {
       try {
-        // Initialize deletedOrganizerInv object
-        const deletedOrganizerInv = {
-          organizerID: inv.organizerID,
-          tournamentID: inv.tournamentID,
-          tournamentName: inv.tournamentName,
-          type: inv.type,
+        if (inv.category == 'tournamentsMgr') {
+          // Initialize deletedOrganizerInv object
+          const deletedOrganizerInv = {
+            category: inv.category,
+            organizerID: inv.organizerID,
+            tournamentID: inv.tournamentID,
+            tournamentName: inv.tournamentName,
+            type: inv.type,
+          }
+
+          // Create acceptedMsg
+          const acceptedMsg = {
+            status: 'unread',
+            message:
+              this.name +
+              ' has accepted your manager invitation in ' +
+              inv.tournamentName +
+              '.',
+          }
+
+          // Add tournamentID to tournamentsMgr (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(this.userId)
+            .update({
+              tournamentsMgr: firebase.firestore.FieldValue.arrayUnion(
+                inv.tournamentID
+              ),
+            })
+
+          // Delete inv from organizerInv (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(this.userId)
+            .update({
+              organizerInv: firebase.firestore.FieldValue.arrayRemove(
+                deletedOrganizerInv
+              ),
+            })
+
+          // Send notification to notificationsRef (OrganizerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(inv.organizerID)
+            .update({
+              notificationsRef: firebase.firestore.FieldValue.arrayUnion(
+                acceptedMsg
+              ),
+            })
+
+          // Update manager to tournament manager list (TournamentID)
+          await this.$fire.firestore
+            .collection('tournaments')
+            .doc(inv.tournamentID)
+            .get()
+            .then((doc) => {
+              const currentManagerRefTemp = doc.data().managerRef
+
+              // Get current managerRef
+              const currentManagerRefFiltered = currentManagerRefTemp.find(
+                (element) => element.uid === this.userId
+              )
+
+              // Create current managerRef
+              const currentManagerRef = {
+                uid: currentManagerRefFiltered.uid,
+                status: currentManagerRefFiltered.status,
+              }
+
+              // Create updated managerRef
+              const updatedManagerRef = {
+                uid: this.userId,
+                status: 'active',
+              }
+
+              // Delete current managerRef
+              this.$fire.firestore
+                .collection('tournaments')
+                .doc(inv.tournamentID)
+                .update({
+                  managerRef: firebase.firestore.FieldValue.arrayRemove(
+                    currentManagerRef
+                  ),
+                })
+
+              // Add updated managerRef
+              this.$fire.firestore
+                .collection('tournaments')
+                .doc(inv.tournamentID)
+                .update({
+                  managerRef: firebase.firestore.FieldValue.arrayUnion(
+                    updatedManagerRef
+                  ),
+                })
+            })
+            .then(() => {
+              this.$router.push('/manager/auth/tournaments')
+            })
+        } else if (inv.category == 'eventsMgr') {
+          // Initialize deletedOrganizerInv object
+          const deletedOrganizerInv = {
+            category: inv.category,
+            eventID: inv.eventID,
+            eventName: inv.eventName,
+            gender: inv.gender,
+            sportType: inv.sportType,
+            organizerID: inv.organizerID,
+            tournamentID: inv.tournamentID,
+            type: inv.type,
+          }
+
+          // Create acceptedMsg
+          const acceptedMsg = {
+            status: 'unread',
+            message:
+              this.name +
+              ' has accepted your manager invitation in ' +
+              inv.eventName +
+              ' (' +
+              inv.sportType +
+              ') event' +
+              '.',
+          }
+
+          // Add tournamentID to eventsMgr (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(this.userId)
+            .update({
+              eventsMgr: firebase.firestore.FieldValue.arrayUnion({
+                eventID: inv.eventID,
+                tournamentID: inv.tournamentID,
+              }),
+            })
+
+          // Delete inv from organizerInv (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(this.userId)
+            .update({
+              organizerInv: firebase.firestore.FieldValue.arrayRemove(
+                deletedOrganizerInv
+              ),
+            })
+
+          // Send notification to notificationsRef (OrganizerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(inv.organizerID)
+            .update({
+              notificationsRef: firebase.firestore.FieldValue.arrayUnion(
+                acceptedMsg
+              ),
+            })
+
+          // Update manager to tournament manager list (eventID - TournamentID)
+          await this.$fire.firestore
+            .collection('events')
+            .doc(inv.eventID)
+            .collection('tournaments')
+            .doc(inv.tournamentID)
+            .get()
+            .then((doc) => {
+              const currentManagerRefTemp = doc.data().managerRef
+
+              // Get current managerRef
+              const currentManagerRefFiltered = currentManagerRefTemp.find(
+                (element) => element.uid === this.userId
+              )
+
+              // Create current managerRef
+              const currentManagerRef = {
+                uid: currentManagerRefFiltered.uid,
+                status: currentManagerRefFiltered.status,
+              }
+
+              // Create updated managerRef
+              const updatedManagerRef = {
+                uid: this.userId,
+                status: 'active',
+              }
+
+              // Delete current managerRef
+              this.$fire.firestore
+                .collection('events')
+                .doc(inv.eventID)
+                .collection('tournaments')
+                .doc(inv.tournamentID)
+                .update({
+                  managerRef: firebase.firestore.FieldValue.arrayRemove(
+                    currentManagerRef
+                  ),
+                })
+
+              // Add updated managerRef
+              this.$fire.firestore
+                .collection('events')
+                .doc(inv.eventID)
+                .collection('tournaments')
+                .doc(inv.tournamentID)
+                .update({
+                  managerRef: firebase.firestore.FieldValue.arrayUnion(
+                    updatedManagerRef
+                  ),
+                })
+            })
+            .then(() => {
+              this.$router.push('/manager/auth/events')
+            })
         }
-
-        // Create acceptedMsg
-        const acceptedMsg = {
-          status: 'unread',
-          message:
-            this.name +
-            ' has accepted your manager invitation in ' +
-            inv.tournamentName +
-            '.',
-        }
-
-        // Add tournamentID to tournamentsMgr (ManagerID)
-        await this.$fire.firestore
-          .collection('users')
-          .doc(this.userId)
-          .update({
-            tournamentsMgr: firebase.firestore.FieldValue.arrayUnion(
-              inv.tournamentID
-            ),
-          })
-
-        // Delete inv from organizerInv (ManagerID)
-        await this.$fire.firestore
-          .collection('users')
-          .doc(this.userId)
-          .update({
-            organizerInv: firebase.firestore.FieldValue.arrayRemove(
-              deletedOrganizerInv
-            ),
-          })
-
-        // Send notification to notificationsRef (OrganizerID)
-        await this.$fire.firestore
-          .collection('users')
-          .doc(inv.organizerID)
-          .update({
-            notificationsRef: firebase.firestore.FieldValue.arrayUnion(
-              acceptedMsg
-            ),
-          })
-
-        // Update manager to tournament manager list (TournamentID)
-        await this.$fire.firestore
-          .collection('tournaments')
-          .doc(inv.tournamentID)
-          .get()
-          .then((doc) => {
-            const currentManagerRefTemp = doc.data().managerRef
-
-            // Get current managerRef
-            const currentManagerRefFiltered = currentManagerRefTemp.find(
-              (element) => element.uid === this.userId
-            )
-
-            // Create current managerRef
-            const currentManagerRef = {
-              uid: currentManagerRefFiltered.uid,
-              status: currentManagerRefFiltered.status,
-            }
-
-            // Create updated managerRef
-            const updatedManagerRef = {
-              uid: this.userId,
-              status: 'active',
-            }
-
-            // Delete current managerRef
-            this.$fire.firestore
-              .collection('tournaments')
-              .doc(inv.tournamentID)
-              .update({
-                managerRef: firebase.firestore.FieldValue.arrayRemove(
-                  currentManagerRef
-                ),
-              })
-
-            // Add updated managerRef
-            this.$fire.firestore
-              .collection('tournaments')
-              .doc(inv.tournamentID)
-              .update({
-                managerRef: firebase.firestore.FieldValue.arrayUnion(
-                  updatedManagerRef
-                ),
-              })
-          })
-          .then(() => {
-            this.$router.push('/manager/auth/tournaments')
-          })
       } catch (error) {
         console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
@@ -457,83 +597,187 @@ export default {
 
     // To Reject Organizer Invitation
     async onRejectInv(inv, list) {
-      // Initialize deletedOrganizerInv object
-      const deletedOrganizerInv = {
-        organizerID: inv.organizerID,
-        tournamentID: inv.tournamentID,
-        tournamentName: inv.tournamentName,
-        type: inv.type,
-      }
-
-      // Create rejectedMsg
-      const rejectedMsg = {
-        status: 'unread',
-        message:
-          this.name +
-          ' has rejected your manager invitation in ' +
-          inv.tournamentName +
-          '.',
-      }
-
-      // Delete inv from organizerInv (ManagerID)
-      await this.$fire.firestore
-        .collection('users')
-        .doc(this.userId)
-        .update({
-          organizerInv: firebase.firestore.FieldValue.arrayRemove(
-            deletedOrganizerInv
-          ),
-        })
-
-      // Send notification to notificationsRef (OrganizerID)
-      await this.$fire.firestore
-        .collection('users')
-        .doc(inv.organizerID)
-        .update({
-          notificationsRef: firebase.firestore.FieldValue.arrayUnion(
-            rejectedMsg
-          ),
-        })
-
-      // Delete manager pending to tournament manager list (TournamentID)
-      await this.$fire.firestore
-        .collection('tournaments')
-        .doc(inv.tournamentID)
-        .get()
-        .then((doc) => {
-          const currentManagerRefTemp = doc.data().managerRef
-
-          // Get current managerRef
-          const currentManagerRefFiltered = currentManagerRefTemp.find(
-            (element) => element.uid === this.userId
-          )
-
-          // Create current managerRef
-          const currentManagerRef = {
-            uid: currentManagerRefFiltered.uid,
-            status: currentManagerRefFiltered.status,
+      try {
+        if (inv.category == 'tournamentsMgr') {
+          // Initialize deletedOrganizerInv object
+          const deletedOrganizerInv = {
+            organizerID: inv.organizerID,
+            tournamentID: inv.tournamentID,
+            tournamentName: inv.tournamentName,
+            type: inv.type,
           }
 
-          // Delete current managerRef
-          this.$fire.firestore
-            .collection('tournaments')
-            .doc(inv.tournamentID)
+          // Create rejectedMsg
+          const rejectedMsg = {
+            status: 'unread',
+            message:
+              this.name +
+              ' has rejected your manager invitation in ' +
+              inv.tournamentName +
+              '.',
+          }
+
+          // Delete inv from organizerInv (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(this.userId)
             .update({
-              managerRef: firebase.firestore.FieldValue.arrayRemove(
-                currentManagerRef
+              organizerInv: firebase.firestore.FieldValue.arrayRemove(
+                deletedOrganizerInv
               ),
             })
+
+          // Send notification to notificationsRef (OrganizerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(inv.organizerID)
+            .update({
+              notificationsRef: firebase.firestore.FieldValue.arrayUnion(
+                rejectedMsg
+              ),
+            })
+
+          // Delete manager pending to tournament manager list (TournamentID)
+          await this.$fire.firestore
+            .collection('tournaments')
+            .doc(inv.tournamentID)
+            .get()
+            .then((doc) => {
+              const currentManagerRefTemp = doc.data().managerRef
+
+              // Get current managerRef
+              const currentManagerRefFiltered = currentManagerRefTemp.find(
+                (element) => element.uid === this.userId
+              )
+
+              // Create current managerRef
+              const currentManagerRef = {
+                uid: currentManagerRefFiltered.uid,
+                status: currentManagerRefFiltered.status,
+              }
+
+              // Delete current managerRef
+              this.$fire.firestore
+                .collection('tournaments')
+                .doc(inv.tournamentID)
+                .update({
+                  managerRef: firebase.firestore.FieldValue.arrayRemove(
+                    currentManagerRef
+                  ),
+                })
+            })
+            .then(() => {
+              this.$store.commit('SET_NOTIFICATION', {
+                alert:
+                  'You have rejected manager invitation from ' +
+                  inv.tournamentName,
+                alertIcon: 'mdi-alert-circle',
+                alertIconStyle: 'mr-2 align-self-top',
+                colorIcon: 'red darken-1',
+                snackbar: true,
+              })
+            })
+        } else if (inv.category == 'eventsMgr') {
+          // Initialize deletedOrganizerInv object
+          const deletedOrganizerInv = {
+            category: inv.category,
+            eventID: inv.eventID,
+            eventName: inv.eventName,
+            gender: inv.gender,
+            sportType: inv.sportType,
+            organizerID: inv.organizerID,
+            tournamentID: inv.tournamentID,
+            type: inv.type,
+          }
+
+          // Create rejectedMsg
+          const rejectedMsg = {
+            status: 'unread',
+            message:
+              this.name +
+              ' has rejected your manager invitation in ' +
+              inv.eventName +
+              ' (' +
+              inv.sportType +
+              ') event' +
+              '.',
+          }
+
+          // Delete inv from organizerInv (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(this.userId)
+            .update({
+              organizerInv: firebase.firestore.FieldValue.arrayRemove(
+                deletedOrganizerInv
+              ),
+            })
+
+          // Send notification to notificationsRef (OrganizerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(inv.organizerID)
+            .update({
+              notificationsRef: firebase.firestore.FieldValue.arrayUnion(
+                rejectedMsg
+              ),
+            })
+
+          // Delete manager pending to tournament manager list (TournamentID)
+          await this.$fire.firestore
+            .collection('events')
+            .doc(inv.eventID)
+            .collection('tournaments')
+            .doc(inv.tournamentID)
+            .get()
+            .then((doc) => {
+              const currentManagerRefTemp = doc.data().managerRef
+
+              // Get current managerRef
+              const currentManagerRefFiltered = currentManagerRefTemp.find(
+                (element) => element.uid === this.userId
+              )
+
+              // Create current managerRef
+              const currentManagerRef = {
+                uid: currentManagerRefFiltered.uid,
+                status: currentManagerRefFiltered.status,
+              }
+
+              // Delete current managerRef
+              this.$fire.firestore
+                .collection('events')
+                .doc(inv.eventID)
+                .collection('tournaments')
+                .doc(inv.tournamentID)
+                .update({
+                  managerRef: firebase.firestore.FieldValue.arrayRemove(
+                    currentManagerRef
+                  ),
+                })
+            })
+            .then(() => {
+              this.$store.commit('SET_NOTIFICATION', {
+                alert:
+                  'You have rejected manager invitation from ' +
+                  inv.tournamentName,
+                alertIcon: 'mdi-alert-circle',
+                alertIconStyle: 'mr-2 align-self-top',
+                colorIcon: 'red darken-1',
+                snackbar: true,
+              })
+            })
+        }
+      } catch (error) {
+        console.log(error.code)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
         })
-        .then(() => {
-          this.$store.commit('SET_NOTIFICATION', {
-            alert:
-              'You have rejected manager invitation from ' + inv.tournamentName,
-            alertIcon: 'mdi-alert-circle',
-            alertIconStyle: 'mr-2 align-self-top',
-            colorIcon: 'red darken-1',
-            snackbar: true,
-          })
-        })
+      }
     },
 
     // To Sign Out Account

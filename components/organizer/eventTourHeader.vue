@@ -66,7 +66,7 @@
                 <!-- Title -->
                 <v-col cols="8" md="7" xl="10">
                   <h1 class="text-h4 font-weight-bold mb-md-n3">
-                    {{ eventRef.title }}
+                    {{ eventRef.title }} &mdash; {{ tournamentRef.sportType }}
                   </h1>
                 </v-col>
 
@@ -107,6 +107,12 @@
                   {{ tournamentRef.participants }} Teams
                 </h1>
 
+                <!-- Gender -->
+                <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
+                  <v-icon class="mr-1">mdi-gender-male-female</v-icon>
+                  {{ tournamentRef.gender }}
+                </h1>
+
                 <!-- Sports Type -->
                 <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
                   <v-icon class="mr-1">mdi-stadium</v-icon>
@@ -117,12 +123,6 @@
                 <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
                   <v-icon class="mr-1">mdi-trophy</v-icon>
                   {{ tournamentRef.gStage }} &rarr; {{ tournamentRef.fStage }}
-                </h1>
-
-                <!-- Date -->
-                <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
-                  <v-icon class="mr-1">mdi-calendar</v-icon>
-                  {{ startDate }} &rharu; {{ endDate }}
                 </h1>
               </div>
             </v-row>
@@ -160,15 +160,15 @@ export default {
         },
         {
           name: 'Group Stage',
-          route: `/organizer/auth/tournaments/${this.$route.params.id}/${this.$route.params.tournamentID}/groupstage`,
+          route: `/organizer/auth/events/${this.$route.params.id}/${this.$route.params.tournamentID}/groupstage`,
         },
         {
           name: 'Final Stage',
-          route: `/organizer/auth/tournaments/${this.$route.params.id}/${this.$route.params.tournamentID}/finalstage`,
+          route: `/organizer/auth/events/${this.$route.params.id}/${this.$route.params.tournamentID}/finalstage`,
         },
         {
           name: 'Participants',
-          route: `/organizer/auth/tournaments/${this.$route.params.id}/${this.$route.params.tournamentID}/participants`,
+          route: `/organizer/auth/events/${this.$route.params.id}/${this.$route.params.tournamentID}/participants`,
         },
         {
           name: 'Settings',

@@ -499,12 +499,18 @@ export default {
             managerRef: [],
             registrationStatus: false,
 
+            // Sponsorship Data
+            sponsorship: [],
+
             // List Requested Manager
             requestListMgr: [],
 
             // Organizer Collaborator
             organizerRef: [],
             organizerRequestList: [],
+
+            // Tournament ID Reference
+            tournamentRef: [],
           })
 
         // Update EventID in Users Collection
@@ -525,6 +531,7 @@ export default {
       } catch (error) {
         // Loading State -> False
         this.isLoading = false
+        
         console.log(error)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
