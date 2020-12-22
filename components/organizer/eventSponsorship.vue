@@ -2,17 +2,18 @@
   <v-card class="mx-auto py-7 px-9 mb-4" outlined tile>
     <!-- No sponsorship -->
     <v-row>
-      <h1 class="text-subtitle-1 font-weight-bold text-center">
+      <h1 class="text-subtitle-1 font-weight-bold text-center mb-n6">
         <v-icon class="mr-1">mdi-sponsor</v-icon>
         Brand Sponsorship
       </h1>
 
       <v-col cols="12">
         <a
+          v-show="userID == eventHostname"
           @click="addSponsorship = !addSponsorship"
           class="card text-decoration-none"
         >
-          <v-card class="mx-auto py-4 px-5 text-center" outlined>
+          <v-card class="mx-auto py-4 px-5 mt-7 text-center" outlined>
             <v-icon class="mt-n1" color="primary">mdi-plus-box</v-icon>
             <h1 class="text-subtitle-2 font-weight-medium text-grey">
               Add Sponsorship
@@ -30,6 +31,7 @@
         <div class="d-flex button">
           <v-btn
             @click="onDeleteBrandSponsor(sponsorship)"
+            :disabled="userID != eventHostname"
             class="ml-auto mr-2 mt-1"
             icon
           >
@@ -247,22 +249,31 @@ export default {
       'https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2FLogo.jpg?alt=media&token=921893c3-3134-494b-8f8c-332b10666623',
     websiteURL: '',
     description: '',
+    eventHostname: '',
 
     // Photo Selection
     selectedFile: null,
     isFileUploaded: false,
     uploadPercentage: null,
 
+    // Current User Info
+    userID: null,
+
     // Data Fetched
     sponsorshipList: '',
   }),
 
   mounted() {
+    // Get current user
+    this.userID = this.$fire.auth.currentUser.uid
+
+    // Get data from events
     this.$fire.firestore
       .collection('events')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
         this.sponsorshipList = doc.data().sponsorship
+        this.eventHostname = doc.data().hostName
       })
   },
 
