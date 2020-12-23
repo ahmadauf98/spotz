@@ -1,7 +1,7 @@
 <template>
   <v-app>
-    <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
-      <v-container class="p-0 my-0" fluid>
+    <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0 mt-n5 mb-5">
+      <div class="nav-mx">
         <!-- Notifications -->
         <notifications />
 
@@ -10,16 +10,16 @@
 
         <v-row>
           <!-- Left Side -->
-          <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
+          <v-col cols="12" lg="8" order="2" order-lg="1">
             <participantscomp />
           </v-col>
 
           <!-- Right Side -->
-          <v-col cols="12" lg="4" xl="3" order="1" order-lg="2">
+          <v-col cols="12" lg="4" order="1" order-lg="2">
             <tournamentInfo />
           </v-col>
         </v-row>
-      </v-container>
+      </div>
     </v-main>
   </v-app>
 </template>
@@ -39,6 +39,39 @@ export default {
     participantscomp,
     notifications,
   },
-  
 }
 </script>
+
+<style scoped>
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .nav-mx {
+    margin: 0px 40px;
+  }
+}
+
+/* Medium devices (landscape tablets, 960px and up) */
+@media only screen and (min-width: 960px) {
+  .nav-mx {
+    margin: 0px 50px;
+  }
+}
+
+/* Large devices (laptops/desktops, 1264px and up) */
+@media only screen and (min-width: 1264px) {
+  .nav-mx {
+    margin: 0px 180px;
+  }
+}
+
+/* Extra large devices (large laptops and desktops, 1904px and up) */
+@media only screen and (min-width: 1904px) {
+  .nav-mx {
+    margin: 0px 200px;
+  }
+}
+</style>

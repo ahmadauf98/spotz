@@ -98,7 +98,7 @@ export default {
 /* Extra large devices (large laptops and desktops, 1904px and up) */
 @media only screen and (min-width: 1904px) {
   .nav-padding {
-    padding: 0px 350px;
+    padding: 0px 300px;
   }
 }
 </style>

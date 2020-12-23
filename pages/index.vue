@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <!-- First Section -->
     <div class="px-2 nav-mx mt-5 mt-md-15">
       <v-row class="d-flex align-center">

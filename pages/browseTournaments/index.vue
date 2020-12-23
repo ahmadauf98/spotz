@@ -1,9 +1,9 @@
 <template>
   <v-app>
-    <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
-      <v-container class="p-0 my-0" fluid>
-        <!-- Greeting User -->
-        <h1 class="mt-6">Tournaments</h1>
+    <v-main class="mx-8 mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
+      <div class="nav-mx mb-5">
+        <!-- Title -->
+        <h1 class="text-h4 font-weight-black mb-4 mb-md-2 mt-6">Tournaments</h1>
 
         <v-row class="d-flex mb-n4">
           <v-col cols="12" lg="3" class="mb-n1 mb-lg-0">
@@ -82,7 +82,7 @@
               v-show="tournament.status == true"
               :key="tournament.tournamentID"
               cols="6"
-              lg="3"
+              lg="4"
             >
               <v-card class="mx-auto" outlined>
                 <!-- Header Picture -->
@@ -176,7 +176,7 @@
             indeterminate
           ></v-progress-circular>
         </v-overlay>
-      </v-container>
+      </div>
     </v-main>
   </v-app>
 </template>
@@ -343,3 +343,26 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+/* Medium devices (landscape tablets, 960px and up) */
+@media only screen and (min-width: 960px) {
+  .nav-mx {
+    margin: 0px 50px;
+  }
+}
+
+/* Large devices (laptops/desktops, 1264px and up) */
+@media only screen and (min-width: 1264px) {
+  .nav-mx {
+    margin: 0px 190px;
+  }
+}
+
+/* Extra large devices (large laptops and desktops, 1904px and up) */
+@media only screen and (min-width: 1904px) {
+  .nav-mx {
+    margin: 0px 220px;
+  }
+}
+</style>
