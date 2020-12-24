@@ -257,7 +257,7 @@ export default {
 
   data() {
     return {
-      // User Input Data
+      // Event Data
       eventRef: '',
       eventStatus: false,
       tournamentList: '',

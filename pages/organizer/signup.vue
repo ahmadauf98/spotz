@@ -252,6 +252,7 @@ export default {
                 notificationsMgr: [],
                 managerReq: [],
                 organizerInv: [],
+                eventsCollab: [],
               })
               data.user.updateProfile({
                 displayName: this.name,

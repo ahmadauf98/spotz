@@ -389,10 +389,9 @@ export default {
             gender: this.gender,
 
             // Collaborator Data
-            collaborator: [],
+            collaborator: null,
 
             // Registration & Manager Data
-
             registrationStatus: false,
 
             // Manager Data

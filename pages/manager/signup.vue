@@ -265,6 +265,9 @@ export default {
                 tournamentsMgr: [],
                 eventsMgr: [],
                 notificationsMgr: [],
+                managerReq: [],
+                organizerInv: [],
+                eventsCollab: [],
               })
               data.user.updateProfile({
                 displayName: this.name,

@@ -208,7 +208,7 @@ export default {
       startDate: '',
       endDate: '',
 
-      //Search Data
+      // Search Data
       isLoading: false,
       items: [],
       search: null,

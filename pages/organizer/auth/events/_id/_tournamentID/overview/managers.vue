@@ -11,6 +11,7 @@
         <v-row>
           <!-- Left Side -->
           <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
+            
             <!-- Card displayed if manager list is empty -->
             <v-card
               v-if="managerlength == 0"

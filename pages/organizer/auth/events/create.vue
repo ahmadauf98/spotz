@@ -506,8 +506,7 @@ export default {
             requestListMgr: [],
 
             // Organizer Collaborator
-            organizerRef: [],
-            organizerRequestList: [],
+            collabRef: [],
 
             // Tournament ID Reference
             tournamentRef: [],
@@ -531,7 +530,7 @@ export default {
       } catch (error) {
         // Loading State -> False
         this.isLoading = false
-        
+
         console.log(error)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,

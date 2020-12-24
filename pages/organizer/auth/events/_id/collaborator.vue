@@ -1,9 +1,516 @@
 <template>
-  <div>
-    <h1>Collaborator Page</h1>
-  </div>
+  <v-app>
+    <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
+      <v-container class="p-0 my-0" fluid>
+        <!-- Notifications -->
+        <notifications />
+
+        <!-- Organization Details Part -->
+        <eventHeader />
+
+        <v-row>
+          <!-- Left Side -->
+          <v-col cols="12" lg="8" order="2" order-lg="1">
+            <!-- Card displayed if collaborator list is empty -->
+            <v-card
+              v-if="collaboratorlength == 0"
+              class="mx-auto py-10 mt-n3 mt-lg-0 px-9"
+              outlined
+              tile
+            >
+              <v-row class="mt-n4 mb-n5 d-flex align-center">
+                <v-col cols="12" md="8" order="2" order-md="1">
+                  <div>
+                    <h1
+                      class="text-center text-md-left text-subtitle-1 font-weight-bold mb-4"
+                    >
+                      List of Collaborator
+                    </h1>
+
+                    <h1 class="text-subtitle-1 font-weight-regular mb-5">
+                      Currently there is no collaborator yet in your event.
+                      Please invite collaborator by email and the list of
+                      collaborator will be displayed here.
+                    </h1>
+
+                    <v-btn
+                      @click="addCollaboration"
+                      class="font-weight-regular text-capitalize"
+                      color="primary"
+                      depressed
+                    >
+                      Add Collaborator
+                    </v-btn>
+                  </div>
+                </v-col>
+
+                <v-col
+                  cols="12"
+                  md="4"
+                  class="d-flex justify-center align-top"
+                  order="1"
+                  order-md="2"
+                >
+                  <div class="px-5 mt-md-n8 mt-lg-n3 mt-xl-1">
+                    <img
+                      src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fmanagers-tournament.svg?alt=media&token=ec47c873-a84d-4353-b823-e0fe7bff619b"
+                      width="220px"
+                      alt="..."
+                    />
+                  </div>
+                </v-col>
+              </v-row>
+            </v-card>
+
+            <!-- Card displayed if collaborator list is not empty -->
+            <v-card
+              v-else
+              class="mx-auto py-10 mt-n3 mt-lg-0 px-9"
+              outlined
+              tile
+            >
+              <div class="d-flex">
+                <h1 class="text-subtitle-1 font-weight-bold mb-1">
+                  List of Collaborators
+                </h1>
+
+                <v-btn
+                  @click="addCollaboration"
+                  class="ml-auto mt-n2"
+                  color="primary"
+                  icon
+                >
+                  <v-icon>mdi-account-multiple-plus</v-icon>
+                </v-btn>
+              </div>
+
+              <v-simple-table>
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-center">No</th>
+                      <th class="text-left">ID</th>
+                      <th class="text-left">Tournament</th>
+                      <th class="text-left">Collaborator</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(collaborator, index) in collaboratorList"
+                      :key="index"
+                      class="text-center"
+                    >
+                      <td class="text-center">{{ index + 1 }}</td>
+                      <td class="text-left">{{ collaborator.tournamentID }}</td>
+                      <td class="text-left">
+                        {{ collaborator.tournamentName }}
+                      </td>
+                      <td class="text-left text-capitalize">
+                        {{ collaborator.collaboratorName }}
+                      </td>
+
+                      <td>
+                        <!-- Delete Account -->
+                        <v-menu>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn v-bind="attrs" v-on="on" icon>
+                              <v-icon>mdi-delete</v-icon>
+                            </v-btn>
+                          </template>
+                          <v-list>
+                            <v-list-item @click="onDeleteCollab">
+                              <v-list-item-title>
+                                Delete Account
+                              </v-list-item-title>
+                            </v-list-item>
+                          </v-list>
+                        </v-menu>
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card>
+          </v-col>
+
+          <!-- Right Side -->
+          <v-col cols="12" lg="4" order="1" order-lg="2">
+            <eventSponsorship />
+          </v-col>
+        </v-row>
+
+        <!-- Add Collaborator -->
+        <v-overlay :opacity="opacity" :value="addCollab">
+          <v-card
+            class="mx-auto py-5 px-10 black--text d-block align-center"
+            height="300"
+            width="700"
+            color="white"
+            light
+            outlined
+          >
+            <v-btn @click="addCollab = false" class="mt-n3 ml-n8" icon>
+              <v-icon>mdi-close-circle</v-icon>
+            </v-btn>
+            <!-- Title -->
+            <div class="text-center">
+              <v-icon class="mb-3" color="grey darken-1" size="60"
+                >mdi-account-tie</v-icon
+              >
+              <h1 class="text-center text-h5 font-weight-medium">
+                Add collaborator to manage the tournament
+              </h1>
+            </div>
+
+            <div class="d-flex align-center">
+              <v-row class="mt-6">
+                <!-- Select Collaborator -->
+                <v-col cols="6">
+                  <v-autocomplete
+                    v-model="userID"
+                    :items="userList"
+                    label="Select Collaborator"
+                    item-text="name"
+                    item-value="uid"
+                    outlined
+                    dense
+                  >
+                    <template v-slot:item="data">
+                      <template>
+                        <v-list-item-avatar>
+                          <img :src="data.item.avatar" />
+                        </v-list-item-avatar>
+                        <v-list-item-content>
+                          <v-list-item-title
+                            v-html="data.item.name"
+                          ></v-list-item-title>
+                          <v-list-item-subtitle
+                            v-html="data.item.email"
+                          ></v-list-item-subtitle>
+                        </v-list-item-content>
+                      </template>
+                    </template>
+                  </v-autocomplete>
+                </v-col>
+
+                <!-- Select Tournament -->
+                <v-col cols="4">
+                  <v-autocomplete
+                    v-model="tournamentID"
+                    :items="tournamentList"
+                    label="Select Tournament"
+                    item-text="sportType"
+                    item-value="tournamentID"
+                    outlined
+                    dense
+                  >
+                    <template v-slot:item="data">
+                      <template class="d-flex">
+                        <v-list-item-content>
+                          <v-list-item-title
+                            v-html="data.item.sportType"
+                          ></v-list-item-title>
+                          <v-list-item-subtitle
+                            v-html="data.item.tournamentID"
+                          ></v-list-item-subtitle>
+                        </v-list-item-content>
+                        <v-list-item-icon
+                          class="d-flex align-self-center pa-0 ma-0"
+                        >
+                          <v-chip
+                            v-if="data.item.gender == 'Male'"
+                            color="blue darken-2"
+                            x-small
+                            label
+                            outlined
+                          >
+                            {{ data.item.gender }}
+                          </v-chip>
+
+                          <v-chip
+                            v-else
+                            color="pink darken-1"
+                            x-small
+                            label
+                            outlined
+                          >
+                            {{ data.item.gender }}
+                          </v-chip>
+                        </v-list-item-icon>
+                      </template>
+                    </template>
+                  </v-autocomplete>
+                </v-col>
+
+                <!-- Adding Button -->
+                <v-col cols="2">
+                  <v-btn
+                    @click="onAddCollab(userID, tournamentID)"
+                    class="font-weight-regular text-capitalize"
+                    :disabled="tournamentList == ''"
+                    color="primary"
+                    height="40"
+                    depressed
+                    block
+                  >
+                    Add
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </div>
+          </v-card>
+        </v-overlay>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-export default {}
+import firebase from 'firebase'
+import eventHeader from '~/components/organizer/eventHeader'
+import eventSponsorship from '~/components/organizer/eventSponsorship'
+import notifications from '~/components/notifications'
+
+export default {
+  middleware: 'authenticated',
+
+  layout: 'organizer',
+
+  components: {
+    eventHeader,
+    eventSponsorship,
+    notifications,
+  },
+
+  data() {
+    return {
+      // Event Data
+      eventRef: '',
+      collaboratorlength: '',
+
+      // Adding Collaboration Overlay
+      opacity: 0.5,
+      addCollab: false,
+
+      // Search Data
+      userList: [],
+      tournamentList: [],
+
+      // Adding Collaborator Data
+      userID: '',
+      tournamentID: '',
+      eventHost: '',
+      tournamentName: '',
+      tournamentGender: '',
+      collaboratorList: '',
+
+      // Loading State
+      isLoading: false,
+    }
+  },
+
+  mounted() {
+    // Get Event Data
+    this.$fire.firestore
+      .collection('events')
+      .doc(this.$route.params.id)
+      .onSnapshot((doc) => {
+        this.eventRef = doc.data()
+        this.collaboratorlength = doc.data().collabRef.length
+        var collaboratorListTemp = []
+
+        // Get Tournament and User Data
+        doc.data().collabRef.forEach((doc) => {
+          // Get Tournament Name
+          this.$fire.firestore
+            .collection('events')
+            .doc(this.$route.params.id)
+            .collection('tournaments')
+            .doc(doc.tournamentID)
+            .onSnapshot((docTour) => {
+              // Get User Name
+              this.$fire.firestore
+                .collection('users')
+                .doc(doc.userID)
+                .onSnapshot((docUser) => {
+                  collaboratorListTemp.push({
+                    tournamentID: doc.tournamentID,
+                    tournamentName: docTour.data().sportType,
+                    collaboratorID: doc.userID,
+                    collaboratorName: docUser.data().name,
+                  })
+                })
+            })
+        })
+
+        this.collaboratorList = collaboratorListTemp
+      })
+  },
+
+  methods: {
+    // Get and find user and filter tournament list
+    async addCollaboration() {
+      // Get list of tournament
+      this.$fire.firestore
+        .collection('events')
+        .doc(this.$route.params.id)
+        .onSnapshot((doc) => {
+          var tournamentListTemp = []
+
+          doc.data().tournamentRef.forEach((tournamentID) => {
+            // Get Tournament Data
+            this.$fire.firestore
+              .collection('events')
+              .doc(this.$route.params.id)
+              .collection('tournaments')
+              .doc(tournamentID)
+              .onSnapshot((doc) => {
+                // Filtered tournament that don't have collaborator
+                if (doc.data().collaborator == null) {
+                  var list = {
+                    sportType: doc.data().sportType,
+                    tournamentID: doc.data().tournamentID,
+                    gender: doc.data().gender,
+                  }
+                  tournamentListTemp.push(list)
+                }
+              })
+          })
+          this.tournamentList = tournamentListTemp
+        })
+
+      // Get list of user
+      this.$fire.firestore
+        .collection('users')
+        .get()
+        .then((querySnapshot) => {
+          var userListTemp = []
+          querySnapshot.forEach((doc) => {
+            var list = {
+              name: doc.data().name,
+              email: doc.data().email,
+              avatar: doc.data().photoURL,
+              uid: doc.data().uid,
+            }
+            userListTemp.push(list)
+          })
+
+          // Remove host from the list
+          const host = userListTemp.find(
+            (element) => element.uid === this.eventRef.hostName
+          )
+
+          const filteredListTemp = userListTemp.filter(function (element) {
+            return element != host
+          })
+
+          this.userList = filteredListTemp
+        })
+
+      // Set adding collaboration overlay to True
+      this.addCollab = true
+    },
+
+    // Adding Collaborator to the events
+    async onAddCollab(userID, tournamentID) {
+      // Get hostName
+      this.$fire.firestore
+        .collection('users')
+        .doc(this.eventRef.hostName)
+        .get()
+        .then((doc) => {
+          this.eventHost = doc.data().name
+        })
+
+      // Get tournament name & gender
+      this.$fire.firestore
+        .collection('events')
+        .doc(this.$route.params.id)
+        .collection('tournaments')
+        .doc(tournamentID)
+        .get()
+        .then((doc) => {
+          this.tournamentName = doc.data().sportType
+          this.tournamentGender = doc.data().gender
+        })
+
+      try {
+        // Add userID & TournamentID to collabRef (Event)
+        await this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .update({
+            collabRef: firebase.firestore.FieldValue.arrayUnion({
+              userID: userID,
+              tournamentID: tournamentID,
+            }),
+          })
+
+        // Add userID to collaborator (Tournament)
+        await this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(tournamentID)
+          .update({
+            collaborator: userID,
+          })
+
+        // Add TournamentID to eventsCollab (User)
+        await this.$fire.firestore
+          .collection('users')
+          .doc(userID)
+          .update({
+            eventsCollab: firebase.firestore.FieldValue.arrayUnion({
+              eventID: this.$route.params.id,
+              tournamentID: tournamentID,
+            }),
+          })
+
+        // Send Notifications to the users (User)
+        await this.$fire.firestore
+          .collection('users')
+          .doc(userID)
+          .update({
+            notificationsRef: firebase.firestore.FieldValue.arrayUnion({
+              message:
+                this.eventHost +
+                ' has assigned you a role in ' +
+                this.eventRef.title +
+                'event to manage ' +
+                this.tournamentName +
+                'tournament (' +
+                this.tournamentGender +
+                ').',
+              status: 'unread',
+            }),
+          })
+          .then(() => {
+            // Set loadingState to false
+            this.addCollab = false
+          })
+      } catch (error) {
+        // Set loadingState to false
+        this.addCollab = false
+        console.log(error.message)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
+    },
+
+    // Delete Collaborator From Tournament
+    onDeleteCollab() {
+      // Remove userID & TournamentID from collabRef (Event)
+      // Remove userID from collaborator (Tournament)
+      // Remove TournamentID from eventsCollab (User)
+      // Send Notifications to the users (User)
+    },
+  },
+}
 </script>
