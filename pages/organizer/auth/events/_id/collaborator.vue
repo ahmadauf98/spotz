@@ -90,8 +90,8 @@
                     <tr>
                       <th class="text-center">No</th>
                       <th class="text-left">ID</th>
-                      <th class="text-left">Tournament</th>
-                      <th class="text-left">Collaborator</th>
+                      <th class="text-center">Tournament</th>
+                      <th class="text-center">Collaborator</th>
                       <th class="text-center">Actions</th>
                     </tr>
                   </thead>
@@ -103,10 +103,10 @@
                     >
                       <td class="text-center">{{ index + 1 }}</td>
                       <td class="text-left">{{ collaborator.tournamentID }}</td>
-                      <td class="text-left">
+                      <td class="text-center">
                         {{ collaborator.tournamentName }}
                       </td>
-                      <td class="text-left text-capitalize">
+                      <td class="text-center">
                         {{ collaborator.collaboratorName }}
                       </td>
 
@@ -119,7 +119,7 @@
                             </v-btn>
                           </template>
                           <v-list>
-                            <v-list-item @click="onDeleteCollab">
+                            <v-list-item @click="onDeleteCollab(collaborator)">
                               <v-list-item-title>
                                 Delete Account
                               </v-list-item-title>
@@ -304,6 +304,7 @@ export default {
       tournamentName: '',
       tournamentGender: '',
       collaboratorList: '',
+      tournName: '',
 
       // Loading State
       isLoading: false,
@@ -318,8 +319,7 @@ export default {
       .onSnapshot((doc) => {
         this.eventRef = doc.data()
         this.collaboratorlength = doc.data().collabRef.length
-        var collaboratorListTemp = []
-
+        let collaboratorListTemp = []
         // Get Tournament and User Data
         doc.data().collabRef.forEach((doc) => {
           // Get Tournament Name
@@ -343,7 +343,6 @@ export default {
                 })
             })
         })
-
         this.collaboratorList = collaboratorListTemp
       })
   },
@@ -478,9 +477,9 @@ export default {
                 this.eventHost +
                 ' has assigned you a role in ' +
                 this.eventRef.title +
-                'event to manage ' +
+                ' event to manage ' +
                 this.tournamentName +
-                'tournament (' +
+                ' tournament (' +
                 this.tournamentGender +
                 ').',
               status: 'unread',
@@ -494,6 +493,7 @@ export default {
         // Set loadingState to false
         this.addCollab = false
         console.log(error.message)
+        this.$forceUpdate()
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
@@ -505,11 +505,74 @@ export default {
     },
 
     // Delete Collaborator From Tournament
-    onDeleteCollab() {
-      // Remove userID & TournamentID from collabRef (Event)
-      // Remove userID from collaborator (Tournament)
-      // Remove TournamentID from eventsCollab (User)
-      // Send Notifications to the users (User)
+    async onDeleteCollab(collaborator) {
+      // Get tournament name & gender
+      this.$fire.firestore
+        .collection('events')
+        .doc(this.$route.params.id)
+        .collection('tournaments')
+        .doc(collaborator.tournamentID)
+        .get()
+        .then((doc) => {
+          this.tournamentGender = doc.data().gender
+        })
+      try {
+        // Remove userID & TournamentID from collabRef (Event)
+        await this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .update({
+            collabRef: firebase.firestore.FieldValue.arrayRemove({
+              userID: collaborator.collaboratorID,
+              tournamentID: collaborator.tournamentID,
+            }),
+          })
+        // Remove userID from collaborator (Tournament)
+        await this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(collaborator.tournamentID)
+          .update({
+            collaborator: null,
+          })
+        // Remove TournamentID from eventsCollab (User)
+        await this.$fire.firestore
+          .collection('users')
+          .doc(collaborator.collaboratorID)
+          .update({
+            eventsCollab: firebase.firestore.FieldValue.arrayRemove({
+              eventID: this.$route.params.id,
+              tournamentID: collaborator.tournamentID,
+            }),
+          })
+        // Send Notifications to the users (User)
+        await this.$fire.firestore
+          .collection('users')
+          .doc(collaborator.collaboratorID)
+          .update({
+            notificationsRef: firebase.firestore.FieldValue.arrayUnion({
+              message:
+                'You have been removed as a collaborator of ' +
+                this.eventRef.title +
+                ' event to manage ' +
+                collaborator.tournamentName +
+                ' tournament (' +
+                this.tournamentGender +
+                ').',
+              status: 'unread',
+            }),
+          })
+      } catch (error) {
+        console.log(error.message)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
     },
   },
 }

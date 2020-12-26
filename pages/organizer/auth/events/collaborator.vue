@@ -9,48 +9,29 @@
           <!-- Event Title -->
           <v-row>
             <v-col cols="5">
-              <h1 class="text-h4 font-weight-bold mt-6 mb-3">My Events</h1>
-            </v-col>
-            <v-col></v-col>
-            <v-col cols="3" class="d-flex justify-end">
-              <v-btn
-                class="font-weight-medium text-capitalize mt-6 mr-1"
-                text
-                color="primary"
-                to="/organizer/auth/events/collaborator"
-              >
-                Collaborators
-              </v-btn>
-
-              <v-btn
-                v-show="eventsRef != ''"
-                class="font-weight-regular text-capitalize mt-6 ml-1"
-                dark
-                depressed
-                color="primary"
-                to="/organizer/auth/events/create"
-              >
-                New Event
-              </v-btn>
+              <h1 class="text-h4 font-weight-bold mt-6 mb-3">
+                My Collaborators
+              </h1>
             </v-col>
           </v-row>
 
           <!-- Events Create -->
-          <v-row v-if="eventsRef == null || eventsRef == ''">
+          <v-row v-if="collabRef == null || collabRef == ''">
             <v-col>
               <v-card class="mx-auto" outlined>
                 <v-row class="p-15">
                   <v-col cols="12" md="7" lg="8">
                     <div class="px-5">
                       <h1 class="text-subtitle-1 font-weight-bold mb-8">
-                        Create Event
+                        Event Collaborator
                       </h1>
                       <h1 class="text-h4 font-weight-medium mb-2">
-                        Multiple & Organized
+                        Manage Tournament
                       </h1>
-                      <h1 class="text-subtitle-1 font-weight-regular mb-5">
-                        Create and manage your multiple tournaments in one
-                        single event.
+                      <h1 class="text-subtitle-1 font-weight-regular mb-5 mr-2">
+                        To handle the tournaments in the event, you need tp
+                        be part of the organizer. Wait for your event host to
+                        adding you in their event collaborator.
                       </h1>
                       <v-btn
                         class="font-weight-regular text-capitalize mb-4"
@@ -66,7 +47,7 @@
                   <v-col cols="12" md="4" class="d-none d-md-flex align-center">
                     <div class="px-5 py-md-0 py-lg-0">
                       <img
-                        src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fmy-event.svg?alt=media&token=a2380370-4e88-4043-b1ca-e72e70ddced9"
+                        src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fmy-organization.svg?alt=media&token=c060c284-a3e7-4cee-8961-69796868256c"
                         width="220px"
                         alt="..."
                       />
@@ -80,13 +61,13 @@
           <!-- Events Listing -->
           <v-row
             v-else
-            v-for="(event, index) in eventsRef"
+            v-for="(collab, index) in collabRef"
             :key="index"
             class="mb-n2"
           >
             <v-col>
               <nuxt-link
-                :to="`/organizer/auth/events/${event.eventID}/overview`"
+                :to="`/organizer/auth/events/${collab.eventID}/${collab.tournamentID}/overview`"
                 class="text-decoration-none card"
               >
                 <v-card class="py-5" outlined tile>
@@ -94,19 +75,22 @@
                     <v-col cols="8" class="d-flex align-center">
                       <!-- Picture -->
                       <v-avatar class="mr-8" size="50" rounded>
-                        <img :src="event.photoURL" alt="..." />
+                        <img :src="collab.photoURL" alt="..." />
                       </v-avatar>
 
                       <!-- Title -->
                       <h1 class="text-body-1 font-weight-bold">
-                        {{ event.title }}
+                        {{ collab.eventTitle }}
                         <br />
-                        <span class="text-caption">{{ event.websiteURL }}</span>
+                        <span class="text-caption"
+                          >{{ collab.tournamentName }} &mdash;
+                          {{ collab.tournamentGender }}</span
+                        >
                       </h1>
                     </v-col>
                     <v-col cols="4" class="d-flex justify-end align-center">
                       <v-chip class="ma-2" color="green" small label outlined>
-                        {{ event.startDate }}
+                        {{ collab.startDate }}
                       </v-chip>
                     </v-col>
                   </v-row>
@@ -132,7 +116,7 @@ export default {
       title: '',
       sportType: '',
       participants: '',
-      eventsRef: [],
+      collabRef: [],
 
       // User Authentication
       userId: '',
@@ -146,17 +130,35 @@ export default {
       .collection('users')
       .doc(this.userId)
       .onSnapshot((doc) => {
-        this.eventsRefTemp = []
+        this.collabRefTemp = []
         if (doc.exists) {
-          doc.data().eventsRef.forEach((docref) => {
+          doc.data().eventsCollab.forEach((docref) => {
+            // Get events data
             this.$fire.firestore
               .collection('events')
-              .doc(docref)
-              .onSnapshot((doc) => {
-                this.eventsRefTemp.push(doc.data())
+              .doc(docref.eventID)
+              .onSnapshot((docEvent) => {
+                // Get tournaments data
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(docref.eventID)
+                  .collection('tournaments')
+                  .doc(docref.tournamentID)
+                  .onSnapshot((docTour) => {
+                    var list = {
+                      eventID: docref.eventID,
+                      tournamentID: docref.tournamentID,
+                      photoURL: docEvent.data().photoURL,
+                      tournamentName: docTour.data().sportType,
+                      tournamentGender: docTour.data().gender,
+                      eventTitle: docEvent.data().title,
+                      startDate: docEvent.data().startDate,
+                    }
+                    this.collabRefTemp.push(list)
+                  })
               })
           })
-          this.eventsRef = this.eventsRefTemp
+          this.collabRef = this.collabRefTemp
         }
       })
   },
