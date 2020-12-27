@@ -46,7 +46,7 @@
 
                     <v-btn
                       v-show="tournamentRef.isOpen == false"
-                      @click="overlay = !overlay"
+                      @click="invite"
                       class="font-weight-regular text-capitalize"
                       color="primary"
                       depressed
@@ -90,7 +90,7 @@
                     tournamentRef.isOpen == false &&
                     this.managerlength < tournamentRef.participants
                   "
-                  @click="overlay = !overlay"
+                  @click="invite"
                   class="ml-auto mt-n2"
                   color="primary"
                   icon
@@ -243,7 +243,7 @@
         </v-row>
 
         <!-- Invite Manager -->
-        <v-overlay :opacity="opacity" :value="overlay">
+        <v-overlay :opacity="opacity" :value="invMgr">
           <v-card
             class="mx-auto py-5 px-10 black--text d-block align-center"
             height="300"
@@ -252,7 +252,7 @@
             light
             outlined
           >
-            <v-btn @click="overlay = false" class="mt-n3 ml-n8" icon>
+            <v-btn @click="invMgr = false" class="mt-n3 ml-n8" icon>
               <v-icon>mdi-close-circle</v-icon>
             </v-btn>
             <!-- Title -->
@@ -266,27 +266,49 @@
             </div>
 
             <div class="d-flex align-center">
-              <v-card-text>
-                <v-text-field
-                  class="mr-5 mt-6"
-                  v-model="userEmail"
-                  color="primary"
-                  placeholder="Email Address"
-                  prepend-icon="mdi-account"
-                  outlined
-                  dense
-                ></v-text-field>
-              </v-card-text>
+              <v-row class="mt-6">
+                <!-- Select Manager -->
+                <v-col cols="9">
+                  <v-autocomplete
+                    v-model="userEmail"
+                    :items="userList"
+                    label="Select Manager"
+                    item-text="name"
+                    item-value="email"
+                    outlined
+                    dense
+                  >
+                    <template v-slot:item="data">
+                      <template>
+                        <v-list-item-avatar>
+                          <img :src="data.item.avatar" />
+                        </v-list-item-avatar>
+                        <v-list-item-content>
+                          <v-list-item-title
+                            v-html="data.item.name"
+                          ></v-list-item-title>
+                          <v-list-item-subtitle
+                            v-html="data.item.email"
+                          ></v-list-item-subtitle>
+                        </v-list-item-content>
+                      </template>
+                    </template>
+                  </v-autocomplete>
+                </v-col>
 
-              <v-btn
-                @click="onInvite"
-                class="px-10 font-weight-regular text-capitalize"
-                color="primary"
-                height="40"
-                depressed
-              >
-                Invite</v-btn
-              >
+                <!-- Invite Button -->
+                <v-col cols="3">
+                  <v-btn
+                    @click="onInvite"
+                    class="px-10 font-weight-regular text-capitalize"
+                    color="primary"
+                    height="40"
+                    depressed
+                  >
+                    Invite</v-btn
+                  >
+                </v-col>
+              </v-row>
             </div>
           </v-card>
         </v-overlay>
@@ -314,17 +336,22 @@ export default {
 
   data() {
     return {
-      // User Input Data
+      // Tournament Data
       tournamentRef: '',
+      managerlength: '',
       managerList: '',
       tournamentID: '',
-      managerlength: '',
+
+      // Invite User Info
       userEmail: '',
       getUser: '',
 
+      // Search Data
+      userList: [],
+
       // Manager Invitation Overlay
       opacity: 0.5,
-      overlay: false,
+      invMgr: false,
     }
   },
 
@@ -357,6 +384,40 @@ export default {
 
   methods: {
     // Invite Manager
+
+    invite() {
+      // Get list of user
+      this.$fire.firestore
+        .collection('users')
+        .get()
+        .then((querySnapshot) => {
+          var userListTemp = []
+          querySnapshot.forEach((doc) => {
+            var list = {
+              name: doc.data().name,
+              email: doc.data().email,
+              avatar: doc.data().photoURL,
+              uid: doc.data().uid,
+            }
+            userListTemp.push(list)
+          })
+
+          // Remove host from the list
+          const host = userListTemp.find(
+            (element) => element.uid === this.tournamentRef.hostName
+          )
+
+          const filteredListTemp = userListTemp.filter(function (element) {
+            return element != host
+          })
+
+          this.userList = filteredListTemp
+        })
+
+      // Set invite manager overlay to True
+      this.invMgr = true
+    },
+
     async onInvite() {
       try {
         const snapshot = await this.$fire.firestore
@@ -397,7 +458,7 @@ export default {
             }),
           })
           .then(() => {
-            this.overlay = false
+            this.invMgr = false
             this.userEmail = ''
             this.$store.commit('SET_NOTIFICATION', {
               alert: 'Invitation has been sent',

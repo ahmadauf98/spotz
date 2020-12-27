@@ -11,7 +11,6 @@
         <v-row>
           <!-- Left Side -->
           <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
-            
             <!-- Card displayed if manager list is empty -->
             <v-card
               v-if="managerlength == 0"
@@ -92,7 +91,7 @@
                     eventRef.isOpen == false &&
                     this.managerlength < tournamentRef.participants
                   "
-                  @click="invMgr = !invMgr"
+                  @click="invite"
                   class="ml-auto mt-n2"
                   color="primary"
                   icon
@@ -272,27 +271,49 @@
             </div>
 
             <div class="d-flex align-center">
-              <v-card-text>
-                <v-text-field
-                  class="mr-5 mt-6"
-                  v-model="userEmail"
-                  color="primary"
-                  placeholder="Email Address"
-                  prepend-icon="mdi-account"
-                  outlined
-                  dense
-                ></v-text-field>
-              </v-card-text>
+              <v-row class="mt-6">
+                <!-- Select Manager -->
+                <v-col cols="9">
+                  <v-autocomplete
+                    v-model="userEmail"
+                    :items="userList"
+                    label="Select Manager"
+                    item-text="name"
+                    item-value="email"
+                    outlined
+                    dense
+                  >
+                    <template v-slot:item="data">
+                      <template>
+                        <v-list-item-avatar>
+                          <img :src="data.item.avatar" />
+                        </v-list-item-avatar>
+                        <v-list-item-content>
+                          <v-list-item-title
+                            v-html="data.item.name"
+                          ></v-list-item-title>
+                          <v-list-item-subtitle
+                            v-html="data.item.email"
+                          ></v-list-item-subtitle>
+                        </v-list-item-content>
+                      </template>
+                    </template>
+                  </v-autocomplete>
+                </v-col>
 
-              <v-btn
-                @click="onInvite"
-                class="px-10 font-weight-regular text-capitalize"
-                color="primary"
-                height="40"
-                depressed
-              >
-                Invite</v-btn
-              >
+                <!-- Invite Button -->
+                <v-col cols="3">
+                  <v-btn
+                    @click="onInvite"
+                    class="px-10 font-weight-regular text-capitalize"
+                    color="primary"
+                    height="40"
+                    depressed
+                  >
+                    Invite</v-btn
+                  >
+                </v-col>
+              </v-row>
             </div>
           </v-card>
         </v-overlay>
@@ -331,6 +352,9 @@ export default {
 
       // Current User Info
       userID: null,
+
+      // Search Data
+      userList: [],
 
       // Invite User Info
       userEmail: '',
@@ -389,6 +413,39 @@ export default {
 
   methods: {
     // Invite Manager
+    invite() {
+      // Get list of user
+      this.$fire.firestore
+        .collection('users')
+        .get()
+        .then((querySnapshot) => {
+          var userListTemp = []
+          querySnapshot.forEach((doc) => {
+            var list = {
+              name: doc.data().name,
+              email: doc.data().email,
+              avatar: doc.data().photoURL,
+              uid: doc.data().uid,
+            }
+            userListTemp.push(list)
+          })
+
+          // Remove host from the list
+          const host = userListTemp.find(
+            (element) => element.uid === this.eventRef.hostName
+          )
+
+          const filteredListTemp = userListTemp.filter(function (element) {
+            return element != host
+          })
+
+          this.userList = filteredListTemp
+        })
+
+      // Set invite manager overlay to True
+      this.invMgr = true
+    },
+
     async onInvite() {
       try {
         // Find userID by email

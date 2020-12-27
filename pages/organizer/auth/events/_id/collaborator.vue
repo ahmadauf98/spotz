@@ -349,7 +349,7 @@ export default {
 
   methods: {
     // Get and find user and filter tournament list
-    async addCollaboration() {
+    addCollaboration() {
       // Get list of tournament
       this.$fire.firestore
         .collection('events')
