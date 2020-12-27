@@ -270,14 +270,14 @@
                       </h1>
                     </div>
 
-                    <!--  :disabled="
-                          managerlength_active != tournamentRef.participants
-                        " -->
                     <v-card-actions class="mt-2 d-flex">
                       <v-btn
                         v-if="tournamentRef.registrationStatus == false"
                         :to="`/organizer/auth/events/${this.$route.params.id}/${this.$route.params.tournamentID}/overview/registration`"
                         color="primary"
+                        :disabled="
+                          managerlength_active != tournamentRef.participants
+                        "
                         class="ml-auto text-capitalize"
                         text
                       >
@@ -287,7 +287,7 @@
 
                       <v-btn
                         v-else
-                        :to="`/organizer/auth/tournaments/${this.$route.params.id}/${this.$route.params.tournamentID}/overview/teamapproval`"
+                        :to="`/organizer/auth/events/${this.$route.params.id}/${this.$route.params.tournamentID}/overview/teamapproval`"
                         color="primary"
                         class="ml-auto text-capitalize"
                         text

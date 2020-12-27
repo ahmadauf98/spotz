@@ -138,7 +138,7 @@
               </v-btn>
             </div>
 
-            <div v-for="list in selectedTeam" :key="list.identificationID">
+            <div v-for="(list, index) in selectedTeam" :key="index">
               <div class="d-flex justify-center">
                 <v-avatar
                   v-show="list.passportPhoto != ''"
@@ -264,7 +264,7 @@ export default {
   data() {
     return {
       // User Input Data
-      tournamentProf: '',
+      tournamentRef: '',
       tempList: [],
       approvalList: '',
       selectedTeam: '',
@@ -286,7 +286,7 @@ export default {
       .collection('tournaments')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
-        this.tournamentProf = doc.data()
+        this.tournamentRef = doc.data()
       })
 
     this.$fire.firestore
@@ -324,7 +324,6 @@ export default {
 
     // Approve Registration
     async onApprove(data) {
-      console.log(data)
       this.overlayLoading = true
       try {
         await this.$fire.firestore
@@ -343,10 +342,9 @@ export default {
                 notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
                   messages:
                     'Congratulations! Your ' +
-                    this.tournamentProf.title +
+                    this.tournamentRef.title +
                     ' team registration has been approved.',
-                  isAction: false,
-                  tournamentID: this.tournamentProf.tournamentID,
+                  status: 'unread',
                 }),
               })
           )
@@ -389,10 +387,9 @@ export default {
                 notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
                   messages:
                     'Sorry! Your ' +
-                    this.tournamentProf.title +
+                    this.tournamentRef.title +
                     ' team registration has been rejected. Kindly resubmit back your application in order to get approved by the organizer.',
-                  isAction: false,
-                  tournamentID: this.tournamentProf.tournamentID,
+                  status: 'unread',
                 }),
               })
           )
