@@ -186,6 +186,121 @@
               </v-row>
 
               <!-- Second Row -->
+              <v-row>
+                <!-- First Card -->
+                <v-col>
+                  <v-card class="mx-auto py-4 px-5 pb-11 pb-md-4" outlined>
+                    <div class="d-flex mt-1 mx-1">
+                      <h1
+                        class="text-subtitle-1 font-weight-bold d-flex align-center"
+                      >
+                        <v-icon class="mr-1">mdi-tournament</v-icon>
+                        Seedings Structure
+                      </h1>
+                    </div>
+
+                    <div class="d-flex mt-5 mx-1">
+                      <h1
+                        v-show="tournamentRef.isGroupDraw == true"
+                        class="text-subtitle-1 text-justify font-weight-regular mb-7 mb-md-7 mb-lg-0"
+                      >
+                        The tournament already have fixtures. You can view the
+                        team draw here. To update any fixtures of tournament,
+                        kindly go to the <strong>group stage</strong> and
+                        <strong>final stage</strong> section.
+                      </h1>
+
+                      <h1
+                        v-show="tournamentRef.isGroupDraw == false"
+                        class="text-subtitle-1 text-justify font-weight-regular mb-7 mb-md-7 mb-lg-0"
+                      >
+                        The tournament does not have fixtures yet. You should
+                        make a team draw after <strong>approve</strong> all
+                        registration application from
+                        <strong>all manager of the team.</strong>
+                      </h1>
+                    </div>
+
+                    <v-card-actions class="mt-2 d-flex">
+                      <v-btn
+                        :to="`/organizer/auth/events/${this.$route.params.id}/${this.$route.params.tournamentID}/overview/seedings`"
+                        color="primary"
+                        :disabled="tournamentRef.participants != teamListNumber"
+                        class="ml-auto text-capitalize mb-n7 mb-md-0"
+                        text
+                      >
+                        <span v-show="tournamentRef.isGroupDraw == true">
+                          <v-icon size="20" class="mr-1"
+                            >mdi-clipboard-outline</v-icon
+                          >
+                          View Tournament
+                        </span>
+
+                        <span v-show="tournamentRef.isGroupDraw == false">
+                          <v-icon size="20" class="mr-1"
+                            >mdi-clipboard-edit-outline</v-icon
+                          >
+                          Draw Tournament
+                        </span>
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
+
+                <!-- Second Card -->
+                <v-col>
+                  <v-card class="mx-auto py-4 px-5" outlined>
+                    <div class="d-flex mt-1 mx-1">
+                      <h1
+                        class="text-subtitle-1 font-weight-bold d-flex align-center"
+                      >
+                        <v-icon class="mr-1">mdi-ticket</v-icon>
+                        Registration
+                      </h1>
+                    </div>
+
+                    <div class="d-flex mt-5 mx-1">
+                      <h1
+                        class="text-subtitle-1 text-justify font-weight-regular"
+                      >
+                        Approve or reject list of team registration from team
+                        managers. You can set duration of registration too.
+                        Within the time period, managers can resubmit list of
+                        registration.
+                      </h1>
+                    </div>
+
+                    <!--  :disabled="
+                          managerlength_active != tournamentRef.participants
+                        " -->
+                    <v-card-actions class="mt-2 d-flex">
+                      <v-btn
+                        v-if="tournamentRef.registrationStatus == false"
+                        :to="`/organizer/auth/events/${this.$route.params.id}/${this.$route.params.tournamentID}/overview/registration`"
+                        color="primary"
+                        class="ml-auto text-capitalize"
+                        text
+                      >
+                        <v-icon size="20" class="mr-2">mdi-equal-box </v-icon>
+                        Setup Format
+                      </v-btn>
+
+                      <v-btn
+                        v-else
+                        :to="`/organizer/auth/tournaments/${this.$route.params.id}/${this.$route.params.tournamentID}/overview/teamapproval`"
+                        color="primary"
+                        class="ml-auto text-capitalize"
+                        text
+                      >
+                        <v-icon size="20" class="mr-1"
+                          >mdi-check-box-multiple-outline</v-icon
+                        >
+                        Registration Approval
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
+              </v-row>
             </v-card>
           </v-col>
 
@@ -296,6 +411,8 @@ export default {
       // Tournament Data
       tournamentRef: '',
       managerlength: '',
+      managerlength_active: null,
+      teamListNumber: null,
 
       // Current User Info
       userID: null,
@@ -337,6 +454,23 @@ export default {
       .onSnapshot((doc) => {
         this.tournamentRef = doc.data()
         this.managerlength = doc.data().managerRef.length
+
+        var manager_list = doc.data().managerRef
+        var manager_active = manager_list.filter(
+          (element) => element.status === 'active'
+        )
+        this.managerlength_active = manager_active.length
+      })
+
+    this.$fire.firestore
+      .collection('events')
+      .doc(this.$route.params.id)
+      .collection('tournaments')
+      .doc(this.$route.params.tournamentID)
+      .collection('team-registration')
+      .where('status', '==', 'approved')
+      .onSnapshot((querySnapshot) => {
+        this.teamListNumber = querySnapshot.size
       })
   },
 

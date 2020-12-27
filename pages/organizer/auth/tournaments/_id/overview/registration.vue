@@ -201,7 +201,41 @@
                   </h1>
                 </div>
 
-                <v-col cols="3" class="mt-8 ml-auto">
+                <v-col cols="4" class="mt-8 ml-auto">
+                  <v-menu
+                    ref="menuStart"
+                    v-model="menuStart"
+                    :close-on-content-click="false"
+                    :return-value.sync="dueDate"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="dueDate_Format"
+                        label="Due Date"
+                        readonly
+                        dense
+                        outlined
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker v-model="dueDate" no-title scrollable>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="#6b46c1" @click="menuStart = false">
+                        Cancel
+                      </v-btn>
+                      <v-btn
+                        text
+                        color="#6b46c1"
+                        @click="$refs.menuStart.save(dueDate)"
+                      >
+                        OK
+                      </v-btn>
+                    </v-date-picker>
+                  </v-menu>
                   <v-menu
                     ref="menuStart"
                     v-model="menuStart"
@@ -296,7 +330,7 @@ export default {
   data() {
     return {
       // User Input Data
-      tournamentProf: '',
+      tournamentRef: '',
 
       // Registration Format
       isName: true,
@@ -319,16 +353,24 @@ export default {
     }
   },
 
-  // Fetch Notification Data from Vuex
-  computed: { ...mapState(['notification']) },
+  computed: {
+    // Formating Date (YYYY-MM-DD) to (DD MMMM YYYY)
+    dueDate_Format: function () {
+      if (this.dueDate == '') {
+        return null
+      } else {
+        return moment(this.dueDate, 'YYYY-MM-DD').format('DD MMMM YYYY')
+      }
+    },
+  },
 
   // Fetch User's Data
-  created() {
+  mounted() {
     return this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
-        this.tournamentProf = doc.data()
+        this.tournamentRef = doc.data()
       })
   },
 
@@ -336,35 +378,46 @@ export default {
     async onSubmit() {
       this.overlayLoading = true
       try {
-        await this.$fire.firestore
-          .collection('tournaments')
-          .doc(this.tournamentProf.tournamentID)
-          .collection('team-registration')
-          .doc('format')
-          .set({
-            address: this.isAddress,
-            gender: this.isGender,
-            identificationID: this.isIcn,
-            name: this.isName,
-            numAthelete: this.isAthelete,
-            numMatric: this.isMatric,
-            numPlayers: this.numPlayers,
-            passportPhoto: this.isPhoto,
-            phoneNumber: this.isPhoneNumber,
-            dueDate: this.dueDate,
+        if (this.numPlayers <= 0) {
+          this.overlayLoading = false
+          this.$store.commit('SET_NOTIFICATION', {
+            alert: 'Number of Players should be more than 0',
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
+            snackbar: true,
           })
-          .then(
-            await this.$fire.firestore
-              .collection('tournaments')
-              .doc(this.tournamentProf.tournamentID)
-              .update({
-                registrationStatus: true,
-              })
-          )
-          .then(() => {
-            this.$router.go(-1)
-            this.overlayLoading = false
-          })
+        } else {
+          await this.$fire.firestore
+            .collection('tournaments')
+            .doc(this.tournamentRef.tournamentID)
+            .collection('team-registration')
+            .doc('format')
+            .set({
+              address: this.isAddress,
+              gender: this.isGender,
+              identificationID: this.isIcn,
+              name: this.isName,
+              numAthelete: this.isAthelete,
+              numMatric: this.isMatric,
+              numPlayers: this.numPlayers,
+              passportPhoto: this.isPhoto,
+              phoneNumber: this.isPhoneNumber,
+              dueDate: this.dueDate_Format,
+            })
+            .then(
+              await this.$fire.firestore
+                .collection('tournaments')
+                .doc(this.tournamentRef.tournamentID)
+                .update({
+                  registrationStatus: true,
+                })
+            )
+            .then(() => {
+              this.$router.go(-1)
+              this.overlayLoading = false
+            })
+        }
       } catch (error) {
         this.overlayLoading = false
         console.log(error)
