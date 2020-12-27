@@ -1865,14 +1865,14 @@ export default {
             }
           }
         } catch (error) {
-           console.log(error.code)
-        this.$store.commit('SET_NOTIFICATION', {
-          alert: error.message,
-          alertIcon: 'mdi-alert-circle',
-          alertIconStyle: 'mr-2 align-self-top',
-          colorIcon: 'red darken-1',
-          snackbar: true,
-        })
+          console.log(error.code)
+          this.$store.commit('SET_NOTIFICATION', {
+            alert: error.message,
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
+            snackbar: true,
+          })
         }
       }
     },
@@ -1923,7 +1923,7 @@ export default {
             break
         }
       } catch (error) {
-         console.log(error.code)
+        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
@@ -2029,7 +2029,7 @@ export default {
 
         this.updateResultOverlay = false
       } catch (error) {
-         console.log(error.code)
+        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
@@ -2099,7 +2099,7 @@ export default {
 
         this.updateResultOverlay = false
       } catch (error) {
-         console.log(error.code)
+        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
@@ -2172,7 +2172,7 @@ export default {
 
         this.updateResultOverlay = false
       } catch (error) {
-         console.log(error.code)
+        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
