@@ -15,7 +15,6 @@
             <v-col cols="3" class="d-flex flex-row-reverse">
               <v-btn
                 v-show="tournamentsMgr != ''"
-                type="submit"
                 class="font-weight-regular mt-6 text-capitalize"
                 dark
                 depressed
@@ -41,7 +40,7 @@
                         A single competition
                       </h1>
                       <h1 class="text-subtitle-1 font-weight-regular mb-5">
-                        Discover all the tournaments for your team to
+                        Discover all the eventss for your team to
                         participate in. For private tournament, kindly contact
                         your organizer to be invited.
                       </h1>

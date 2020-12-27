@@ -384,7 +384,6 @@ export default {
 
   methods: {
     // Invite Manager
-
     invite() {
       // Get list of user
       this.$fire.firestore

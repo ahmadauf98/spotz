@@ -29,8 +29,8 @@
                         Manage Tournament
                       </h1>
                       <h1 class="text-subtitle-1 font-weight-regular mb-5 mr-2">
-                        To handle the tournaments in the event, you need tp
-                        be part of the organizer. Wait for your event host to
+                        To handle the tournaments in the event, you need tp be
+                        part of the organizer. Wait for your event host to
                         adding you in their event collaborator.
                       </h1>
                       <v-btn

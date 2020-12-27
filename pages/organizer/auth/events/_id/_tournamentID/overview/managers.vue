@@ -46,7 +46,7 @@
 
                     <v-btn
                       v-show="eventRef.isOpen == false"
-                      @click="invMgr = !invMgr"
+                      @click="invite"
                       class="font-weight-regular text-capitalize"
                       color="primary"
                       depressed
@@ -357,6 +357,7 @@ export default {
       userList: [],
 
       // Invite User Info
+      collaborator: null,
       userEmail: '',
       getUser: '',
 
@@ -409,6 +410,16 @@ export default {
 
         this.managerList = this.managerListTemp
       })
+
+    // Get Collaborator Info
+    this.$fire.firestore
+      .collection('events')
+      .doc(this.$route.params.id)
+      .collection('tournaments')
+      .doc(this.$route.params.tournamentID)
+      .onSnapshot((doc) => {
+        this.collaborator = doc.data().collaborator
+      })
   },
 
   methods: {
@@ -457,8 +468,17 @@ export default {
         this.getUser = snapshot.docs.map((doc) => doc.data())
 
         // Initialize ManagerID & OrganizerID
+        if (this.collaborator != null) {
+          if (this.collaborator == this.userID) {
+            var organizerID = this.userID
+          } else {
+            var organizerID = this.eventRef.hostName
+          }
+        } else {
+          var organizerID = this.eventRef.hostName
+        }
+
         let managerID = this.getUser[0].uid
-        let organizerID = this.eventRef.hostName
         let eventID = this.eventRef.eventID
         let eventName = this.eventRef.title
         let sportType = this.tournamentRef.sportType
