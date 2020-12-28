@@ -13,7 +13,7 @@ export default {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
   // SSR Targeting
-  target: 'server',
+  target: 'static',
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: ['@/assets/css/main.css'],
