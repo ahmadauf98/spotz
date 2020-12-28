@@ -1,6 +1,21 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
+  /*
+   ** Nuxt rendering mode
+   ** See https://nuxtjs.org/api/configuration-mode
+   */
+  mode: 'universal',
+  /*
+   ** Nuxt target
+   ** See https://nuxtjs.org/api/configuration-target
+   */
+  target: 'server',
+  /*
+   ** Headers of the page
+   ** See https://nuxtjs.org/api/configuration-head
+   */
+
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
     titleTemplate: '%s - spotz',
@@ -12,8 +27,6 @@ export default {
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
-  // SSR Targeting
-  target: 'static',
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: ['@/assets/css/main.css'],
@@ -55,10 +68,6 @@ export default {
     },
   },
 
-  server: {
-    port: 8000, // default: 3000
-  },
-
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {},
 
@@ -81,7 +90,5 @@ export default {
   },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
-  build: {
-    extractCSS: true,
-  },
+  build: {},
 }
