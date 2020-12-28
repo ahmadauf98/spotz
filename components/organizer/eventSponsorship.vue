@@ -360,6 +360,13 @@ export default {
             // Set loading state to false
             this.isLoading = false
 
+            // Clear brand input
+            this.brandName = ''
+            this.photoURL =
+              'https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2FLogo.jpg?alt=media&token=921893c3-3134-494b-8f8c-332b10666623'
+            this.websiteURL = ''
+            this.description = ''
+
             // Set addSponsorship to false
             this.addSponsorship = false
           })

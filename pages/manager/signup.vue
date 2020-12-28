@@ -3,22 +3,7 @@
     <v-main class="d-none d-sm-flex align-center">
       <v-container class="p-0" fluid>
         <!-- Notifications -->
-        <v-snackbar
-          v-show="notification.alert != '' || notification.alert != null"
-          v-model="notification.snackbar"
-          :timeout="notification.timeout"
-          dark
-          top
-        >
-          <div class="d-flex justify-center align-center">
-            <v-icon
-              :class="notification.alertIconStyle"
-              :color="notification.colorIcon"
-              >{{ notification.alertIcon }}</v-icon
-            >
-            {{ notification.alert }}
-          </div>
-        </v-snackbar>
+        <notifications />
 
         <v-card width="450px" class="py-4 px-8 mx-auto" outlined>
           <!-- Image Logo -->
@@ -137,7 +122,7 @@
             <div class="text-center mt-2">
               <h1 class="hyperlink caption">
                 Already have an account?
-                <Nuxt-link to="/manager/signin"> Log in. </Nuxt-link>
+                <Nuxt-link to="/organizer/signin"> Log in. </Nuxt-link>
               </h1>
             </div>
           </v-card-text>
@@ -148,10 +133,14 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import notifications from '~/components/notifications'
 
 export default {
   layout: 'auth',
+
+  components: {
+    notifications,
+  },
 
   data() {
     return {
@@ -165,19 +154,15 @@ export default {
       confirmPassword: '',
       checkbox: false,
 
-      // Refresh Page
+      // Loading State
       isLoading: false,
     }
-  },
-
-  // Fetch Notification Data from Vuex
-  computed: {
-    ...mapState(['notification']),
   },
 
   methods: {
     // Signup a user email
     async emailSignup() {
+      // Loading State -> true
       this.isLoading = true
       try {
         if (this.name === null || this.name === '') {
@@ -274,13 +259,13 @@ export default {
               })
             })
             .then(() => {
-              this.$router.push('/manager/auth/dashboard')
+              this.$router.push('/organizer/auth/dashboard')
               this.isLoading = false
             })
         }
       } catch (error) {
-        console.log(error.code)
         this.isLoading = false
+        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',

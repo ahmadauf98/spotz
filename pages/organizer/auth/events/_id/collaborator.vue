@@ -304,6 +304,7 @@ export default {
       tournamentName: '',
       tournamentGender: '',
       collaboratorList: '',
+      collaboratorListTemp: [],
       tournName: '',
 
       // Loading State
@@ -319,31 +320,32 @@ export default {
       .onSnapshot((doc) => {
         this.eventRef = doc.data()
         this.collaboratorlength = doc.data().collabRef.length
-        let collaboratorListTemp = []
+        this.collaboratorListTemp = []
+
         // Get Tournament and User Data
-        doc.data().collabRef.forEach((doc) => {
+        doc.data().collabRef.forEach((element) => {
           // Get Tournament Name
           this.$fire.firestore
             .collection('events')
             .doc(this.$route.params.id)
             .collection('tournaments')
-            .doc(doc.tournamentID)
+            .doc(element.tournamentID)
             .onSnapshot((docTour) => {
               // Get User Name
               this.$fire.firestore
                 .collection('users')
-                .doc(doc.userID)
+                .doc(element.userID)
                 .onSnapshot((docUser) => {
-                  collaboratorListTemp.push({
-                    tournamentID: doc.tournamentID,
+                  this.collaboratorListTemp.push({
+                    tournamentID: element.tournamentID,
                     tournamentName: docTour.data().sportType,
-                    collaboratorID: doc.userID,
+                    collaboratorID: element.userID,
                     collaboratorName: docUser.data().name,
                   })
                 })
             })
         })
-        this.collaboratorList = collaboratorListTemp
+        this.collaboratorList = this.collaboratorListTemp
       })
   },
 
@@ -488,6 +490,7 @@ export default {
           .then(() => {
             // Set loadingState to false
             this.addCollab = false
+            this.$router.go(-1)
           })
       } catch (error) {
         // Set loadingState to false
