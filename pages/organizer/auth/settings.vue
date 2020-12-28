@@ -137,7 +137,7 @@
                               >
                                 <template v-slot:activator="{ on, attrs }">
                                   <v-text-field
-                                    v-model="birthday"
+                                    v-model="birthday_Format"
                                     label="Birthday Date"
                                     v-bind="attrs"
                                     v-on="on"
@@ -150,6 +150,7 @@
                                   ref="picker"
                                   v-model="birthday"
                                   :max="new Date().toISOString().substr(0, 10)"
+                                  no-title
                                   min="1950-01-01"
                                   @change="save"
                                 ></v-date-picker>
@@ -250,6 +251,7 @@
 
 <script>
 import firebase from 'firebase'
+import moment from 'moment'
 import countryList from '~/countries.json'
 import notifications from '~/components/notifications'
 
@@ -276,6 +278,7 @@ export default {
       gender: null,
       countryName: null,
       birthday: null,
+      birthday_d: null,
       about: '',
 
       // Profile Picture
@@ -291,6 +294,26 @@ export default {
     }
   },
 
+  computed: {
+    // Formating Date (YYYY-MM-DD) to (DD MMMM YYYY)
+    birthday_Format: function () {
+      if (this.birthday == null) {
+        return null
+      } else {
+        return moment(this.birthday, 'YYYY-MM-DD').format('DD MMMM YYYY')
+      }
+    },
+
+    // Formating Date (DD MMMM YYYY) to (YYYY-MM-DD)
+    birthday_Format_D: function () {
+      if (this.birthday_d == null) {
+        return null
+      } else {
+        return moment(this.birthday_d, 'DD MMMM YYYY').format('YYYY-MM-DD')
+      }
+    },
+  },
+
   // Calendar Data
   watch: {
     menu(val) {
@@ -299,7 +322,7 @@ export default {
   },
 
   // GET - Fetch User's Data
-  created() {
+  mounted() {
     this.userId = this.$fire.auth.currentUser.uid
 
     return this.$fire.firestore
@@ -313,8 +336,9 @@ export default {
         this.emailVerified = doc.data().emailVerified
         this.countryName = doc.data().country
         this.gender = doc.data().gender
-        this.birthday = doc.data().birthday
+        this.birthday_d = doc.data().birthday
         this.about = doc.data().about
+        this.birthday = this.birthday_Format_D
       })
   },
 
@@ -446,7 +470,7 @@ export default {
             emailVerified: this.emailVerified,
             country: this.countryName,
             gender: this.gender,
-            birthday: this.birthday,
+            birthday: this.birthday_Format,
             about: this.about,
           })
           .then(() => {

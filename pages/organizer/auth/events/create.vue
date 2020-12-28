@@ -130,7 +130,6 @@
                                     <v-date-picker
                                       v-model="startDate"
                                       :allowed-dates="allowedDates_Start"
-                                      no-title
                                       scrollable
                                     >
                                       <v-spacer></v-spacer>

@@ -214,41 +214,7 @@
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
                         v-model="dueDate_Format"
-                        label="Due Date"
-                        readonly
-                        dense
-                        outlined
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker v-model="dueDate" no-title scrollable>
-                      <v-spacer></v-spacer>
-                      <v-btn text color="#6b46c1" @click="menuStart = false">
-                        Cancel
-                      </v-btn>
-                      <v-btn
-                        text
-                        color="#6b46c1"
-                        @click="$refs.menuStart.save(dueDate)"
-                      >
-                        OK
-                      </v-btn>
-                    </v-date-picker>
-                  </v-menu>
-                  <v-menu
-                    ref="menuStart"
-                    v-model="menuStart"
-                    :close-on-content-click="false"
-                    :return-value.sync="dueDate"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="290px"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="dueDate"
-                        placeholder="Choose Date"
+                        label="Choose Date"
                         readonly
                         dense
                         outlined
@@ -312,6 +278,7 @@
 
 <script>
 import firebase from 'firebase'
+import moment from 'moment'
 import tournamentHeader from '~/components/organizer/tournamentHeader'
 import tournamentInfo from '~/components/organizer/tournamentInfo'
 import notifications from '~/components/notifications'

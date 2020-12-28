@@ -756,8 +756,8 @@ export default {
               tournamentID: doDashes(this.title),
               title: this.title,
               description: this.description,
-              startDate: this.startDate,
-              endDate: this.endDate,
+              startDate: this.startDate_Format,
+              endDate: this.endDate_Format,
               photoURL: this.photoURL,
               headerURL:
                 'https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fdefault-cover.svg?alt=media&token=f88fa494-e5ae-49a1-bdf5-30ae75fad015',

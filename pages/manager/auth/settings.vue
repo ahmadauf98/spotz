@@ -4,22 +4,7 @@
       <v-container class="p-0" fluid>
         <div class="mx-xl-15 px-xl-15">
           <!-- Notifications -->
-          <v-snackbar
-            v-show="notification.alert != '' || notification.alert != null"
-            v-model="notification.snackbar"
-            :timeout="notification.timeout"
-            dark
-            top
-          >
-            <div class="d-flex justify-center align-center">
-              <v-icon
-                :class="notification.alertIconStyle"
-                :color="notification.colorIcon"
-                >{{ notification.alertIcon }}</v-icon
-              >
-              {{ notification.alert }}
-            </div>
-          </v-snackbar>
+          <notifications />
 
           <!-- Title -->
           <h1 class="my-5">Settings</h1>
@@ -152,7 +137,7 @@
                               >
                                 <template v-slot:activator="{ on, attrs }">
                                   <v-text-field
-                                    v-model="birthday"
+                                    v-model="birthday_Format"
                                     label="Birthday Date"
                                     v-bind="attrs"
                                     v-on="on"
@@ -165,6 +150,7 @@
                                   ref="picker"
                                   v-model="birthday"
                                   :max="new Date().toISOString().substr(0, 10)"
+                                  no-title
                                   min="1950-01-01"
                                   @change="save"
                                 ></v-date-picker>
@@ -278,13 +264,18 @@
 
 <script>
 import firebase from 'firebase'
+import moment from 'moment'
 import countryList from '~/countries.json'
-import { mapState } from 'vuex'
+import notifications from '~/components/notifications'
 
 export default {
   layout: 'manager',
 
   middleware: 'authenticated',
+
+  components: {
+    notifications,
+  },
 
   data() {
     return {
@@ -300,6 +291,7 @@ export default {
       gender: null,
       countryName: null,
       birthday: null,
+      birthday_d: null,
       about: '',
 
       // Profile Picture
@@ -315,9 +307,24 @@ export default {
     }
   },
 
-  // Fetch Notification Data from Vuex
   computed: {
-    ...mapState(['notification']),
+    // Formating Date (YYYY-MM-DD) to (DD MMMM YYYY)
+    birthday_Format: function () {
+      if (this.birthday == null) {
+        return null
+      } else {
+        return moment(this.birthday, 'YYYY-MM-DD').format('DD MMMM YYYY')
+      }
+    },
+
+    // Formating Date (DD MMMM YYYY) to (YYYY-MM-DD)
+    birthday_Format_D: function () {
+      if (this.birthday_d == null) {
+        return null
+      } else {
+        return moment(this.birthday_d, 'DD MMMM YYYY').format('YYYY-MM-DD')
+      }
+    },
   },
 
   // Calendar Data
@@ -342,8 +349,9 @@ export default {
         this.emailVerified = doc.data().emailVerified
         this.countryName = doc.data().country
         this.gender = doc.data().gender
-        this.birthday = doc.data().birthday
+        this.birthday_d = doc.data().birthday
         this.about = doc.data().about
+        this.birthday = this.birthday_Format_D
       })
   },
 
@@ -475,7 +483,7 @@ export default {
             emailVerified: this.emailVerified,
             country: this.countryName,
             gender: this.gender,
-            birthday: this.birthday,
+            birthday: this.birthday_Format,
             about: this.about,
           })
           .then(() => {
