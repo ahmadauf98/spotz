@@ -211,7 +211,7 @@
               <h1
                 class="text-caption font-weight-medium text-justify text-grey"
               >
-                {{ notification.message }}
+                {{ notification.messages }}
               </h1>
             </v-col>
           </v-row>
