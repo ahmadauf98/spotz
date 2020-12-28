@@ -37,14 +37,14 @@ export default {
   // Firebase module configureation (https://firebase.nuxtjs.org)
   firebase: {
     config: {
-      apiKey: 'AIzaSyC7fccNMz52ebXVlUeJOGBnN1KrszrnC5E',
-      authDomain: 'sports-management-system-v2.firebaseapp.com',
-      databaseURL: 'https://sports-management-system-v2.firebaseio.com',
-      projectId: 'sports-management-system-v2',
-      storageBucket: 'sports-management-system-v2.appspot.com',
-      messagingSenderId: '516883653948',
-      appId: '1:516883653948:web:804497f4864ef2d07cea39',
-      measurementId: 'G-CDL1Z4R6HF',
+      apiKey: process.env.API_KEY,
+      authDomain: process.env.AUTH_DOMAIN,
+      databaseURL: process.env.DATABASE_URL,
+      projectId: process.env.PROJECT_ID,
+      storageBucket: process.env.STORAGE_BUCKET,
+      messagingSenderId: process.env.MESSAGING_SENDER_ID,
+      appId: process.env.APP_ID,
+      measurementId: process.env.MEASUREMENT_ID,
     },
     services: {
       auth: true,
