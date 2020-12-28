@@ -956,5 +956,1684 @@ export default {
         }
       })
   },
+
+  methods: {
+    onView(data) {
+      this.addSeedingsOverlay = true
+      this.selectedData = data
+    },
+
+    async onUpdate(selectedData) {
+      // Loading state -> true
+      this.isLoading = true
+
+      try {
+        if (this.tournamentRef.gGroupNumber == 2) {
+          await this.$fire.firestore
+            .collection('events')
+            .doc(this.$route.params.id)
+            .collection('tournaments')
+            .doc(this.$route.params.tournamentID)
+            .collection('group-stage')
+            .doc('seedings')
+            .update({
+              group_A: selectedData.group_A,
+              group_B: selectedData.group_B,
+            })
+            .then(() => {
+              this.fixture_data_A = []
+              this.fixture_data_B = []
+
+              for (var i = 0; i < this.tournamentRef.gTeamNumbers; i++) {
+                this.fixture_data_A.push(selectedData.group_A[i].teamName)
+                this.fixture_data_B.push(selectedData.group_B[i].teamName)
+              }
+            })
+            .then(async () => {
+              // Initialize Fixture
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.$route.params.tournamentID)
+                .collection('group-stage')
+                .doc('fixtures')
+                .set({
+                  fixture_A: [],
+                  fixture_B: [],
+                })
+
+              // Initialize Table
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.$route.params.tournamentID)
+                .collection('group-stage')
+                .doc('tables')
+                .set({
+                  table_A: [],
+                  table_B: [],
+                })
+
+              // Initialize Final Stage
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.$route.params.tournamentID)
+                .collection('final-stage')
+                .doc('fixtures')
+                .set({
+                  semiFinal: [
+                    // Semi Final 1
+                    {
+                      fixtureID: 'semiFinal1',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 1',
+                      homeTeam: 'Group A1',
+                      awayTeam: 'Group B2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Semi Final 2
+                    {
+                      fixtureID: 'semiFinal2',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 2',
+                      homeTeam: 'Group B1',
+                      awayTeam: 'Group A2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  thirdPlace: [
+                    // 3rd Place
+                    {
+                      fixtureID: '3rdPlace',
+                      bracketID: 'thirdPlace',
+                      title: '3rd Place',
+                      homeTeam: 'Semi Final 1 Loser',
+                      awayTeam: 'Semi Final 2 Loser',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  final: [
+                    // Final Place
+                    {
+                      fixtureID: 'final',
+                      bracketID: 'final',
+                      title: 'Final',
+                      homeTeam: 'Semi Final 1 Winner',
+                      awayTeam: 'Semi Final 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+                })
+            })
+            .then(async () => {
+              // If fixture played once, else fixture played home away method
+              if (this.tournamentRef.gRound == 'once') {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'single-round',
+                })
+                this.fixture_A = games_A.data
+
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'single-round',
+                })
+                this.fixture_B = games_B.data
+              } else {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'double-round',
+                })
+                this.fixture_A = games_A.data
+
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'double-round',
+                })
+                this.fixture_B = games_B.data
+              }
+
+              // Store Fixture A
+              await this.fixture_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_A: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_A',
+                      tableID: 'table_A',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture B
+              await this.fixture_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_B: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_B',
+                      tableID: 'table_B',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+            })
+            .then(async () => {
+              // Initialize Table A
+              await this.group_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_A: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table B
+              await this.group_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_B: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+            })
+        } else if (this.tournamentRef.gGroupNumber == 4) {
+          await this.$fire.firestore
+            .collection('events')
+            .doc(this.$route.params.id)
+            .collection('tournaments')
+            .doc(this.$route.params.tournamentID)
+            .collection('group-stage')
+            .doc('seedings')
+            .update({
+              group_A: selectedData.group_A,
+              group_B: selectedData.group_B,
+              group_C: selectedData.group_C,
+              group_D: selectedData.group_D,
+            })
+            .then(() => {
+              this.fixture_data_A = []
+              this.fixture_data_B = []
+              this.fixture_data_C = []
+              this.fixture_data_D = []
+
+              for (var i = 0; i < this.tournamentRef.gTeamNumbers; i++) {
+                this.fixture_data_A.push(selectedData.group_A[i].teamName)
+                this.fixture_data_B.push(selectedData.group_B[i].teamName)
+                this.fixture_data_C.push(selectedData.group_C[i].teamName)
+                this.fixture_data_D.push(selectedData.group_D[i].teamName)
+              }
+            })
+            .then(async () => {
+              // Initialize Fixture
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.$route.params.tournamentID)
+                .collection('group-stage')
+                .doc('fixtures')
+                .set({
+                  fixture_A: [],
+                  fixture_B: [],
+                  fixture_C: [],
+                  fixture_D: [],
+                })
+
+              // Initialize Table
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.$route.params.tournamentID)
+                .collection('group-stage')
+                .doc('tables')
+                .set({
+                  table_A: [],
+                  table_B: [],
+                  table_C: [],
+                  table_D: [],
+                })
+
+              // Initialize Final Stage
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.$route.params.tournamentID)
+                .collection('final-stage')
+                .doc('fixtures')
+                .set({
+                  quarterFinal: [
+                    // Quarter Final 1
+                    {
+                      fixtureID: 'quarterFinal1',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 1',
+                      homeTeam: 'Group A1',
+                      awayTeam: 'Group B2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 2
+                    {
+                      fixtureID: 'quarterFinal2',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 2',
+                      homeTeam: 'Group B1',
+                      awayTeam: 'Group A2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 3
+                    {
+                      fixtureID: 'quarterFinal3',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 3',
+                      homeTeam: 'Group C1',
+                      awayTeam: 'Group D2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 4
+                    {
+                      fixtureID: 'quarterFinal4',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 4',
+                      homeTeam: 'Group D1',
+                      awayTeam: 'Group C2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  semiFinal: [
+                    // Semi Final 1
+                    {
+                      fixtureID: 'semiFinal1',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 1',
+                      homeTeam: 'Quarter Final 1 Winner',
+                      awayTeam: 'Quarter Final 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Semi Final 2
+                    {
+                      fixtureID: 'semiFinal2',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 2',
+                      homeTeam: 'Quarter Final 3 Winner',
+                      awayTeam: 'Quarter Final 4 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  thirdPlace: [
+                    // 3rd Place
+                    {
+                      fixtureID: '3rdPlace',
+                      bracketID: 'thirdPlace',
+                      title: '3rd Place',
+                      homeTeam: 'Semi Final 1 Loser',
+                      awayTeam: 'Semi Final 2 Loser',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  final: [
+                    // Final Place
+                    {
+                      fixtureID: 'final',
+                      bracketID: 'final',
+                      title: 'Final',
+                      homeTeam: 'Semi Final 1 Winner',
+                      awayTeam: 'Semi Final 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+                })
+            })
+            .then(async () => {
+              // If fixture played once, else fixture played home away method
+              if (this.tournamentRef.gRound == 'once') {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'single-round',
+                })
+                this.fixture_A = games_A.data
+
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'single-round',
+                })
+                this.fixture_B = games_B.data
+
+                // Generate Fixture C
+                const games_C = generator(this.fixture_data_C, {
+                  type: 'single-round',
+                })
+                this.fixture_C = games_C.data
+
+                // Generate Fixture D
+                const games_D = generator(this.fixture_data_D, {
+                  type: 'single-round',
+                })
+                this.fixture_D = games_D.data
+              } else {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'double-round',
+                })
+                this.fixture_A = games_A.data
+
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'double-round',
+                })
+                this.fixture_B = games_B.data
+
+                // Generate Fixture C
+                const games_C = generator(this.fixture_data_C, {
+                  type: 'double-round',
+                })
+                this.fixture_C = games_C.data
+
+                // Generate Fixture D
+                const games_D = generator(this.fixture_data_D, {
+                  type: 'double-round',
+                })
+                this.fixture_D = games_D.data
+              }
+
+              // Store Fixture A
+              await this.fixture_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_A: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_A',
+                      tableID: 'table_A',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture B
+              await this.fixture_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_B: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_B',
+                      tableID: 'table_B',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture C
+              await this.fixture_C.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_C: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_C',
+                      tableID: 'table_C',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture D
+              await this.fixture_D.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_D: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_D',
+                      tableID: 'table_D',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+            })
+            .then(async () => {
+              // Initialize Table A
+              await this.group_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_A: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table B
+              await this.group_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_B: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table C
+              await this.group_C.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_C: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table D
+              await this.group_D.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_D: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+            })
+        } else if (this.tournamentRef.gGroupNumber == 8) {
+          await this.$fire.firestore
+            .collection('events')
+            .doc(this.$route.params.id)
+            .collection('tournaments')
+            .doc(this.$route.params.tournamentID)
+            .collection('group-stage')
+            .doc('seedings')
+            .update({
+              group_A: selectedData.group_A,
+              group_B: selectedData.group_B,
+              group_C: selectedData.group_C,
+              group_D: selectedData.group_D,
+              group_E: selectedData.group_E,
+              group_F: selectedData.group_F,
+              group_G: selectedData.group_G,
+              group_H: selectedData.group_H,
+            })
+            .then(() => {
+              this.fixture_data_A = []
+              this.fixture_data_B = []
+              this.fixture_data_C = []
+              this.fixture_data_D = []
+              this.fixture_data_E = []
+              this.fixture_data_F = []
+              this.fixture_data_G = []
+              this.fixture_data_H = []
+
+              for (var i = 0; i < this.tournamentRef.gTeamNumbers; i++) {
+                this.fixture_data_A.push(selectedData.group_A[i].teamName)
+                this.fixture_data_B.push(selectedData.group_B[i].teamName)
+                this.fixture_data_C.push(selectedData.group_C[i].teamName)
+                this.fixture_data_D.push(selectedData.group_D[i].teamName)
+                this.fixture_data_E.push(selectedData.group_E[i].teamName)
+                this.fixture_data_F.push(selectedData.group_F[i].teamName)
+                this.fixture_data_G.push(selectedData.group_G[i].teamName)
+                this.fixture_data_H.push(selectedData.group_H[i].teamName)
+              }
+            })
+            .then(async () => {
+              // Initialize Fixture
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.$route.params.tournamentID)
+                .collection('group-stage')
+                .doc('fixtures')
+                .set({
+                  fixture_A: [],
+                  fixture_B: [],
+                  fixture_C: [],
+                  fixture_D: [],
+                  fixture_E: [],
+                  fixture_F: [],
+                  fixture_G: [],
+                  fixture_H: [],
+                })
+
+              // Initialize Table
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.$route.params.tournamentID)
+                .collection('group-stage')
+                .doc('tables')
+                .set({
+                  table_A: [],
+                  table_B: [],
+                  table_C: [],
+                  table_D: [],
+                  table_E: [],
+                  table_F: [],
+                  table_G: [],
+                  table_H: [],
+                })
+
+              // Initialize Final Stage
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.$route.params.tournamentID)
+                .collection('final-stage')
+                .doc('fixtures')
+                .set({
+                  round16: [
+                    // Round16 1
+                    {
+                      fixtureID: 'round161',
+                      bracketID: 'round16',
+                      title: 'Round 16 1',
+                      homeTeam: 'Group A1',
+                      awayTeam: 'Group B2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 2
+                    {
+                      fixtureID: 'round162',
+                      bracketID: 'round16',
+                      title: 'Round 16 2',
+                      homeTeam: 'Group B1',
+                      awayTeam: 'Group A2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 3
+                    {
+                      fixtureID: 'round163',
+                      bracketID: 'round16',
+                      title: 'Round 16 3',
+                      homeTeam: 'Group C1',
+                      awayTeam: 'Group D2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 4
+                    {
+                      fixtureID: 'round164',
+                      bracketID: 'round16',
+                      title: 'Round 16 4',
+                      homeTeam: 'Group D1',
+                      awayTeam: 'Group C2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 5
+                    {
+                      fixtureID: 'round165',
+                      bracketID: 'round16',
+                      title: 'Round 16 5',
+                      homeTeam: 'Group E1',
+                      awayTeam: 'Group F2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 6
+                    {
+                      fixtureID: 'round166',
+                      bracketID: 'round16',
+                      title: 'Round 16 6',
+                      homeTeam: 'Group F1',
+                      awayTeam: 'Group E2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 7
+                    {
+                      fixtureID: 'round167',
+                      bracketID: 'round16',
+                      title: 'Round 16 7',
+                      homeTeam: 'Group G1',
+                      awayTeam: 'Group H2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Round16 7
+                    {
+                      fixtureID: 'round168',
+                      bracketID: 'round16',
+                      title: 'Round 16 8',
+                      homeTeam: 'Group H1',
+                      awayTeam: 'Group G2',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  quarterFinal: [
+                    // Quarter Final 1
+                    {
+                      fixtureID: 'quarterFinal1',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 1',
+                      homeTeam: 'Round 16 1 Winner',
+                      awayTeam: 'Round 16 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 2
+                    {
+                      fixtureID: 'quarterFinal2',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 2',
+                      homeTeam: 'Round 16 3 Winner',
+                      awayTeam: 'Group 16 4 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 3
+                    {
+                      fixtureID: 'quarterFinal3',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 3',
+                      homeTeam: 'Round 16 5 Winner',
+                      awayTeam: 'Round 16 6 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Quarter Final 4
+                    {
+                      fixtureID: 'quarterFinal4',
+                      bracketID: 'quarterFinal',
+                      title: 'Quarter Final 4',
+                      homeTeam: 'Round 16 7 Winner',
+                      awayTeam: 'Round 16 8 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  semiFinal: [
+                    // Semi Final 1
+                    {
+                      fixtureID: 'semiFinal1',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 1',
+                      homeTeam: 'Quarter Final 1 Winner',
+                      awayTeam: 'Quarter Final 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+
+                    // Semi Final 2
+                    {
+                      fixtureID: 'semiFinal2',
+                      bracketID: 'semiFinal',
+                      title: 'Semi Final 2',
+                      homeTeam: 'Quarter Final 3 Winner',
+                      awayTeam: 'Quarter Final 4 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  thirdPlace: [
+                    // 3rd Place
+                    {
+                      fixtureID: '3rdPlace',
+                      bracketID: 'thirdPlace',
+                      title: '3rd Place',
+                      homeTeam: 'Semi Final 1 Loser',
+                      awayTeam: 'Semi Final 2 Loser',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+
+                  final: [
+                    // Final Place
+                    {
+                      fixtureID: 'final',
+                      bracketID: 'final',
+                      title: 'Final',
+                      homeTeam: 'Semi Final 1 Winner',
+                      awayTeam: 'Semi Final 2 Winner',
+                      homeScore: 0,
+                      awayScore: 0,
+                      homeSet: 0,
+                      awaySet: 0,
+                      winner: null,
+                      loser: null,
+                      isFulltime: false,
+                      isMatchStart: false,
+                      isTie: false,
+                    },
+                  ],
+                })
+            })
+            .then(async () => {
+              // If fixture played once, else fixture played home away method
+              if (this.tournamentRef.gRound == 'once') {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'single-round',
+                })
+                this.fixture_A = games_A.data
+
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'single-round',
+                })
+                this.fixture_B = games_B.data
+
+                // Generate Fixture C
+                const games_C = generator(this.fixture_data_C, {
+                  type: 'single-round',
+                })
+                this.fixture_C = games_C.data
+
+                // Generate Fixture D
+                const games_D = generator(this.fixture_data_D, {
+                  type: 'single-round',
+                })
+                this.fixture_D = games_D.data
+
+                // Generate Fixture E
+                const games_E = generator(this.fixture_data_E, {
+                  type: 'single-round',
+                })
+                this.fixture_E = games_E.data
+
+                // Generate Fixture F
+                const games_F = generator(this.fixture_data_F, {
+                  type: 'single-round',
+                })
+                this.fixture_F = games_F.data
+
+                // Generate Fixture G
+                const games_G = generator(this.fixture_data_G, {
+                  type: 'single-round',
+                })
+                this.fixture_G = games_G.data
+
+                // Generate Fixture H
+                const games_H = generator(this.fixture_data_H, {
+                  type: 'single-round',
+                })
+                this.fixture_H = games_H.data
+              } else {
+                // Generate Fixture A
+                const games_A = generator(this.fixture_data_A, {
+                  type: 'double-round',
+                })
+                this.fixture_A = games_A.data
+
+                // Generate Fixture B
+                const games_B = generator(this.fixture_data_B, {
+                  type: 'double-round',
+                })
+                this.fixture_B = games_B.data
+
+                // Generate Fixture C
+                const games_C = generator(this.fixture_data_C, {
+                  type: 'double-round',
+                })
+                this.fixture_C = games_C.data
+
+                // Generate Fixture D
+                const games_D = generator(this.fixture_data_D, {
+                  type: 'double-round',
+                })
+                this.fixture_D = games_D.data
+
+                // Generate Fixture E
+                const games_E = generator(this.fixture_data_E, {
+                  type: 'double-round',
+                })
+                this.fixture_E = games_E.data
+
+                // Generate Fixture F
+                const games_F = generator(this.fixture_data_F, {
+                  type: 'double-round',
+                })
+                this.fixture_F = games_F.data
+
+                // Generate Fixture G
+                const games_G = generator(this.fixture_data_G, {
+                  type: 'double-round',
+                })
+                this.fixture_G = games_G.data
+
+                // Generate Fixture H
+                const games_H = generator(this.fixture_data_H, {
+                  type: 'double-round',
+                })
+                this.fixture_H = games_H.data
+              }
+
+              // Store Fixture A
+              await this.fixture_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_A: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_A',
+                      tableID: 'table_A',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture B
+              await this.fixture_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_B: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_B',
+                      tableID: 'table_B',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture C
+              await this.fixture_C.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_C: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_C',
+                      tableID: 'table_C',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture D
+              await this.fixture_D.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_D: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_D',
+                      tableID: 'table_D',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture E
+              await this.fixture_E.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_E: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_E',
+                      tableID: 'table_E',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture F
+              await this.fixture_F.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_F: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_F',
+                      tableID: 'table_F',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture G
+              await this.fixture_G.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_G: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_G',
+                      tableID: 'table_G',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+
+              // Store Fixture H
+              await this.fixture_H.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('fixtures')
+                  .update({
+                    fixture_H: firebase.firestore.FieldValue.arrayUnion({
+                      fixtureID: 'fixture_H',
+                      tableID: 'table_H',
+                      homeTeam: doc.homeTeam,
+                      awayTeam: doc.awayTeam,
+                      round: doc.round,
+                      homeScore: 0,
+                      awayScore: 0,
+                      winner: null,
+                      loser: null,
+                      isTie: false,
+                      isFulltime: false,
+                      isMatchStart: false,
+                    }),
+                  })
+              })
+            })
+            .then(async () => {
+              // Initialize Table A
+              await this.group_A.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_A: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table B
+              await this.group_B.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_B: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table C
+              await this.group_C.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_C: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table D
+              await this.group_D.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_D: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table E
+              await this.group_E.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_E: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table F
+              await this.group_F.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_F: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table G
+              await this.group_G.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_G: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+
+              // Initialize Table H
+              await this.group_H.forEach((doc) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(this.$route.params.tournamentID)
+                  .collection('group-stage')
+                  .doc('tables')
+                  .update({
+                    table_H: firebase.firestore.FieldValue.arrayUnion({
+                      teamName: doc.teamName,
+                      matches: 0,
+                      win: 0,
+                      lost: 0,
+                      draw: 0,
+                      goals_for: 0,
+                      goals_against: 0,
+                      goals_difference: 0,
+                      points: 0,
+                    }),
+                  })
+              })
+            })
+        }
+
+        await this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .update({
+            isGroupDraw: true,
+            isGroupStage: false,
+            isRound16: false,
+            isQuarterFinal: false,
+            isSemiFinal: false,
+            isThirdPlace: false,
+            isFinal: false,
+          })
+          .then(() => {
+            // Loading state -> false
+            this.isLoading = false
+            this.addSeedingsOverlay = false
+          })
+      } catch (error) {
+        // Loading state -> true
+        this.isLoading = false
+        console.log(error)
+      }
+    },
+  },
 }
 </script>

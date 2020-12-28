@@ -2,7 +2,7 @@
   <v-app>
     <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
       <v-container class="p-0 my-0" fluid>
-         <!-- Notifications -->
+        <!-- Notifications -->
         <notifications />
 
         <!-- Organization Details Part -->
@@ -1320,6 +1320,15 @@ export default {
               group_A: selectedData.group_A,
               group_B: selectedData.group_B,
             })
+            .then(() => {
+              this.fixture_data_A = []
+              this.fixture_data_B = []
+
+              for (var i = 0; i < this.tournamentRef.gTeamNumbers; i++) {
+                this.fixture_data_A.push(selectedData.group_A[i].teamName)
+                this.fixture_data_B.push(selectedData.group_B[i].teamName)
+              }
+            })
             .then(async () => {
               // Initialize Fixture
               await this.$fire.firestore
@@ -1563,6 +1572,19 @@ export default {
               group_B: selectedData.group_B,
               group_C: selectedData.group_C,
               group_D: selectedData.group_D,
+            })
+            .then(() => {
+              this.fixture_data_A = []
+              this.fixture_data_B = []
+              this.fixture_data_C = []
+              this.fixture_data_D = []
+
+              for (var i = 0; i < this.tournamentRef.gTeamNumbers; i++) {
+                this.fixture_data_A.push(selectedData.group_A[i].teamName)
+                this.fixture_data_B.push(selectedData.group_B[i].teamName)
+                this.fixture_data_C.push(selectedData.group_C[i].teamName)
+                this.fixture_data_D.push(selectedData.group_D[i].teamName)
+              }
             })
             .then(async () => {
               // Initialize Fixture
@@ -2007,6 +2029,27 @@ export default {
               group_F: selectedData.group_F,
               group_G: selectedData.group_G,
               group_H: selectedData.group_H,
+            })
+            .then(() => {
+              this.fixture_data_A = []
+              this.fixture_data_B = []
+              this.fixture_data_C = []
+              this.fixture_data_D = []
+              this.fixture_data_E = []
+              this.fixture_data_F = []
+              this.fixture_data_G = []
+              this.fixture_data_H = []
+
+              for (var i = 0; i < this.tournamentRef.gTeamNumbers; i++) {
+                this.fixture_data_A.push(selectedData.group_A[i].teamName)
+                this.fixture_data_B.push(selectedData.group_B[i].teamName)
+                this.fixture_data_C.push(selectedData.group_C[i].teamName)
+                this.fixture_data_D.push(selectedData.group_D[i].teamName)
+                this.fixture_data_E.push(selectedData.group_E[i].teamName)
+                this.fixture_data_F.push(selectedData.group_F[i].teamName)
+                this.fixture_data_G.push(selectedData.group_G[i].teamName)
+                this.fixture_data_H.push(selectedData.group_H[i].teamName)
+              }
             })
             .then(async () => {
               // Initialize Fixture
