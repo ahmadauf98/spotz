@@ -326,8 +326,6 @@ import moment from 'moment'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -363,6 +361,15 @@ export default {
     result: function () {
       return (this.participants = this.gTeamNumbers * this.gGroupNumber)
     },
+  },
+
+  mounted() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

@@ -329,8 +329,6 @@ import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -371,55 +369,63 @@ export default {
   },
 
   mounted() {
-    // Get current user
-    this.userID = this.$fire.auth.currentUser.uid
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userID = user.uid
 
-    // Get data from events
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.eventRef = doc.data()
-      })
+        // Get current user
+        this.userID = this.$fire.auth.currentUser.uid
 
-    // Get data from tournaments
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-        this.managerlength = doc.data().managerRef.length
-        this.managerListTemp = []
+        // Get data from events
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.eventRef = doc.data()
+          })
 
-        // Get User in Manager List
-        doc.data().managerRef.forEach((docref) => {
-          this.$fire.firestore
-            .collection('users')
-            .doc(docref.uid)
-            .onSnapshot((doc) => {
-              this.managerListTemp.push({
-                status: docref.status,
-                uid: docref.uid,
-                name: doc.data().name,
-                email: doc.data().email,
-              })
+        // Get data from tournaments
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+            this.managerlength = doc.data().managerRef.length
+            this.managerListTemp = []
+
+            // Get User in Manager List
+            doc.data().managerRef.forEach((docref) => {
+              this.$fire.firestore
+                .collection('users')
+                .doc(docref.uid)
+                .onSnapshot((doc) => {
+                  this.managerListTemp.push({
+                    status: docref.status,
+                    uid: docref.uid,
+                    name: doc.data().name,
+                    email: doc.data().email,
+                  })
+                })
             })
-        })
 
-        this.managerList = this.managerListTemp
-      })
+            this.managerList = this.managerListTemp
+          })
 
-    // Get Collaborator Info
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .onSnapshot((doc) => {
-        this.collaborator = doc.data().collaborator
-      })
+        // Get Collaborator Info
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .onSnapshot((doc) => {
+            this.collaborator = doc.data().collaborator
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

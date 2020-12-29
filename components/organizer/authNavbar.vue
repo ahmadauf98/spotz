@@ -278,57 +278,46 @@ export default {
 
       // User Authentication
       userId: '',
-      id: '',
     }
-  },
-
-  beforeCreate() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        console.log('Authenticated User', user)
-
-        this.id = user.uid
-      } else {
-        console.log('Logged Out')
-      }
-    })
   },
 
   mounted() {
-    this.userId = this.$fire.auth.currentUser.uid
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userId = user.uid
 
-    if (this.$fire.auth.currentUser.uid == null) {
-      this.userId = this.id
-    }
+        this.$fire.firestore
+          .collection('users')
+          .doc(this.userId)
+          .onSnapshot((doc) => {
+            this.name = doc.data().name
+            this.email = doc.data().email
+            this.photoURL = doc.data().photoURL
+            this.notificationsRef = doc.data().notificationsRef
+            const managerReq_sort = doc.data().managerReq
 
-    this.$fire.firestore
-      .collection('users')
-      .doc(this.userId)
-      .onSnapshot((doc) => {
-        this.name = doc.data().name
-        this.email = doc.data().email
-        this.photoURL = doc.data().photoURL
-        this.notificationsRef = doc.data().notificationsRef
-        const managerReq_sort = doc.data().managerReq
+            // Sort manager request
+            if (typeof managerReq_sort != 'undefined') {
+              this.managerReq = managerReq_sort.reverse()
+            }
 
-        // Sort manager request
-        if (typeof managerReq_sort != 'undefined') {
-          this.managerReq = managerReq_sort.reverse()
-        }
+            // Filter unread notification organizer
+            const organizer_unread_list = this.notificationsRef
 
-        // Filter unread notification organizer
-        const organizer_unread_list = this.notificationsRef
-
-        if (
-          typeof organizer_unread_list != 'undefined' ||
-          organizer_unread_list != ''
-        ) {
-          const organizer_unread = organizer_unread_list.filter(
-            (element) => element.status === 'unread'
-          )
-          this.unreadNotificationRef = organizer_unread
-        }
-      })
+            if (
+              typeof organizer_unread_list != 'undefined' ||
+              organizer_unread_list != ''
+            ) {
+              const organizer_unread = organizer_unread_list.filter(
+                (element) => element.status === 'unread'
+              )
+              this.unreadNotificationRef = organizer_unread
+            }
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

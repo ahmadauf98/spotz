@@ -1035,8 +1035,6 @@ import tournamentInfo from '~/components/organizer/tournamentInfo'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -1078,123 +1076,128 @@ export default {
     }
   },
 
-  // Fetch User's Data
   mounted() {
-    // Tournament Data
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-      })
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // Tournament Data
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+          })
 
-    // Get list of Official Team
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .collection('team-registration')
-      .where('status', '==', 'approved')
-      .onSnapshot((querySnapshot) => {
-        this.teamListNumber = querySnapshot.size
-      })
+        // Get list of Official Team
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .where('status', '==', 'approved')
+          .onSnapshot((querySnapshot) => {
+            this.teamListNumber = querySnapshot.size
+          })
 
-    // Get list of Qualified Team
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .collection('final-stage')
-      .doc('participants')
-      .onSnapshot((querySnapshot) => {
-        if (querySnapshot.exists) {
-          this.finalStageList = querySnapshot.data()
+        // Get list of Qualified Team
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('final-stage')
+          .doc('participants')
+          .onSnapshot((querySnapshot) => {
+            if (querySnapshot.exists) {
+              this.finalStageList = querySnapshot.data()
 
-          if (this.tournamentRef.gGroupNumber == 2) {
-            this.finalStageList_semi = this.finalStageList
-          } else if (this.tournamentRef.gGroupNumber == 4) {
-            this.finalStageList_quarter = this.finalStageList
-          } else if (this.tournamentRef.gGroupNumber == 8) {
-            this.finalStageList_round16 = this.finalStageList
-          }
-        }
-      })
-
-    // Get Fixture of Each Bracket
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .collection('final-stage')
-      .doc('fixtures')
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          this.final = doc.data().final
-          this.thirdPlace = doc.data().thirdPlace
-          this.semiFinal = doc.data().semiFinal
-          this.quarterFinal = doc.data().quarterFinal
-          this.round16 = doc.data().round16
-
-          // Check SemiFinal Fixtures Fulltime State
-          if (typeof this.semiFinal != 'undefined') {
-            if (
-              this.semiFinal[0].isFulltime == true &&
-              this.semiFinal[1].isFulltime == true
-            ) {
-              this.semiCheck = true
-            } else {
-              this.semiCheck = false
+              if (this.tournamentRef.gGroupNumber == 2) {
+                this.finalStageList_semi = this.finalStageList
+              } else if (this.tournamentRef.gGroupNumber == 4) {
+                this.finalStageList_quarter = this.finalStageList
+              } else if (this.tournamentRef.gGroupNumber == 8) {
+                this.finalStageList_round16 = this.finalStageList
+              }
             }
-          }
+          })
 
-          // Check QuaterFinal Fixtures Fulltime State
-          if (typeof this.quarterFinal != 'undefined') {
-            if (
-              this.quarterFinal[0].isFulltime == true &&
-              this.quarterFinal[1].isFulltime == true &&
-              this.quarterFinal[2].isFulltime == true &&
-              this.quarterFinal[3].isFulltime == true
-            ) {
-              this.quarterCheck = true
-            } else {
-              this.quarterCheck = false
+        // Get Fixture of Each Bracket
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('final-stage')
+          .doc('fixtures')
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              this.final = doc.data().final
+              this.thirdPlace = doc.data().thirdPlace
+              this.semiFinal = doc.data().semiFinal
+              this.quarterFinal = doc.data().quarterFinal
+              this.round16 = doc.data().round16
+
+              // Check SemiFinal Fixtures Fulltime State
+              if (typeof this.semiFinal != 'undefined') {
+                if (
+                  this.semiFinal[0].isFulltime == true &&
+                  this.semiFinal[1].isFulltime == true
+                ) {
+                  this.semiCheck = true
+                } else {
+                  this.semiCheck = false
+                }
+              }
+
+              // Check QuaterFinal Fixtures Fulltime State
+              if (typeof this.quarterFinal != 'undefined') {
+                if (
+                  this.quarterFinal[0].isFulltime == true &&
+                  this.quarterFinal[1].isFulltime == true &&
+                  this.quarterFinal[2].isFulltime == true &&
+                  this.quarterFinal[3].isFulltime == true
+                ) {
+                  this.quarterCheck = true
+                } else {
+                  this.quarterCheck = false
+                }
+              }
+
+              // Check Round16 Fixtures Fulltime State
+              if (typeof this.round16 != 'undefined') {
+                if (
+                  this.round16[0].isFulltime == true &&
+                  this.round16[1].isFulltime == true &&
+                  this.round16[2].isFulltime == true &&
+                  this.round16[3].isFulltime == true &&
+                  this.round16[4].isFulltime == true &&
+                  this.round16[5].isFulltime == true &&
+                  this.round16[5].isFulltime == true &&
+                  this.round16[7].isFulltime == true
+                ) {
+                  this.round16Check = true
+                } else {
+                  this.round16Check = false
+                }
+              }
+
+              // Testing Unit if else
+              if (this.tournamentRef.gGroupNumber == 2) {
+                this.assign(this.semiFinal, this.finalStageList)
+                this.assign(this.thirdPlace, this.semiFinal)
+                this.assign(this.final, this.semiFinal)
+              } else if (this.tournamentRef.gGroupNumber == 4) {
+                this.assign(this.quarterFinal, this.finalStageList)
+                this.assign(this.semiFinal, this.quarterFinal)
+                this.assign(this.thirdPlace, this.semiFinal)
+                this.assign(this.final, this.semiFinal)
+              } else if (this.tournamentRef.gGroupNumber == 8) {
+                this.assign(this.round16, this.finalStageList)
+                this.assign(this.quarterFinal, this.round16)
+                this.assign(this.semiFinal, this.quarterFinal)
+                this.assign(this.thirdPlace, this.semiFinal)
+                this.assign(this.final, this.semiFinal)
+              }
             }
-          }
-
-          // Check Round16 Fixtures Fulltime State
-          if (typeof this.round16 != 'undefined') {
-            if (
-              this.round16[0].isFulltime == true &&
-              this.round16[1].isFulltime == true &&
-              this.round16[2].isFulltime == true &&
-              this.round16[3].isFulltime == true &&
-              this.round16[4].isFulltime == true &&
-              this.round16[5].isFulltime == true &&
-              this.round16[5].isFulltime == true &&
-              this.round16[7].isFulltime == true
-            ) {
-              this.round16Check = true
-            } else {
-              this.round16Check = false
-            }
-          }
-
-          // Testing Unit if else
-          if (this.tournamentRef.gGroupNumber == 2) {
-            this.assign(this.semiFinal, this.finalStageList)
-            this.assign(this.thirdPlace, this.semiFinal)
-            this.assign(this.final, this.semiFinal)
-          } else if (this.tournamentRef.gGroupNumber == 4) {
-            this.assign(this.quarterFinal, this.finalStageList)
-            this.assign(this.semiFinal, this.quarterFinal)
-            this.assign(this.thirdPlace, this.semiFinal)
-            this.assign(this.final, this.semiFinal)
-          } else if (this.tournamentRef.gGroupNumber == 8) {
-            this.assign(this.round16, this.finalStageList)
-            this.assign(this.quarterFinal, this.round16)
-            this.assign(this.semiFinal, this.quarterFinal)
-            this.assign(this.thirdPlace, this.semiFinal)
-            this.assign(this.final, this.semiFinal)
-          }
-        }
-      })
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

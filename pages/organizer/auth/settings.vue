@@ -256,8 +256,6 @@ import countryList from '~/countries.json'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -321,25 +319,30 @@ export default {
     },
   },
 
-  // GET - Fetch User's Data
   mounted() {
-    this.userId = this.$fire.auth.currentUser.uid
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userId = user.uid
 
-    return this.$fire.firestore
-      .collection('users')
-      .doc(this.userId)
-      .get()
-      .then((doc) => {
-        this.name = doc.data().name
-        this.email = doc.data().email
-        this.photoURL = doc.data().photoURL
-        this.emailVerified = doc.data().emailVerified
-        this.countryName = doc.data().country
-        this.gender = doc.data().gender
-        this.birthday_d = doc.data().birthday
-        this.about = doc.data().about
-        this.birthday = this.birthday_Format_D
-      })
+        this.$fire.firestore
+          .collection('users')
+          .doc(this.userId)
+          .get()
+          .then((doc) => {
+            this.name = doc.data().name
+            this.email = doc.data().email
+            this.photoURL = doc.data().photoURL
+            this.emailVerified = doc.data().emailVerified
+            this.countryName = doc.data().country
+            this.gender = doc.data().gender
+            this.birthday_d = doc.data().birthday
+            this.about = doc.data().about
+            this.birthday = this.birthday_Format_D
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

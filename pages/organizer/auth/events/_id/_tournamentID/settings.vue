@@ -59,13 +59,12 @@
 </template>
 
 <script>
+import firebase from 'firebase'
 import eventTourHeader from '~/components/organizer/eventTourHeader'
 import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -88,16 +87,22 @@ export default {
     }
   },
 
-  created() {
-    // Get data from tournaments
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .onSnapshot((doc) => {
-        this.gender = doc.data().gender
-      })
+  mounted() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // Get data from tournaments
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .onSnapshot((doc) => {
+            this.gender = doc.data().gender
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import firebase from 'firebase'
+
 export default {
   data() {
     return {
@@ -69,14 +71,19 @@ export default {
     }
   },
 
-  // Fetch User's Data
-  created() {
-    return this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-      })
+  mounted() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 }
 </script>

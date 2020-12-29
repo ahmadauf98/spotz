@@ -193,23 +193,28 @@ export default {
   },
 
   mounted() {
-    // Fetch User's Data
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-
-        this.startDate = doc.data().startDate
-        this.endDate = doc.data().endDate
-
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
         this.$fire.firestore
-          .collection('users')
-          .doc(doc.data().hostName)
-          .onSnapshot((docRef) => {
-            this.hostnameProf = docRef.data()
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+
+            this.startDate = doc.data().startDate
+            this.endDate = doc.data().endDate
+
+            this.$fire.firestore
+              .collection('users')
+              .doc(doc.data().hostName)
+              .onSnapshot((docRef) => {
+                this.hostnameProf = docRef.data()
+              })
           })
-      })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

@@ -105,9 +105,9 @@
 </template>
 
 <script>
-export default {
-  middleware: 'authenticated',
+import firebase from 'firebase'
 
+export default {
   layout: 'organizer',
 
   data() {
@@ -124,43 +124,49 @@ export default {
   },
 
   mounted() {
-    this.userId = this.$fire.auth.currentUser.uid
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userId = user.uid
 
-    return this.$fire.firestore
-      .collection('users')
-      .doc(this.userId)
-      .onSnapshot((doc) => {
-        this.collabRefTemp = []
-        if (doc.exists) {
-          doc.data().eventsCollab.forEach((docref) => {
-            // Get events data
-            this.$fire.firestore
-              .collection('events')
-              .doc(docref.eventID)
-              .onSnapshot((docEvent) => {
-                // Get tournaments data
+        this.$fire.firestore
+          .collection('users')
+          .doc(this.userId)
+          .onSnapshot((doc) => {
+            this.collabRefTemp = []
+            if (doc.exists) {
+              doc.data().eventsCollab.forEach((docref) => {
+                // Get events data
                 this.$fire.firestore
                   .collection('events')
                   .doc(docref.eventID)
-                  .collection('tournaments')
-                  .doc(docref.tournamentID)
-                  .onSnapshot((docTour) => {
-                    var list = {
-                      eventID: docref.eventID,
-                      tournamentID: docref.tournamentID,
-                      photoURL: docEvent.data().photoURL,
-                      tournamentName: docTour.data().sportType,
-                      tournamentGender: docTour.data().gender,
-                      eventTitle: docEvent.data().title,
-                      startDate: docEvent.data().startDate,
-                    }
-                    this.collabRefTemp.push(list)
+                  .onSnapshot((docEvent) => {
+                    // Get tournaments data
+                    this.$fire.firestore
+                      .collection('events')
+                      .doc(docref.eventID)
+                      .collection('tournaments')
+                      .doc(docref.tournamentID)
+                      .onSnapshot((docTour) => {
+                        var list = {
+                          eventID: docref.eventID,
+                          tournamentID: docref.tournamentID,
+                          photoURL: docEvent.data().photoURL,
+                          tournamentName: docTour.data().sportType,
+                          tournamentGender: docTour.data().gender,
+                          eventTitle: docEvent.data().title,
+                          startDate: docEvent.data().startDate,
+                        }
+                        this.collabRefTemp.push(list)
+                      })
                   })
               })
+              this.collabRef = this.collabRefTemp
+            }
           })
-          this.collabRef = this.collabRefTemp
-        }
-      })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 }
 </script>

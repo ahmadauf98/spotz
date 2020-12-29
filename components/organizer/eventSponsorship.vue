@@ -9,7 +9,7 @@
 
       <v-col cols="12">
         <a
-          v-show="userID == eventHostname"
+          v-show="userId == eventHostname"
           @click="addSponsorship = !addSponsorship"
           class="card text-decoration-none"
         >
@@ -31,7 +31,7 @@
         <div class="d-flex button">
           <v-btn
             @click="onDeleteBrandSponsor(sponsorship)"
-            :disabled="userID != eventHostname"
+            :disabled="userId != eventHostname"
             class="ml-auto mr-2 mt-1"
             icon
           >
@@ -257,24 +257,28 @@ export default {
     uploadPercentage: null,
 
     // Current User Info
-    userID: null,
+    userId: '',
 
     // Data Fetched
     sponsorshipList: '',
   }),
 
   mounted() {
-    // Get current user
-    this.userID = this.$fire.auth.currentUser.uid
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userId = user.uid
 
-    // Get data from events
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.sponsorshipList = doc.data().sponsorship
-        this.eventHostname = doc.data().hostName
-      })
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.sponsorshipList = doc.data().sponsorship
+            this.eventHostname = doc.data().hostName
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

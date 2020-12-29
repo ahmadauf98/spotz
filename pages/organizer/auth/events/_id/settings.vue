@@ -231,13 +231,12 @@
 </template>
 
 <script>
+import firebase from 'firebase'
 import eventHeader from '~/components/organizer/eventHeader'
 import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -273,29 +272,35 @@ export default {
   },
 
   mounted() {
-    // Event Data
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.eventsRef = doc.data()
-      })
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // Event Data
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.eventsRef = doc.data()
+          })
 
-    // Fetch Events Data from Database
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.title = doc.data().title
-        this.description = doc.data().description
-        this.startDate = doc.data().startDate
-        this.endDate = doc.data().endDate
-        this.websiteURL = doc.data().websiteURL
-        this.phoneNumber = doc.data().phoneNumber
-        this.location = doc.data().location
-        this.email = doc.data().email
-        this.isOpen = doc.data().isOpen
-      })
+        // Fetch Events Data from Database
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.title = doc.data().title
+            this.description = doc.data().description
+            this.startDate = doc.data().startDate
+            this.endDate = doc.data().endDate
+            this.websiteURL = doc.data().websiteURL
+            this.phoneNumber = doc.data().phoneNumber
+            this.location = doc.data().location
+            this.email = doc.data().email
+            this.isOpen = doc.data().isOpen
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

@@ -251,8 +251,6 @@ import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -280,42 +278,47 @@ export default {
     }
   },
 
-  // Fetch Data from Firestore
   mounted() {
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-      })
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+          })
 
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .collection('team-registration')
-      .where('status', '==', 'pending')
-      .onSnapshot((querySnapshot) => {
-        this.tempList = []
-        querySnapshot.forEach((doc) => {
-          this.$fire.firestore
-            .collection('users')
-            .doc(doc.data().uid)
-            .onSnapshot((udoc) => {
-              this.tempList.push({
-                listplayers: doc.data().listPlayers,
-                teamName: doc.data().teamName,
-                uid: doc.data().uid,
-                managerName: udoc.data().name,
-                managerEmail: udoc.data().email,
-              })
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .collection('team-registration')
+          .where('status', '==', 'pending')
+          .onSnapshot((querySnapshot) => {
+            this.tempList = []
+            querySnapshot.forEach((doc) => {
+              this.$fire.firestore
+                .collection('users')
+                .doc(doc.data().uid)
+                .onSnapshot((udoc) => {
+                  this.tempList.push({
+                    listplayers: doc.data().listPlayers,
+                    teamName: doc.data().teamName,
+                    uid: doc.data().uid,
+                    managerName: udoc.data().name,
+                    managerEmail: udoc.data().email,
+                  })
+                })
             })
-        })
-        this.approvalList = this.tempList
-      })
+            this.approvalList = this.tempList
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

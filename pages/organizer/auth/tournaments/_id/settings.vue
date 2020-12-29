@@ -243,13 +243,12 @@
 </template>
 
 <script>
+import firebase from 'firebase'
 import tournamentHeader from '~/components/organizer/tournamentHeader'
 import tournamentInfo from '~/components/organizer/tournamentInfo'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -285,30 +284,36 @@ export default {
   },
 
   mounted() {
-    // Tournament Data
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-      })
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // Tournament Data
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+          })
 
-    // Fetch Tournament Data from Database
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.title = doc.data().title
-        this.description = doc.data().description
-        this.startDate = doc.data().startDate
-        this.endDate = doc.data().endDate
-        this.websiteURL = doc.data().websiteURL
-        this.phoneNumber = doc.data().phoneNumber
-        this.location = doc.data().location
-        this.email = doc.data().email
-        this.isOpen = doc.data().isOpen
-        this.gender = doc.data().gender
-      })
+        // Fetch Tournament Data from Database
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.title = doc.data().title
+            this.description = doc.data().description
+            this.startDate = doc.data().startDate
+            this.endDate = doc.data().endDate
+            this.websiteURL = doc.data().websiteURL
+            this.phoneNumber = doc.data().phoneNumber
+            this.location = doc.data().location
+            this.email = doc.data().email
+            this.isOpen = doc.data().isOpen
+            this.gender = doc.data().gender
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

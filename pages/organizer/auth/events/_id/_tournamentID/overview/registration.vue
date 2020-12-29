@@ -272,8 +272,6 @@ import notifications from '~/components/notifications'
 import moment from 'moment'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -319,16 +317,21 @@ export default {
     },
   },
 
-  // Fetch User's Data
   mounted() {
-    return this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-      })
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

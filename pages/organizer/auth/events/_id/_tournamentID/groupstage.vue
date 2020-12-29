@@ -1685,8 +1685,6 @@ import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -1740,146 +1738,151 @@ export default {
     }
   },
 
-  // Fetch User's Data
   mounted() {
-    // Tournament Data
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-      })
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // Tournament Data
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+          })
 
-    // Get list of Official Team
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .collection('team-registration')
-      .where('status', '==', 'approved')
-      .onSnapshot((querySnapshot) => {
-        this.teamListNumber = querySnapshot.size
-      })
+        // Get list of Official Team
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .collection('team-registration')
+          .where('status', '==', 'approved')
+          .onSnapshot((querySnapshot) => {
+            this.teamListNumber = querySnapshot.size
+          })
 
-    // Get Bracket Group
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .collection('group-stage')
-      .doc('seedings')
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          // Read Data
-          this.group_A = doc.data().group_A
-          this.group_B = doc.data().group_B
-          this.group_C = doc.data().group_C
-          this.group_D = doc.data().group_D
-          this.group_E = doc.data().group_E
-          this.group_F = doc.data().group_F
-          this.group_G = doc.data().group_G
-          this.group_H = doc.data().group_H
+        // Get Bracket Group
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .collection('group-stage')
+          .doc('seedings')
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              // Read Data
+              this.group_A = doc.data().group_A
+              this.group_B = doc.data().group_B
+              this.group_C = doc.data().group_C
+              this.group_D = doc.data().group_D
+              this.group_E = doc.data().group_E
+              this.group_F = doc.data().group_F
+              this.group_G = doc.data().group_G
+              this.group_H = doc.data().group_H
 
-          // Overlay Data
-          this.groupStageData = doc.data()
-        }
-      })
+              // Overlay Data
+              this.groupStageData = doc.data()
+            }
+          })
 
-    // Get Fixture of Each Group
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .collection('group-stage')
-      .doc('fixtures')
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          this.fixture_A = doc.data().fixture_A
-          this.fixture_B = doc.data().fixture_B
-          this.fixture_C = doc.data().fixture_C
-          this.fixture_D = doc.data().fixture_D
-          this.fixture_E = doc.data().fixture_E
-          this.fixture_F = doc.data().fixture_F
-          this.fixture_G = doc.data().fixture_G
-          this.fixture_H = doc.data().fixture_H
-        }
-      })
+        // Get Fixture of Each Group
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .collection('group-stage')
+          .doc('fixtures')
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              this.fixture_A = doc.data().fixture_A
+              this.fixture_B = doc.data().fixture_B
+              this.fixture_C = doc.data().fixture_C
+              this.fixture_D = doc.data().fixture_D
+              this.fixture_E = doc.data().fixture_E
+              this.fixture_F = doc.data().fixture_F
+              this.fixture_G = doc.data().fixture_G
+              this.fixture_H = doc.data().fixture_H
+            }
+          })
 
-    // Get Standings Table of Each Group
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .collection('group-stage')
-      .doc('tables')
-      .onSnapshot((doc) => {
-        this.sort_table_A = ''
-        this.sort_table_B = ''
-        this.sort_table_C = ''
-        this.sort_table_D = ''
-        this.sort_table_E = ''
-        this.sort_table_F = ''
-        this.sort_table_G = ''
-        this.sort_table_H = ''
+        // Get Standings Table of Each Group
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .collection('group-stage')
+          .doc('tables')
+          .onSnapshot((doc) => {
+            this.sort_table_A = ''
+            this.sort_table_B = ''
+            this.sort_table_C = ''
+            this.sort_table_D = ''
+            this.sort_table_E = ''
+            this.sort_table_F = ''
+            this.sort_table_G = ''
+            this.sort_table_H = ''
 
-        if (doc.exists) {
-          this.sort_table_A = doc.data().table_A
-          this.sort_table_B = doc.data().table_B
-          this.sort_table_C = doc.data().table_C
-          this.sort_table_D = doc.data().table_D
-          this.sort_table_E = doc.data().table_E
-          this.sort_table_F = doc.data().table_F
-          this.sort_table_G = doc.data().table_G
-          this.sort_table_H = doc.data().table_H
+            if (doc.exists) {
+              this.sort_table_A = doc.data().table_A
+              this.sort_table_B = doc.data().table_B
+              this.sort_table_C = doc.data().table_C
+              this.sort_table_D = doc.data().table_D
+              this.sort_table_E = doc.data().table_E
+              this.sort_table_F = doc.data().table_F
+              this.sort_table_G = doc.data().table_G
+              this.sort_table_H = doc.data().table_H
 
-          if (this.sort_table_A != null) {
-            this.sort_table_A.sort(this.compare)
-          }
+              if (this.sort_table_A != null) {
+                this.sort_table_A.sort(this.compare)
+              }
 
-          if (this.sort_table_B != null) {
-            this.sort_table_B.sort(this.compare)
-          }
+              if (this.sort_table_B != null) {
+                this.sort_table_B.sort(this.compare)
+              }
 
-          if (this.sort_table_C != null) {
-            this.sort_table_C.sort(this.compare)
-          }
+              if (this.sort_table_C != null) {
+                this.sort_table_C.sort(this.compare)
+              }
 
-          if (this.sort_table_D != null) {
-            this.sort_table_D.sort(this.compare)
-          }
+              if (this.sort_table_D != null) {
+                this.sort_table_D.sort(this.compare)
+              }
 
-          if (this.sort_table_E != null) {
-            this.sort_table_E.sort(this.compare)
-          }
+              if (this.sort_table_E != null) {
+                this.sort_table_E.sort(this.compare)
+              }
 
-          if (this.sort_table_F != null) {
-            this.sort_table_F.sort(this.compare)
-          }
+              if (this.sort_table_F != null) {
+                this.sort_table_F.sort(this.compare)
+              }
 
-          if (this.sort_table_G != null) {
-            this.sort_table_G.sort(this.compare)
-          }
+              if (this.sort_table_G != null) {
+                this.sort_table_G.sort(this.compare)
+              }
 
-          if (this.sort_table_H != null) {
-            this.sort_table_H.sort(this.compare)
-          }
-        }
+              if (this.sort_table_H != null) {
+                this.sort_table_H.sort(this.compare)
+              }
+            }
 
-        this.table_A = this.sort_table_A
-        this.table_B = this.sort_table_B
-        this.table_C = this.sort_table_C
-        this.table_D = this.sort_table_D
-        this.table_E = this.sort_table_E
-        this.table_F = this.sort_table_F
-        this.table_G = this.sort_table_G
-        this.table_H = this.sort_table_H
-      })
+            this.table_A = this.sort_table_A
+            this.table_B = this.sort_table_B
+            this.table_C = this.sort_table_C
+            this.table_D = this.sort_table_D
+            this.table_E = this.sort_table_E
+            this.table_F = this.sort_table_F
+            this.table_G = this.sort_table_G
+            this.table_H = this.sort_table_H
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

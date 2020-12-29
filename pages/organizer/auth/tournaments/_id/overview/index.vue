@@ -389,8 +389,6 @@ import tournamentInfo from '~/components/organizer/tournamentInfo'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -424,30 +422,35 @@ export default {
     }
   },
 
-  // Fetch User's Data
   mounted() {
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-        this.managerlength = doc.data().managerRef.length
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+            this.managerlength = doc.data().managerRef.length
 
-        var manager_list = doc.data().managerRef
-        var manager_active = manager_list.filter(
-          (element) => element.status === 'active'
-        )
-        this.managerlength_active = manager_active.length
-      })
+            var manager_list = doc.data().managerRef
+            var manager_active = manager_list.filter(
+              (element) => element.status === 'active'
+            )
+            this.managerlength_active = manager_active.length
+          })
 
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .collection('team-registration')
-      .where('status', '==', 'approved')
-      .onSnapshot((querySnapshot) => {
-        this.teamListNumber = querySnapshot.size
-      })
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .where('status', '==', 'approved')
+          .onSnapshot((querySnapshot) => {
+            this.teamListNumber = querySnapshot.size
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

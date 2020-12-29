@@ -1132,8 +1132,6 @@ import notifications from '~/components/notifications'
 import generator from 'tournament-generator'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -1194,109 +1192,143 @@ export default {
   },
 
   mounted() {
-    // Tournament Data
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-      })
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // Tournament Data
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+          })
 
-    // Official List Data
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .collection('team-registration')
-      .where('status', '==', 'approved')
-      .onSnapshot((querySnapshot) => {
-        this.tempTeams = []
-        this.tempList = []
-        querySnapshot.forEach((doc) => {
-          this.tempTeams.push(doc.data().teamName)
-          this.$fire.firestore
-            .collection('users')
-            .doc(doc.data().uid)
-            .onSnapshot((udoc) => {
-              this.tempList.push({
-                listplayers: doc.data().listPlayers,
-                teamName: doc.data().teamName,
-                uid: doc.data().uid,
-                managerName: udoc.data().name,
-                managerEmail: udoc.data().email,
-              })
+        // Official List Data
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .where('status', '==', 'approved')
+          .onSnapshot((querySnapshot) => {
+            this.tempTeams = []
+            this.tempList = []
+            querySnapshot.forEach((doc) => {
+              this.tempTeams.push(doc.data().teamName)
+              this.$fire.firestore
+                .collection('users')
+                .doc(doc.data().uid)
+                .onSnapshot((udoc) => {
+                  this.tempList.push({
+                    listplayers: doc.data().listPlayers,
+                    teamName: doc.data().teamName,
+                    uid: doc.data().uid,
+                    managerName: udoc.data().name,
+                    managerEmail: udoc.data().email,
+                  })
+                })
+              this.teams = this.tempTeams
             })
-          this.teams = this.tempTeams
-        })
-        this.officialList = this.tempList
-      })
+            this.officialList = this.tempList
+          })
 
-    // Get Bracket Group
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .collection('group-stage')
-      .doc('seedings')
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          // Read Data
-          this.group_A = doc.data().group_A
-          this.group_B = doc.data().group_B
-          this.group_C = doc.data().group_C
-          this.group_D = doc.data().group_D
-          this.group_E = doc.data().group_E
-          this.group_F = doc.data().group_F
-          this.group_G = doc.data().group_G
-          this.group_H = doc.data().group_H
+        // Get Bracket Group
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('group-stage')
+          .doc('seedings')
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              // Read Data
+              this.group_A = doc.data().group_A
+              this.group_B = doc.data().group_B
+              this.group_C = doc.data().group_C
+              this.group_D = doc.data().group_D
+              this.group_E = doc.data().group_E
+              this.group_F = doc.data().group_F
+              this.group_G = doc.data().group_G
+              this.group_H = doc.data().group_H
 
-          // Overlay Data
-          this.groupStageData = doc.data()
-        }
-      })
-
-    // Filter Group for Tournament Generator
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .collection('group-stage')
-      .doc('seedings')
-      .get()
-      .then((querySnapshot) => {
-        if (querySnapshot.exists) {
-          for (var i = 0; i < this.tournamentRef.gTeamNumbers; i++) {
-            if (this.tournamentRef.gGroupNumber == 2) {
-              this.fixture_data_A.push(querySnapshot.data().group_A[i].teamName)
-              this.fixture_data_B.push(querySnapshot.data().group_B[i].teamName)
-            } else if (this.tournamentRef.gGroupNumber == 4) {
-              this.fixture_data_A.push(querySnapshot.data().group_A[i].teamName)
-              this.fixture_data_B.push(querySnapshot.data().group_B[i].teamName)
-              this.fixture_data_C.push(querySnapshot.data().group_C[i].teamName)
-              this.fixture_data_D.push(querySnapshot.data().group_D[i].teamName)
-            } else if (this.tournamentRef.gGroupNumber == 8) {
-              this.fixture_data_A.push(querySnapshot.data().group_A[i].teamName)
-              this.fixture_data_B.push(querySnapshot.data().group_B[i].teamName)
-              this.fixture_data_C.push(querySnapshot.data().group_C[i].teamName)
-              this.fixture_data_D.push(querySnapshot.data().group_D[i].teamName)
-              this.fixture_data_E.push(querySnapshot.data().group_E[i].teamName)
-              this.fixture_data_F.push(querySnapshot.data().group_F[i].teamName)
-              this.fixture_data_G.push(querySnapshot.data().group_G[i].teamName)
-              this.fixture_data_H.push(querySnapshot.data().group_H[i].teamName)
+              // Overlay Data
+              this.groupStageData = doc.data()
             }
-          }
-        }
-      })
+          })
 
-    // Get Fixture of Each Group
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .collection('group-stage')
-      .doc('fixtures')
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          this.fixture_A = doc.data().fixture_A
-          this.fixture_B = doc.data().fixture_B
-        }
-      })
+        // Filter Group for Tournament Generator
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('group-stage')
+          .doc('seedings')
+          .get()
+          .then((querySnapshot) => {
+            if (querySnapshot.exists) {
+              for (var i = 0; i < this.tournamentRef.gTeamNumbers; i++) {
+                if (this.tournamentRef.gGroupNumber == 2) {
+                  this.fixture_data_A.push(
+                    querySnapshot.data().group_A[i].teamName
+                  )
+                  this.fixture_data_B.push(
+                    querySnapshot.data().group_B[i].teamName
+                  )
+                } else if (this.tournamentRef.gGroupNumber == 4) {
+                  this.fixture_data_A.push(
+                    querySnapshot.data().group_A[i].teamName
+                  )
+                  this.fixture_data_B.push(
+                    querySnapshot.data().group_B[i].teamName
+                  )
+                  this.fixture_data_C.push(
+                    querySnapshot.data().group_C[i].teamName
+                  )
+                  this.fixture_data_D.push(
+                    querySnapshot.data().group_D[i].teamName
+                  )
+                } else if (this.tournamentRef.gGroupNumber == 8) {
+                  this.fixture_data_A.push(
+                    querySnapshot.data().group_A[i].teamName
+                  )
+                  this.fixture_data_B.push(
+                    querySnapshot.data().group_B[i].teamName
+                  )
+                  this.fixture_data_C.push(
+                    querySnapshot.data().group_C[i].teamName
+                  )
+                  this.fixture_data_D.push(
+                    querySnapshot.data().group_D[i].teamName
+                  )
+                  this.fixture_data_E.push(
+                    querySnapshot.data().group_E[i].teamName
+                  )
+                  this.fixture_data_F.push(
+                    querySnapshot.data().group_F[i].teamName
+                  )
+                  this.fixture_data_G.push(
+                    querySnapshot.data().group_G[i].teamName
+                  )
+                  this.fixture_data_H.push(
+                    querySnapshot.data().group_H[i].teamName
+                  )
+                }
+              }
+            }
+          })
+
+        // Get Fixture of Each Group
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('group-stage')
+          .doc('fixtures')
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              this.fixture_A = doc.data().fixture_A
+              this.fixture_B = doc.data().fixture_B
+            }
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

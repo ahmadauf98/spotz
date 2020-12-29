@@ -392,8 +392,6 @@ import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -434,44 +432,49 @@ export default {
   },
 
   mounted() {
-    // Get current user
-    this.userID = this.$fire.auth.currentUser.uid
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userID = user.uid
 
-    // Get data from events
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.eventRef = doc.data()
-      })
+        // Get data from events
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.eventRef = doc.data()
+          })
 
-    // Get data from tournaments
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-        this.managerlength = doc.data().managerRef.length
+        // Get data from tournaments
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+            this.managerlength = doc.data().managerRef.length
 
-        var manager_list = doc.data().managerRef
-        var manager_active = manager_list.filter(
-          (element) => element.status === 'active'
-        )
-        this.managerlength_active = manager_active.length
-      })
+            var manager_list = doc.data().managerRef
+            var manager_active = manager_list.filter(
+              (element) => element.status === 'active'
+            )
+            this.managerlength_active = manager_active.length
+          })
 
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .collection('team-registration')
-      .where('status', '==', 'approved')
-      .onSnapshot((querySnapshot) => {
-        this.teamListNumber = querySnapshot.size
-      })
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .collection('team-registration')
+          .where('status', '==', 'approved')
+          .onSnapshot((querySnapshot) => {
+            this.teamListNumber = querySnapshot.size
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

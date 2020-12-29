@@ -121,9 +121,9 @@
 </template>
 
 <script>
-export default {
-  middleware: 'authenticated',
+import firebase from 'firebase'
 
+export default {
   layout: 'organizer',
 
   data() {
@@ -140,25 +140,31 @@ export default {
   },
 
   mounted() {
-    this.userId = this.$fire.auth.currentUser.uid
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userId = user.uid
 
-    return this.$fire.firestore
-      .collection('users')
-      .doc(this.userId)
-      .onSnapshot((doc) => {
-        this.eventsRefTemp = []
-        if (doc.exists) {
-          doc.data().eventsRef.forEach((docref) => {
-            this.$fire.firestore
-              .collection('events')
-              .doc(docref)
-              .onSnapshot((doc) => {
-                this.eventsRefTemp.push(doc.data())
+        this.$fire.firestore
+          .collection('users')
+          .doc(this.userId)
+          .onSnapshot((doc) => {
+            this.eventsRefTemp = []
+            if (doc.exists) {
+              doc.data().eventsRef.forEach((docref) => {
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(docref)
+                  .onSnapshot((doc) => {
+                    this.eventsRefTemp.push(doc.data())
+                  })
               })
+              this.eventsRef = this.eventsRefTemp
+            }
           })
-          this.eventsRef = this.eventsRefTemp
-        }
-      })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 }
 </script>

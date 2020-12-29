@@ -563,8 +563,6 @@ import moment from 'moment'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -640,10 +638,13 @@ export default {
     },
   },
 
-  // Fetch & Refresh User's Data
   mounted() {
-    var userId = this.$fire.auth.currentUser.uid
-    this.hostName = userId
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

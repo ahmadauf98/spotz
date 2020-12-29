@@ -185,23 +185,28 @@ export default {
   },
 
   mounted() {
-    // Fetch User's Data
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.eventRef = doc.data()
-
-        this.startDate = doc.data().startDate
-        this.endDate = doc.data().endDate
-
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
         this.$fire.firestore
-          .collection('users')
-          .doc(doc.data().hostName)
-          .onSnapshot((docRef) => {
-            this.hostnameProf = docRef.data()
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.eventRef = doc.data()
+
+            this.startDate = doc.data().startDate
+            this.endDate = doc.data().endDate
+
+            this.$fire.firestore
+              .collection('users')
+              .doc(doc.data().hostName)
+              .onSnapshot((docRef) => {
+                this.hostnameProf = docRef.data()
+              })
           })
-      })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

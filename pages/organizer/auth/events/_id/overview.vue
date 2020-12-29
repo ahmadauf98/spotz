@@ -245,8 +245,6 @@ import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -268,27 +266,33 @@ export default {
   },
 
   mounted() {
-    // Get Event Data
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.eventRef = doc.data()
-        var tournamentList = []
-        this.eventRef.tournamentRef.forEach((element) => {
-          var tournamentID = element
-          // Get Tournament Data
-          this.$fire.firestore
-            .collection('events')
-            .doc(this.$route.params.id)
-            .collection('tournaments')
-            .doc(tournamentID)
-            .onSnapshot((doc) => {
-              tournamentList.push(doc.data())
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // Get Event Data
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.eventRef = doc.data()
+            var tournamentList = []
+            this.eventRef.tournamentRef.forEach((element) => {
+              var tournamentID = element
+              // Get Tournament Data
+              this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(tournamentID)
+                .onSnapshot((doc) => {
+                  tournamentList.push(doc.data())
+                })
             })
-        })
-        this.tournamentList = tournamentList
-      })
+            this.tournamentList = tournamentList
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

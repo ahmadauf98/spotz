@@ -284,8 +284,6 @@ import tournamentInfo from '~/components/organizer/tournamentInfo'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -331,14 +329,19 @@ export default {
     },
   },
 
-  // Fetch User's Data
   mounted() {
-    return this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-      })
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

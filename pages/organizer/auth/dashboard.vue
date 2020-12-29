@@ -103,40 +103,25 @@ export default {
       name: '',
 
       // User Authentication
-      user: '',
       userId: '',
-      id: '',
     }
   },
 
-  beforeCreate() {
+  mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log('Authenticated User', user)
+        this.userId = user.uid
 
-        this.id = user.uid
+        this.$fire.firestore
+          .collection('users')
+          .doc(this.userId)
+          .onSnapshot((doc) => {
+            this.name = doc.data().name
+          })
       } else {
-        console.log('Logged Out')
+        this.$router.push('/')
       }
     })
-  },
-
-  // GET - Fetch User's Data
-  mounted() {
-    this.userId = this.$fire.auth.currentUser.uid
-
-    if (this.$fire.auth.currentUser.uid == null) {
-      this.userId = this.id
-    }
-
-    console.log(this.userId)
-
-    this.$fire.firestore
-      .collection('users')
-      .doc(this.userId)
-      .onSnapshot((doc) => {
-        this.name = doc.data().name
-      })
   },
 }
 </script>

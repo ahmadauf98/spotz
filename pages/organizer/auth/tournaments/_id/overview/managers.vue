@@ -324,8 +324,6 @@ import tournamentInfo from '~/components/organizer/tournamentInfo'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -356,30 +354,35 @@ export default {
   },
 
   mounted() {
-    return this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-        this.managerlength = doc.data().managerRef.length
-        this.managerListTemp = []
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+            this.managerlength = doc.data().managerRef.length
+            this.managerListTemp = []
 
-        doc.data().managerRef.forEach((docref) => {
-          this.$fire.firestore
-            .collection('users')
-            .doc(docref.uid)
-            .onSnapshot((doc) => {
-              this.managerListTemp.push({
-                status: docref.status,
-                uid: docref.uid,
-                name: doc.data().name,
-                email: doc.data().email,
-              })
+            doc.data().managerRef.forEach((docref) => {
+              this.$fire.firestore
+                .collection('users')
+                .doc(docref.uid)
+                .onSnapshot((doc) => {
+                  this.managerListTemp.push({
+                    status: docref.status,
+                    uid: docref.uid,
+                    name: doc.data().name,
+                    email: doc.data().email,
+                  })
+                })
             })
-        })
-
-        this.managerList = this.managerListTemp
-      })
+            this.managerList = this.managerListTemp
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

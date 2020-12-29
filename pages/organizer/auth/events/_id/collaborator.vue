@@ -273,8 +273,6 @@ import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   components: {
@@ -313,40 +311,48 @@ export default {
   },
 
   mounted() {
-    // Get Event Data
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.eventRef = doc.data()
-        this.collaboratorlength = doc.data().collabRef.length
-        this.collaboratorListTemp = []
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userID = user.uid
 
-        // Get Tournament and User Data
-        doc.data().collabRef.forEach((element) => {
-          // Get Tournament Name
-          this.$fire.firestore
-            .collection('events')
-            .doc(this.$route.params.id)
-            .collection('tournaments')
-            .doc(element.tournamentID)
-            .onSnapshot((docTour) => {
-              // Get User Name
+        // Get Event Data
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.eventRef = doc.data()
+            this.collaboratorlength = doc.data().collabRef.length
+            this.collaboratorListTemp = []
+
+            // Get Tournament and User Data
+            doc.data().collabRef.forEach((element) => {
+              // Get Tournament Name
               this.$fire.firestore
-                .collection('users')
-                .doc(element.userID)
-                .onSnapshot((docUser) => {
-                  this.collaboratorListTemp.push({
-                    tournamentID: element.tournamentID,
-                    tournamentName: docTour.data().sportType,
-                    collaboratorID: element.userID,
-                    collaboratorName: docUser.data().name,
-                  })
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(element.tournamentID)
+                .onSnapshot((docTour) => {
+                  // Get User Name
+                  this.$fire.firestore
+                    .collection('users')
+                    .doc(element.userID)
+                    .onSnapshot((docUser) => {
+                      this.collaboratorListTemp.push({
+                        tournamentID: element.tournamentID,
+                        tournamentName: docTour.data().sportType,
+                        collaboratorID: element.userID,
+                        collaboratorName: docUser.data().name,
+                      })
+                    })
                 })
             })
-        })
-        this.collaboratorList = this.collaboratorListTemp
-      })
+            this.collaboratorList = this.collaboratorListTemp
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {
