@@ -281,7 +281,7 @@ export default {
     }
   },
 
-  fetch() {
+  mounted() {
     this.userId = this.$fire.auth.currentUser.uid
 
     this.$fire.firestore
