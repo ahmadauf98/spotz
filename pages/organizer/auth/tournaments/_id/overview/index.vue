@@ -430,11 +430,13 @@ export default {
           .collection('tournaments')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            var hostName = doc.data().hostName
+            if (doc.exists) {
+              var hostName = doc.data().hostName
 
-            if (user.uid != hostName) {
-              console.log('No Credential')
-              this.$router.replace('/organizer/auth/dashboard')
+              if (user.uid != hostName) {
+                console.log('No Credential')
+                this.$router.replace('/organizer/auth/dashboard')
+              }
             }
           })
 
@@ -442,14 +444,16 @@ export default {
           .collection('tournaments')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            this.tournamentRef = doc.data()
-            this.managerlength = doc.data().managerRef.length
+            if (doc.exists) {
+              this.tournamentRef = doc.data()
+              this.managerlength = doc.data().managerRef.length
 
-            var manager_list = doc.data().managerRef
-            var manager_active = manager_list.filter(
-              (element) => element.status === 'active'
-            )
-            this.managerlength_active = manager_active.length
+              var manager_list = doc.data().managerRef
+              var manager_active = manager_list.filter(
+                (element) => element.status === 'active'
+              )
+              this.managerlength_active = manager_active.length
+            }
           })
 
         this.$fire.firestore
