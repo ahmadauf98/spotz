@@ -373,6 +373,30 @@ export default {
       if (user) {
         this.userID = user.uid
 
+        // Validate Account Credential
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .onSnapshot((doc) => {
+            var collaborator = doc.data().collaborator
+
+            this.$fire.firestore
+              .collection('events')
+              .doc(this.$route.params.id)
+              .onSnapshot((doc) => {
+                var hostName = doc.data().hostName
+
+                if (collaborator != null || hostName) {
+                  if (user.uid != collaborator && user.uid != hostName) {
+                    console.log('No Credential')
+                    this.$router.replace('/organizer/auth/dashboard')
+                  }
+                }
+              })
+          })
+
         // Get current user
         this.userID = this.$fire.auth.currentUser.uid
 
