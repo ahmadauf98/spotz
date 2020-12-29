@@ -263,6 +263,19 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        // Validate Account Credential
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            var hostName = doc.data().hostName
+
+            if (user.uid != hostName) {
+              console.log('No Credential')
+              this.$router.replace('/organizer/auth/dashboard')
+            }
+          })
+
         // Tournament Data
         this.$fire.firestore
           .collection('tournaments')
