@@ -273,21 +273,29 @@ export default {
           .collection('events')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            this.eventRef = doc.data()
-            var tournamentList = []
-            this.eventRef.tournamentRef.forEach((element) => {
-              var tournamentID = element
-              // Get Tournament Data
-              this.$fire.firestore
-                .collection('events')
-                .doc(this.$route.params.id)
-                .collection('tournaments')
-                .doc(tournamentID)
-                .onSnapshot((doc) => {
-                  tournamentList.push(doc.data())
-                })
-            })
-            this.tournamentList = tournamentList
+            if (doc.exists) {
+              this.eventRef = doc.data()
+              var tournamentList = []
+              this.eventRef.tournamentRef.forEach((element) => {
+                var tournamentID = element
+                // Get Tournament Data
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(tournamentID)
+                  .onSnapshot((doc) => {
+                    tournamentList.push(doc.data())
+                  })
+              })
+              this.tournamentList = tournamentList
+            }
+
+            // Validate Account
+            if (user.uid != this.eventRef.hostName) {
+              console.log('No Credential')
+              this.$router.replace('/organizer/auth/dashboard')
+            }
           })
       } else {
         this.$router.push('/')

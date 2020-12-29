@@ -272,8 +272,10 @@ export default {
           .collection('events')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            this.sponsorshipList = doc.data().sponsorship
-            this.eventHostname = doc.data().hostName
+            if (doc.exists) {
+              this.sponsorshipList = doc.data().sponsorship
+              this.eventHostname = doc.data().hostName
+            }
           })
       } else {
         this.$router.push('/')

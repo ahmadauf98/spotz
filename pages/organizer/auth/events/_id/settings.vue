@@ -35,7 +35,6 @@
                       v-model="isOpen"
                       color="primary"
                       label="Open Event"
-                      :disabled="eventsRef.isGroupDraw == true"
                       inset
                       hide-details
                     ></v-switch>
@@ -248,7 +247,7 @@ export default {
   data() {
     return {
       // Event Data
-      eventsRef: '',
+      eventRef: '',
 
       //Selection Data
       genderList: ['Male', 'Female'],
@@ -274,28 +273,29 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        // Event Data
-        this.$fire.firestore
-          .collection('events')
-          .doc(this.$route.params.id)
-          .onSnapshot((doc) => {
-            this.eventsRef = doc.data()
-          })
-
         // Fetch Events Data from Database
         this.$fire.firestore
           .collection('events')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            this.title = doc.data().title
-            this.description = doc.data().description
-            this.startDate = doc.data().startDate
-            this.endDate = doc.data().endDate
-            this.websiteURL = doc.data().websiteURL
-            this.phoneNumber = doc.data().phoneNumber
-            this.location = doc.data().location
-            this.email = doc.data().email
-            this.isOpen = doc.data().isOpen
+            if (doc.exists) {
+              this.eventRef = doc.data()
+              this.title = doc.data().title
+              this.description = doc.data().description
+              this.startDate = doc.data().startDate
+              this.endDate = doc.data().endDate
+              this.websiteURL = doc.data().websiteURL
+              this.phoneNumber = doc.data().phoneNumber
+              this.location = doc.data().location
+              this.email = doc.data().email
+              this.isOpen = doc.data().isOpen
+            }
+
+            // Validate Account
+            if (user.uid != this.eventRef.hostName) {
+              console.log('No Credential')
+              this.$router.replace('/organizer/auth/dashboard')
+            }
           })
       } else {
         this.$router.push('/')

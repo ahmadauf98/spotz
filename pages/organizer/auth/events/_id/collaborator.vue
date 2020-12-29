@@ -320,34 +320,42 @@ export default {
           .collection('events')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            this.eventRef = doc.data()
-            this.collaboratorlength = doc.data().collabRef.length
-            this.collaboratorListTemp = []
+            if (doc.exists) {
+              this.eventRef = doc.data()
+              this.collaboratorlength = doc.data().collabRef.length
+              this.collaboratorListTemp = []
 
-            // Get Tournament and User Data
-            doc.data().collabRef.forEach((element) => {
-              // Get Tournament Name
-              this.$fire.firestore
-                .collection('events')
-                .doc(this.$route.params.id)
-                .collection('tournaments')
-                .doc(element.tournamentID)
-                .onSnapshot((docTour) => {
-                  // Get User Name
-                  this.$fire.firestore
-                    .collection('users')
-                    .doc(element.userID)
-                    .onSnapshot((docUser) => {
-                      this.collaboratorListTemp.push({
-                        tournamentID: element.tournamentID,
-                        tournamentName: docTour.data().sportType,
-                        collaboratorID: element.userID,
-                        collaboratorName: docUser.data().name,
+              // Get Tournament and User Data
+              doc.data().collabRef.forEach((element) => {
+                // Get Tournament Name
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(this.$route.params.id)
+                  .collection('tournaments')
+                  .doc(element.tournamentID)
+                  .onSnapshot((docTour) => {
+                    // Get User Name
+                    this.$fire.firestore
+                      .collection('users')
+                      .doc(element.userID)
+                      .onSnapshot((docUser) => {
+                        this.collaboratorListTemp.push({
+                          tournamentID: element.tournamentID,
+                          tournamentName: docTour.data().sportType,
+                          collaboratorID: element.userID,
+                          collaboratorName: docUser.data().name,
+                        })
                       })
-                    })
-                })
-            })
-            this.collaboratorList = this.collaboratorListTemp
+                  })
+              })
+              this.collaboratorList = this.collaboratorListTemp
+            }
+
+            // Validate Account
+            if (user.uid != this.eventRef.hostName) {
+              console.log('No Credential')
+              this.$router.replace('/organizer/auth/dashboard')
+            }
           })
       } else {
         this.$router.push('/')

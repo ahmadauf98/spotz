@@ -366,6 +366,21 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        var hostName = ''
+
+        // Event Data
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            hostName = doc.data().hostName
+
+            // Validate Account
+            if (user.uid != hostName) {
+              console.log('No Credential')
+              this.$router.replace('/organizer/auth/dashboard')
+            }
+          })
       } else {
         this.$router.push('/')
       }

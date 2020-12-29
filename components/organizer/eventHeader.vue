@@ -191,17 +191,19 @@ export default {
           .collection('events')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            this.eventRef = doc.data()
+            if (doc.exists) {
+              this.eventRef = doc.data()
 
-            this.startDate = doc.data().startDate
-            this.endDate = doc.data().endDate
+              this.startDate = doc.data().startDate
+              this.endDate = doc.data().endDate
 
-            this.$fire.firestore
-              .collection('users')
-              .doc(doc.data().hostName)
-              .onSnapshot((docRef) => {
-                this.hostnameProf = docRef.data()
-              })
+              this.$fire.firestore
+                .collection('users')
+                .doc(doc.data().hostName)
+                .onSnapshot((docRef) => {
+                  this.hostnameProf = docRef.data()
+                })
+            }
           })
       } else {
         this.$router.push('/')

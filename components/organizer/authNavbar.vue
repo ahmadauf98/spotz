@@ -639,9 +639,7 @@ export default {
     // To Sign Out Account
     async logout() {
       try {
-        await this.$fire.auth.signOut().then(() => {
-          this.$router.push('/')
-        })
+        await this.$fire.auth.signOut()
       } catch (error) {
         console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
