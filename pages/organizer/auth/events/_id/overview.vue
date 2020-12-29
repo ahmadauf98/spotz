@@ -268,6 +268,19 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        // Validate Account Credential
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            var hostName = doc.data().hostName
+
+            if (user.uid != hostName) {
+              console.log('No Credential')
+              this.$router.replace('/organizer/auth/dashboard')
+            }
+          })
+
         // Get Event Data
         this.$fire.firestore
           .collection('events')
@@ -289,12 +302,6 @@ export default {
                   })
               })
               this.tournamentList = tournamentList
-            }
-
-            // Validate Account
-            if (user.uid != this.eventRef.hostName) {
-              console.log('No Credential')
-              this.$router.replace('/organizer/auth/dashboard')
             }
           })
       } else {

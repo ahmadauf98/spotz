@@ -315,6 +315,19 @@ export default {
       if (user) {
         this.userID = user.uid
 
+        // Validate Account Credential
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            var hostName = doc.data().hostName
+
+            if (user.uid != hostName) {
+              console.log('No Credential')
+              this.$router.replace('/organizer/auth/dashboard')
+            }
+          })
+
         // Get Event Data
         this.$fire.firestore
           .collection('events')
@@ -334,27 +347,23 @@ export default {
                   .collection('tournaments')
                   .doc(element.tournamentID)
                   .onSnapshot((docTour) => {
-                    // Get User Name
-                    this.$fire.firestore
-                      .collection('users')
-                      .doc(element.userID)
-                      .onSnapshot((docUser) => {
-                        this.collaboratorListTemp.push({
-                          tournamentID: element.tournamentID,
-                          tournamentName: docTour.data().sportType,
-                          collaboratorID: element.userID,
-                          collaboratorName: docUser.data().name,
+                    if (docTour.exists) {
+                      // Get User Name
+                      this.$fire.firestore
+                        .collection('users')
+                        .doc(element.userID)
+                        .onSnapshot((docUser) => {
+                          this.collaboratorListTemp.push({
+                            tournamentID: element.tournamentID,
+                            tournamentName: docTour.data().sportType,
+                            collaboratorID: element.userID,
+                            collaboratorName: docUser.data().name,
+                          })
                         })
-                      })
+                    }
                   })
               })
               this.collaboratorList = this.collaboratorListTemp
-            }
-
-            // Validate Account
-            if (user.uid != this.eventRef.hostName) {
-              console.log('No Credential')
-              this.$router.replace('/organizer/auth/dashboard')
             }
           })
       } else {

@@ -368,18 +368,25 @@ export default {
       if (user) {
         var hostName = ''
 
+        // Validate Account Credential
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            var hostName = doc.data().hostName
+
+            if (user.uid != hostName) {
+              console.log('No Credential')
+              this.$router.replace('/organizer/auth/dashboard')
+            }
+          })
+
         // Event Data
         this.$fire.firestore
           .collection('events')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
             hostName = doc.data().hostName
-
-            // Validate Account
-            if (user.uid != hostName) {
-              console.log('No Credential')
-              this.$router.replace('/organizer/auth/dashboard')
-            }
           })
       } else {
         this.$router.push('/')

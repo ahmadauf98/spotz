@@ -273,6 +273,19 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        // Validate Account Credential
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            var hostName = doc.data().hostName
+
+            if (user.uid != hostName) {
+              console.log('No Credential')
+              this.$router.replace('/organizer/auth/dashboard')
+            }
+          })
+
         // Fetch Events Data from Database
         this.$fire.firestore
           .collection('events')
@@ -289,12 +302,6 @@ export default {
               this.location = doc.data().location
               this.email = doc.data().email
               this.isOpen = doc.data().isOpen
-            }
-
-            // Validate Account
-            if (user.uid != this.eventRef.hostName) {
-              console.log('No Credential')
-              this.$router.replace('/organizer/auth/dashboard')
             }
           })
       } else {
