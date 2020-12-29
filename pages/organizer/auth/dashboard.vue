@@ -95,8 +95,6 @@
 import firebase from 'firebase'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'organizer',
 
   data() {
@@ -107,20 +105,31 @@ export default {
       // User Authentication
       user: '',
       userId: '',
+      id: '',
     }
   },
 
-  // GET - Fetch User's Data
   beforeCreate() {
-    this.userId = this.$fire.auth.currentUser.uid
-
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log('Authenticated User')
+        console.log('Authenticated User', user)
+
+        this.id = user.uid
       } else {
-        return redirect('/')
+        console.log('Logged Out')
       }
     })
+  },
+
+  // GET - Fetch User's Data
+  mounted() {
+    this.userId = this.$fire.auth.currentUser.uid
+
+    if (this.$fire.auth.currentUser.uid == null) {
+      this.userId = this.id
+    }
+
+    console.log(this.userId)
 
     this.$fire.firestore
       .collection('users')

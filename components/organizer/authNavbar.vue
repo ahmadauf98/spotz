@@ -278,11 +278,28 @@ export default {
 
       // User Authentication
       userId: '',
+      id: '',
     }
+  },
+
+  beforeCreate() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        console.log('Authenticated User', user)
+
+        this.id = user.uid
+      } else {
+        console.log('Logged Out')
+      }
+    })
   },
 
   mounted() {
     this.userId = this.$fire.auth.currentUser.uid
+
+    if (this.$fire.auth.currentUser.uid == null) {
+      this.userId = this.id
+    }
 
     this.$fire.firestore
       .collection('users')
