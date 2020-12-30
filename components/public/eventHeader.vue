@@ -3,31 +3,7 @@
     <v-col>
       <v-card class="mx-auto" outlined tile>
         <!-- Header Picture -->
-        <v-img :src="eventRef.headerURL" height="300px">
-          <v-btn
-            color="#1a202c"
-            class="mb-10"
-            @click="chooseHeader"
-            fab
-            small
-            dark
-            absolute
-            bottom
-            right
-          >
-            <v-icon size="20" v-if="!isFileUploaded">mdi-camera</v-icon>
-            <template v-else>
-              <span>{{ uploadPercentage }}%</span>
-            </template>
-          </v-btn>
-          <input
-            type="file"
-            ref="headerChoosen"
-            style="display: none"
-            @change="onHeaderSelected"
-            accept="image/*"
-          />
-        </v-img>
+        <v-img :src="eventRef.headerURL" height="300px"></v-img>
 
         <v-row class="px-10 d-sm-block d-md-flex">
           <v-col cols="12" class="d-sm-block d-md-flex">
@@ -36,42 +12,19 @@
               <v-avatar class="mt-n15" size="150" rounded>
                 <img :src="eventRef.photoURL" alt="..." />
               </v-avatar>
-
-              <div class="mt-n8 ml-15">
-                <v-btn
-                  @click="choosePhoto"
-                  class="ml-15"
-                  color="#1a202c"
-                  fab
-                  small
-                  dark
-                >
-                  <v-icon size="20" v-if="!isFileUploaded">mdi-camera</v-icon>
-                  <template v-else>
-                    <span> {{ uploadPercentage }} %</span>
-                  </template>
-                </v-btn>
-                <input
-                  type="file"
-                  ref="photoChoosen"
-                  style="display: none"
-                  @change="onFileSelected"
-                  accept="image/*"
-                />
-              </div>
             </div>
 
             <v-row class="mx-1 mt-4 d-block">
               <v-row class="d-flex align-center mt-n6">
                 <!-- Title -->
-                <v-col cols="8" md="7" xl="10">
+                <v-col cols="8" md="7" xl="9">
                   <h1 class="text-h4 font-weight-bold mb-md-n3">
                     {{ eventRef.title }}
                   </h1>
                 </v-col>
 
                 <!-- Hostname -->
-                <v-col cols="4" md="5" xl="2" class="d-flex justify-end">
+                <v-col cols="4" md="5" xl="3" class="d-flex justify-end">
                   <v-card outlined class="d-flex align-center py-2 px-4">
                     <v-avatar size="50">
                       <img :src="hostnameProf.photoURL" alt="..." />
@@ -158,14 +111,6 @@ export default {
           name: 'Overview',
           route: `overview`,
         },
-        {
-          name: 'Collaborator',
-          route: `collaborator`,
-        },
-        {
-          name: 'Settings',
-          route: `settings`,
-        },
       ],
 
       // User Input Data
@@ -175,12 +120,6 @@ export default {
       hostnameProf: '',
       startDate: '',
       endDate: '',
-
-      // Profile Picture
-      selectedFile: null,
-      selectedHeader: null,
-      uploadPercentage: null,
-      isFileUploaded: false,
     }
   },
 

@@ -3,14 +3,14 @@
     <v-col>
       <v-card class="mx-auto" outlined tile>
         <!-- Header Picture -->
-        <v-img :src="tournamentRef.headerURL" height="300px"> </v-img>
+        <v-img :src="eventRef.headerURL" height="300px"> </v-img>
 
         <v-row class="px-10 d-sm-block d-md-flex">
           <v-col cols="12" class="d-sm-block d-md-flex">
             <!-- Profile Picture -->
             <div class="mr-5 mt-n7">
               <v-avatar class="mt-n15" size="150" rounded>
-                <img :src="tournamentRef.photoURL" alt="..." />
+                <img :src="eventRef.photoURL" alt="..." />
               </v-avatar>
             </div>
 
@@ -18,12 +18,12 @@
               <v-row class="d-flex align-center mt-n6">
                 <!-- Title -->
                 <v-col cols="8" md="7" xl="9">
-                  <h1 class="text-h4 font-weight-bold mb-n3">
-                    {{ tournamentRef.title }}
+                  <h1 class="text-h4 font-weight-bold mb-md-n3">
+                    {{ eventRef.title }} &mdash; {{ tournamentRef.sportType }}
                   </h1>
                 </v-col>
 
-                <!-- Register Button -->
+                <!-- TODO:Register Button -->
                 <v-col cols="4" md="5" xl="3" class="d-flex justify-end">
                   <v-card
                     color="white"
@@ -43,8 +43,7 @@
                       class="font-weight-regular text-capitalize"
                       v-if="authStatus == true"
                       v-show="
-                        tournamentRef.isOpen == true &&
-                        requestStatus == 'request'
+                        eventRef.isOpen == true && requestStatus == 'request'
                       "
                       :disabled="
                         managerlength_active == tournamentRef.participants ||
@@ -64,8 +63,7 @@
                       class="font-weight-regular text-capitalize"
                       v-if="authStatus == true"
                       v-show="
-                        tournamentRef.isOpen == true &&
-                        requestStatus == 'pending'
+                        eventRef.isOpen == true && requestStatus == 'pending'
                       "
                       color="yellow darken-2"
                       depressed
@@ -81,8 +79,7 @@
                       class="font-weight-regular text-capitalize"
                       v-if="authStatus == true"
                       v-show="
-                        tournamentRef.isOpen == true &&
-                        requestStatus == 'accepted'
+                        eventRef.isOpen == true && requestStatus == 'accepted'
                       "
                       disabled
                       color="yellow darken-2"
@@ -97,7 +94,7 @@
                     <v-btn
                       class="font-weight-regular text-capitalize"
                       v-else
-                      v-show="tournamentRef.isOpen == true"
+                      v-show="eventRef.isOpen == true"
                       :disabled="
                         managerlength_active == tournamentRef.participants ||
                         tournamentRef.isGroupDraw == true
@@ -112,7 +109,7 @@
 
                     <v-btn
                       class="font-weight-regular text-capitalize"
-                      v-show="tournamentRef.isOpen == false"
+                      v-show="eventRef.isOpen == false"
                       disabled
                       color="primary"
                       depressed
@@ -128,9 +125,9 @@
                 <!-- Description -->
                 <v-col cols="7">
                   <h1
-                    class="text-subtitle-2 text-justify font-weight-regular mt-n3 mt-md-0 mt-lg-n3"
+                    class="text-subtitle-2 text-justify font-weight-regular mt-n3 mt-md-0 mt-lg-n0 mt-xl-n3"
                   >
-                    {{ tournamentRef.description }}
+                    {{ eventRef.description }}
                   </h1>
                 </v-col>
                 <v-col></v-col>
@@ -145,6 +142,12 @@
                   {{ tournamentRef.participants }} Teams
                 </h1>
 
+                <!-- Gender -->
+                <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
+                  <v-icon class="mr-1">mdi-gender-male-female</v-icon>
+                  {{ tournamentRef.gender }}
+                </h1>
+
                 <!-- Sports Type -->
                 <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
                   <v-icon class="mr-1">mdi-stadium</v-icon>
@@ -155,12 +158,6 @@
                 <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
                   <v-icon class="mr-1">mdi-trophy</v-icon>
                   {{ tournamentRef.gStage }} &rarr; {{ tournamentRef.fStage }}
-                </h1>
-
-                <!-- Date -->
-                <h1 class="text-subtitle-2 font-weight-regular mt-2 mr-5">
-                  <v-icon class="mr-1">mdi-calendar</v-icon>
-                  {{ startDate }} &rharu; {{ endDate }}
                 </h1>
               </div>
             </v-row>
@@ -181,7 +178,7 @@
           </v-tabs>
         </v-row>
 
-        <!-- Request To be Manager overlay-->
+        <!-- TODO:Request To be Manager overlay-->
         <v-overlay :opacity="opacity" :value="requestManager">
           <v-card
             class="mx-auto py-5 px-10 black--text d-block align-center"
@@ -272,30 +269,31 @@ export default {
       // User Input Data
       photoURL: '',
       headerURL: '',
+      eventRef: '',
       tournamentRef: '',
       hostnameProf: '',
       startDate: '',
       endDate: '',
 
-      // Request Button Data
+      // TODO:Request Button Data
       managerlength_active: null,
       authStatus: false,
       requestStatus: 'request',
       requestListMgr: '',
 
-      // Manager Request requestManager
+      // TODO:Manager Request requestManager
       opacity: 0.5,
       requestManager: false,
     }
   },
 
   mounted() {
+    // Get Events Data
     this.$fire.firestore
-      .collection('tournaments')
+      .collection('events')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-
+        this.eventRef = doc.data()
         this.startDate = doc.data().startDate
         this.endDate = doc.data().endDate
 
@@ -305,6 +303,16 @@ export default {
           .onSnapshot((docRef) => {
             this.hostnameProf = docRef.data()
           })
+      })
+
+    // Get Tournaments Data
+    this.$fire.firestore
+      .collection('events')
+      .doc(this.$route.params.id)
+      .collection('tournaments')
+      .doc(this.$route.params.tournamentID)
+      .onSnapshot((doc) => {
+        this.tournamentRef = doc.data()
 
         // Get Active Managers Number
         var manager_list = doc.data().managerRef
@@ -331,8 +339,10 @@ export default {
 
         // Get Request Status
         this.$fire.firestore
-          .collection('tournaments')
+          .collection('events')
           .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
           .onSnapshot((doc) => {
             if (doc.exists) {
               this.requestListMgr = doc.data().requestListMgr
@@ -360,7 +370,10 @@ export default {
         let managerID = ''
         let managerName = ''
         let organizerID = ''
-        let tournamentID = this.$route.params.id
+        let collaboratorID = ''
+        let eventID = this.$route.params.id
+        let tournamentID = this.$route.params.tournamentID
+        let eventName = ''
         let tournamentName = ''
 
         // Get ManagerID
@@ -377,21 +390,35 @@ export default {
 
         // Get OrganizerID
         await this.$fire.firestore
-          .collection('tournaments')
+          .collection('events')
           .doc(this.$route.params.id)
           .get()
           .then((doc) => {
             organizerID = doc.data().hostName
-            tournamentName = doc.data().title
+            eventName = doc.data().title
+          })
+
+        await this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .get()
+          .then((doc) => {
+            collaboratorID = doc.data().collaborator
+            tournamentName = doc.data().sportType
           })
 
         // Update List of Request
         await this.$fire.firestore
-          .collection('tournaments')
+          .collection('events')
           .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
           .update({
             requestListMgr: firebase.firestore.FieldValue.arrayUnion({
               managerID: managerID,
+              eventID: eventID,
               tournamentID: tournamentID,
               status: 'pending',
             }),
@@ -405,9 +432,11 @@ export default {
             managerReq: firebase.firestore.FieldValue.arrayUnion({
               managerID: managerID,
               managerName: managerName,
+              eventID: eventID,
+              eventName: eventName,
               tournamentID: tournamentID,
               tournamentName: tournamentName,
-              type: 'tournamentRequest',
+              type: 'eventRequest',
             }),
           })
           .then(() => {

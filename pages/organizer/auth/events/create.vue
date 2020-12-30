@@ -496,14 +496,10 @@ export default {
             isOpen: this.isOpen,
 
             // Registration Data
-            managerRef: [],
             registrationStatus: false,
 
             // Sponsorship Data
             sponsorship: [],
-
-            // List Requested Manager
-            requestListMgr: [],
 
             // Organizer Collaborator
             collabRef: [],

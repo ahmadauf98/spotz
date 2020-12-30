@@ -116,6 +116,25 @@
             </v-col>
           </v-row>
         </v-card>
+
+        <v-card
+          v-show="eventsRef == ''"
+          class="mx-auto py-15"
+          color="white "
+          tile
+          outlined
+        >
+          <div class="d-flex justify-center mb-3">
+            <img
+              src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fbrowse-not-found.svg?alt=media&token=cd2b3754-f754-4a79-bbef-67468ae2884c"
+              alt="..."
+              width="300px"
+            />
+          </div>
+          <h1 class="text-h6 text-center text-grey">
+            There are no events found.
+          </h1>
+        </v-card>
       </div>
     </v-main>
   </v-app>

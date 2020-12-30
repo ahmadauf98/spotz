@@ -154,7 +154,7 @@
 
 <script>
 import firebase from 'firebase'
-import eventTourHeader from '~/components/manager/eventTourHeader'
+import eventTourHeader from '~/components/public/eventTourHeader'
 import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
 
