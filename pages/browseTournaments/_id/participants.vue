@@ -11,7 +11,30 @@
         <v-row>
           <!-- Left Side -->
           <v-col cols="12" lg="8" order="2" order-lg="1">
-            <participantscomp />
+            <div style="position: sticky; min-height: 316px">
+              <v-overlay
+                :absolute="absolute"
+                :value="overlay"
+                :opacity="opacity"
+                color="#583f97"
+                class="text-center"
+              >
+                <v-icon size="50">mdi-lock</v-icon>
+                <h1>Content Locked</h1>
+                <h1 class="text-subtitle-1">Login to see more info</h1>
+
+                <v-btn
+                  class="font-weight-regular text-capitalize my-2"
+                  :to="`signin`"
+                  outlined
+                  dark
+                  depressed
+                >
+                  Login
+                </v-btn>
+              </v-overlay>
+              <contentLocked />
+            </div>
           </v-col>
 
           <!-- Right Side -->
@@ -25,9 +48,9 @@
 </template>
 
 <script>
-import tournamentHeader from '~/components/tournamentHeader'
+import tournamentHeader from '~/components/public/tournamentHeader'
 import tournamentInfo from '~/components/manager/tournamentInfo'
-import participantscomp from '~/components/manager/participantscomp'
+import contentLocked from '~/components/public/tournaments/contentLocked'
 import notifications from '~/components/notifications'
 
 export default {
@@ -36,9 +59,15 @@ export default {
   components: {
     tournamentHeader,
     tournamentInfo,
-    participantscomp,
+    contentLocked,
     notifications,
   },
+
+  data: () => ({
+    overlay: true,
+    opacity: 1,
+    absolute: true,
+  }),
 }
 </script>
 

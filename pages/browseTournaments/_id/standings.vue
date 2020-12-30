@@ -33,7 +33,7 @@
                   Login
                 </v-btn>
               </v-overlay>
-              <standingscomp />
+              <contentLocked />
             </div>
           </v-col>
 
@@ -48,9 +48,9 @@
 </template>
 
 <script>
-import tournamentHeader from '~/components/tournamentHeader'
+import tournamentHeader from '~/components/public/tournamentHeader'
 import tournamentInfo from '~/components/manager/tournamentInfo'
-import standingscomp from '~/components/manager/standingscomp'
+import contentLocked from '~/components/public/tournaments/contentLocked'
 import notifications from '~/components/notifications'
 
 export default {
@@ -59,7 +59,7 @@ export default {
   components: {
     tournamentHeader,
     tournamentInfo,
-    standingscomp,
+    contentLocked,
     notifications,
   },
 

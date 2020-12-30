@@ -323,29 +323,33 @@ export default {
     })
 
     // Get ManagerID
-    let managerID = ''
-    managerID = this.$fire.auth.currentUser.uid
+    this.$fire.auth.onAuthStateChanged((user) => {
+      if (user) {
+        let managerID = ''
+        managerID = user.uid
 
-    // Get Request Status
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          this.requestListMgr = doc.data().requestListMgr
-          const requestListMgr = this.requestListMgr.find(
-            (element) => element.managerID === managerID
-          )
+        // Get Request Status
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              this.requestListMgr = doc.data().requestListMgr
+              const requestListMgr = this.requestListMgr.find(
+                (element) => element.managerID === managerID
+              )
 
-          if (typeof requestListMgr != 'undefined') {
-            if (requestListMgr.status == 'pending') {
-              this.requestStatus = 'pending'
-            } else if (requestListMgr.status == 'accepted') {
-              this.requestStatus = 'accepted'
+              if (typeof requestListMgr != 'undefined') {
+                if (requestListMgr.status == 'pending') {
+                  this.requestStatus = 'pending'
+                } else if (requestListMgr.status == 'accepted') {
+                  this.requestStatus = 'accepted'
+                }
+              }
             }
-          }
-        }
-      })
+          })
+      }
+    })
   },
 
   methods: {

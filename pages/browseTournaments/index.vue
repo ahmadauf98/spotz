@@ -6,7 +6,7 @@
         <h1 class="text-h4 font-weight-black mb-4 mb-md-2 mt-6">Tournaments</h1>
 
         <v-row class="d-flex mb-n4">
-          <v-col cols="12" lg="3" class="mb-n1 mb-lg-0">
+          <v-col cols="12" lg="5" class="mb-n1 mb-lg-0">
             <v-autocomplete
               :items="items"
               :loading="isLoading"
@@ -78,9 +78,9 @@
         <v-card class="mx-auto" color="white " tile outlined>
           <v-row>
             <v-col
-              v-for="tournament in tournamentsRef"
+              v-for="(tournament, index) in tournamentsRef"
               v-show="tournament.status == true"
-              :key="tournament.tournamentID"
+              :key="index"
               cols="6"
               lg="4"
             >
@@ -128,7 +128,7 @@
                     <v-icon class="mr-2" color="grey darken-1" size="20">
                       mdi-calendar
                     </v-icon>
-                    {{ startDate }} &mdash; {{ endDate }}
+                    {{ tournament.startDate }} &mdash; {{ tournament.endDate }}
                   </h1>
 
                   <v-btn
@@ -228,9 +228,6 @@ export default {
         querySnapshot.forEach((doc) => {
           this.tournamentsRef.push(doc.data())
 
-          this.startDate = doc.data().startDate
-          this.endDate = doc.data().endDate
-
           this.$fire.firestore
             .collection('users')
             .doc(doc.data().hostName)
@@ -256,7 +253,6 @@ export default {
           querySnapshot.forEach((doc) => {
             this.items.push(doc.data())
           })
-          // console.log(this.items)
           this.isLoading = false
         })
         .catch((error) => {

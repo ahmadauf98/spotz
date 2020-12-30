@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import tournamentHeader from '~/components/tournamentHeader'
+import tournamentHeader from '~/components/public/tournamentHeader'
 import tournamentInfo from '~/components/manager/tournamentInfo'
 import groupstagecomp from '~/components/manager/groupstagecomp'
 import notifications from '~/components/notifications'
