@@ -104,10 +104,9 @@
                       "
                       :to="`signin`"
                       color="green darken-1"
-                      dark
                       depressed
                     >
-                      Login to Register
+                      <span class="text-white">Login to Register</span>
                     </v-btn>
 
                     <v-btn

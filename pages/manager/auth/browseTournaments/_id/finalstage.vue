@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import firebase from 'firebase'
 import tournamentHeader from '~/components/public/tournamentHeader'
 import tournamentInfo from '~/components/manager/tournamentInfo'
 import finalstagecomp from '~/components/manager/finalstagecomp'
@@ -40,6 +41,16 @@ export default {
     tournamentInfo,
     finalstagecomp,
     notifications,
+  },
+
+  mounted() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // For future use
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 }
 </script>

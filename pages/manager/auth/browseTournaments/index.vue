@@ -4,11 +4,11 @@
     class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0 mb-10"
   >
     <v-container class="p-0 my-0" fluid>
-      <!-- Greeting User -->
-      <h1 class="mt-6">Tournaments</h1>
+      <!-- Title -->
+      <h1 class="text-h4 font-weight-black mb-4 mb-md-2 mt-6">Tournaments</h1>
 
       <v-row class="d-flex mb-n4">
-        <v-col cols="12" lg="3" class="mb-n1 mb-lg-0">
+        <v-col cols="12" lg="5" class="mb-n1 mb-lg-0">
           <v-autocomplete
             :items="items"
             :loading="isLoading"
@@ -80,11 +80,11 @@
       <v-card class="mx-auto" color="white " tile outlined>
         <v-row>
           <v-col
-            v-for="tournament in tournamentsRef"
+            v-for="(tournament, index) in tournamentsRef"
             v-show="tournament.status == true"
-            :key="tournament.tournamentID"
+            :key="index"
             cols="6"
-            lg="3"
+            lg="4"
           >
             <v-card class="mx-auto" outlined>
               <!-- Header Picture -->
@@ -130,7 +130,7 @@
                   <v-icon class="mr-2" color="grey darken-1" size="20">
                     mdi-calendar
                   </v-icon>
-                  {{ startDate }} &mdash; {{ endDate }}
+                  {{ tournament.startDate }} &mdash; {{ tournament.endDate }}
                 </h1>
 
                 <v-btn
@@ -183,11 +183,9 @@
 </template>
 
 <script>
-import moment from 'moment'
+import firebase from 'firebase'
 
 export default {
-  middleware: 'authenticated',
-
   layout: 'manager',
 
   data() {
@@ -222,32 +220,29 @@ export default {
     }
   },
 
-  // Fetch User's Data
   mounted() {
-    return this.$fire.firestore
-      .collection('tournaments')
-      .where('status', '==', true)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          this.tournamentsRef.push(doc.data())
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.$fire.firestore
+          .collection('tournaments')
+          .where('status', '==', true)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              this.tournamentsRef.push(doc.data())
 
-          // Initialize Date Data into Moment
-          var startDateFormat = moment(doc.data().startDate, 'YYYY-MM-DD')
-          var endDateFormat = moment(doc.data().endDate, 'YYYY-MM-DD')
-
-          // Formating Date (YYYY-MM-DD) to (DD MMMM YYYY)
-          this.startDate = startDateFormat.format('DD MMMM YYYY')
-          this.endDate = endDateFormat.format('DD MMMM YYYY')
-
-          this.$fire.firestore
-            .collection('users')
-            .doc(doc.data().hostName)
-            .onSnapshot((docRef) => {
-              this.hostnameProf = docRef.data()
+              this.$fire.firestore
+                .collection('users')
+                .doc(doc.data().hostName)
+                .onSnapshot((docRef) => {
+                  this.hostnameProf = docRef.data()
+                })
             })
-        })
-      })
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   watch: {
