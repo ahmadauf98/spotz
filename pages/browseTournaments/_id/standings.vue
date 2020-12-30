@@ -29,7 +29,6 @@
                   outlined
                   dark
                   depressed
-                  small
                 >
                   Login
                 </v-btn>

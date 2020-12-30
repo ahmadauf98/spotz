@@ -219,9 +219,8 @@ export default {
     }
   },
 
-  // Fetch User's Data
   mounted() {
-    return this.$fire.firestore
+    this.$fire.firestore
       .collection('tournaments')
       .where('status', '==', true)
       .get()
@@ -229,13 +228,8 @@ export default {
         querySnapshot.forEach((doc) => {
           this.tournamentsRef.push(doc.data())
 
-          // Initialize Date Data into Moment
-          var startDateFormat = moment(doc.data().startDate, 'YYYY-MM-DD')
-          var endDateFormat = moment(doc.data().endDate, 'YYYY-MM-DD')
-
-          // Formating Date (YYYY-MM-DD) to (DD MMMM YYYY)
-          this.startDate = startDateFormat.format('DD MMMM YYYY')
-          this.endDate = endDateFormat.format('DD MMMM YYYY')
+          this.startDate = doc.data().startDate
+          this.endDate = doc.data().endDate
 
           this.$fire.firestore
             .collection('users')
