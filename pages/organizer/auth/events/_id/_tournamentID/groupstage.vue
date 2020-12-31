@@ -1674,6 +1674,129 @@
           <eventSponsorship />
         </v-col>
       </v-row>
+
+      <!-- Update Result Overlay -->
+      <v-overlay :opacity="updateResultOpacity" :value="updateResultOverlay">
+        <v-card
+          class="mx-auto py-5 px-10 black--text d-block align-center"
+          min-height="300"
+          width="700"
+          color="white"
+          light
+          outlined
+        >
+          <v-btn @click="updateResultOverlay = false" class="mt-n3 ml-n8" icon>
+            <v-icon>mdi-close-circle</v-icon>
+          </v-btn>
+          <!-- Title -->
+          <div class="d-flex justify-center mb-4 mt-n4">
+            <h1 class="text-h6 font-weight-bold">Report Score</h1>
+          </div>
+
+          <div class="mb-6">
+            <v-card class="pa-4" outlined>
+              <v-row class="d-flex justify-center align-center">
+                <v-col cols="4" class="d-block">
+                  <h1 class="text-subtitle-1 font-weight-medium text-center">
+                    {{ resultData.homeTeam }}
+                  </h1>
+
+                  <v-col cols="8" class="mx-auto">
+                    <v-text-field
+                      v-show="resultData.isMatchStart == true"
+                      class="text-h4 mb-n10 font-weight-bold"
+                      v-model="resultData.homeScore"
+                      type="number"
+                      min="0"
+                      max="100"
+                      outlined
+                    ></v-text-field>
+
+                    <h1
+                      v-show="resultData.isMatchStart == false"
+                      class="text-center mt-n2"
+                    >
+                      {{ resultData.homeScore }}
+                    </h1>
+                  </v-col>
+                </v-col>
+
+                <v-col cols="2" class="text-center">
+                  <h1 class="text-caption text-grey">
+                    Match {{ resultData.round }}
+                  </h1>
+                  <v-chip class="ma-2" color="green darken-1" dark small label>
+                    Versus
+                  </v-chip>
+                </v-col>
+
+                <v-col cols="4" class="d-block">
+                  <h1 class="text-subtitle-1 font-weight-medium text-center">
+                    {{ resultData.awayTeam }}
+                  </h1>
+
+                  <v-col cols="8" class="mx-auto">
+                    <v-text-field
+                      v-show="resultData.isMatchStart == true"
+                      class="text-h4 mb-n10 font-weight-bold"
+                      v-model="resultData.awayScore"
+                      type="number"
+                      min="0"
+                      max="100"
+                      outlined
+                    ></v-text-field>
+
+                    <h1
+                      v-show="resultData.isMatchStart == false"
+                      class="text-center mt-n2"
+                    >
+                      {{ resultData.awayScore }}
+                    </h1>
+                  </v-col>
+                </v-col>
+              </v-row>
+            </v-card>
+          </div>
+
+          <div class="d-flex justify-end mb-2">
+            <v-btn
+              v-show="resultData.isMatchStart == false"
+              class="ml-auto font-weight-regular text-capitalize"
+              @click="onStartMatch(resultData, currentGroupData)"
+              width="150"
+              dark
+              depressed
+              color="orange darken-1"
+            >
+              Start Match
+            </v-btn>
+
+            <v-btn
+              v-show="resultData.isMatchStart == true"
+              class="px-10 ml-2 font-weight-regular text-capitalize"
+              color="primary"
+              width="150"
+              @click="onLiveUpdate(resultData, currentGroupData)"
+              outlined
+            >
+              Live Update</v-btn
+            >
+
+            <v-btn
+              v-show="resultData.isMatchStart == true"
+              class="px-10 ml-2 font-weight-regular text-capitalize"
+              color="primary"
+              width="150"
+              @click="
+                onUpdateResult(resultData, currentGroupData, currentTableData)
+              "
+              depressed
+            >
+              Fulltime</v-btn
+            >
+          </div>
+        </v-card>
+      </v-overlay>
     </v-main>
   </v-app>
 </template>
