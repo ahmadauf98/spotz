@@ -423,31 +423,59 @@ export default {
             }),
           })
 
-        // Send Manager Request to Organizer
-        await this.$fire.firestore
-          .collection('users')
-          .doc(organizerID)
-          .update({
-            managerReq: firebase.firestore.FieldValue.arrayUnion({
-              managerID: managerID,
-              managerName: managerName,
-              eventID: eventID,
-              eventName: eventName,
-              tournamentID: tournamentID,
-              tournamentName: tournamentName,
-              type: 'eventRequest',
-            }),
-          })
-          .then(() => {
-            this.requestManager = false
-            this.$store.commit('SET_NOTIFICATION', {
-              alert: 'Request has been sent to the organizer',
-              alertIcon: 'mdi-email-send',
-              alertIconStyle: 'mr-2 align-self-top',
-              colorIcon: 'green darken-1',
-              snackbar: true,
+        if (collaboratorID == null) {
+          // Send Manager Request to Organizer
+          await this.$fire.firestore
+            .collection('users')
+            .doc(organizerID)
+            .update({
+              managerReq: firebase.firestore.FieldValue.arrayUnion({
+                managerID: managerID,
+                managerName: managerName,
+                eventID: eventID,
+                eventName: eventName,
+                tournamentID: tournamentID,
+                tournamentName: tournamentName,
+                type: 'eventRequest',
+              }),
             })
-          })
+            .then(() => {
+              this.requestManager = false
+              this.$store.commit('SET_NOTIFICATION', {
+                alert: 'Request has been sent to the organizer',
+                alertIcon: 'mdi-email-send',
+                alertIconStyle: 'mr-2 align-self-top',
+                colorIcon: 'green darken-1',
+                snackbar: true,
+              })
+            })
+        } else {
+          // Send Manager Request to Organizer
+          await this.$fire.firestore
+            .collection('users')
+            .doc(collaboratorID)
+            .update({
+              managerReq: firebase.firestore.FieldValue.arrayUnion({
+                managerID: managerID,
+                managerName: managerName,
+                eventID: eventID,
+                eventName: eventName,
+                tournamentID: tournamentID,
+                tournamentName: tournamentName,
+                type: 'eventRequest',
+              }),
+            })
+            .then(() => {
+              this.requestManager = false
+              this.$store.commit('SET_NOTIFICATION', {
+                alert: 'Request has been sent to the organizer',
+                alertIcon: 'mdi-email-send',
+                alertIconStyle: 'mr-2 align-self-top',
+                colorIcon: 'green darken-1',
+                snackbar: true,
+              })
+            })
+        }
       } catch (error) {
         console.log(error)
         this.$store.commit('SET_NOTIFICATION', {

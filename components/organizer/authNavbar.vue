@@ -96,7 +96,29 @@
               </h1>
             </v-col>
 
-            <v-col v-if="request.type == 'tournamentRequest'" cols="3">
+            <v-col
+              v-if="request.type == 'eventRequest'"
+              cols="9"
+              class="d-block align-center"
+            >
+              <h1
+                class="text-caption font-weight-regular text-justify text-grey"
+              >
+                <span class="font-weight-bold">{{ request.managerName }}</span>
+                is requesting to join
+                <span class="font-weight-bold"
+                  >{{ request.eventName }}({{ request.tournamentName }})</span
+                >
+              </h1>
+            </v-col>
+
+            <v-col
+              v-if="
+                request.type == 'tournamentRequest' ||
+                request.type == 'eventRequest'
+              "
+              cols="3"
+            >
               <v-btn
                 @click="onAcceptReq(request, managerReq)"
                 color="green darken-1"
@@ -347,283 +369,433 @@ export default {
     // To Accept Manager Request
     async onAcceptReq(req, list) {
       try {
-        // Initialize deletedManagerReq object
-        const deletedManagerReq = {
-          managerID: req.managerID,
-          managerName: req.managerName,
-          tournamentID: req.tournamentID,
-          tournamentName: req.tournamentName,
-          type: req.type,
-        }
+        if (req.type == 'tournamentRequest') {
+          // Initialize deletedManagerReq object
+          const deletedManagerReq = {
+            managerID: req.managerID,
+            managerName: req.managerName,
+            tournamentID: req.tournamentID,
+            tournamentName: req.tournamentName,
+            type: req.type,
+          }
 
-        // Create acceptedMsg
-        const acceptedMsg = {
-          status: 'unread',
-          message:
-            'Your manager request to join ' +
-            req.tournamentName +
-            ' has been approved. Kindly check the details of tournament to register your players.',
-        }
+          // Create acceptedMsg
+          const acceptedMsg = {
+            status: 'unread',
+            message:
+              'Your manager request to join ' +
+              req.tournamentName +
+              ' has been approved. Kindly check the details of tournament to register your players.',
+          }
 
-        // Add tournamentID to tournamentsMgr (ManagerID)
-        await this.$fire.firestore
-          .collection('users')
-          .doc(req.managerID)
-          .update({
-            tournamentsMgr: firebase.firestore.FieldValue.arrayUnion(
-              req.tournamentID
-            ),
-          })
-
-        // Delete req from managerReq (OrganizerID)
-        await this.$fire.firestore
-          .collection('users')
-          .doc(this.userId)
-          .update({
-            managerReq: firebase.firestore.FieldValue.arrayRemove(
-              deletedManagerReq
-            ),
-          })
-
-        // Send notification to notificationsMgr (ManagerID)
-        await this.$fire.firestore
-          .collection('users')
-          .doc(req.managerID)
-          .update({
-            notificationsMgr: firebase.firestore.FieldValue.arrayUnion(
-              acceptedMsg
-            ),
-          })
-
-        // Add manager to tournament manager list
-        await this.$fire.firestore
-          .collection('tournaments')
-          .doc(req.tournamentID)
-          .update({
-            managerRef: firebase.firestore.FieldValue.arrayUnion({
-              uid: req.managerID,
-              status: 'active',
-            }),
-          })
-
-        // Update list of request (TournamentID)
-        await this.$fire.firestore
-          .collection('tournaments')
-          .doc(req.tournamentID)
-          .get()
-          .then((doc) => {
-            const currentRequestListMgrTemp = doc.data().requestListMgr
-
-            // Get current list of request
-            const currentRequestListMgrFiltered = currentRequestListMgrTemp.find(
-              (element) =>
-                element.managerID === req.managerID &&
-                element.tournamentID === req.tournamentID
-            )
-
-            // Create current list of request
-            const currentRequestListMgr = {
-              managerID: currentRequestListMgrFiltered.managerID,
-              tournamentID: currentRequestListMgrFiltered.tournamentID,
-              status: currentRequestListMgrFiltered.status,
-            }
-
-            // Create updated list of request
-            const updatedRequestListMgr = {
-              managerID: req.managerID,
-              tournamentID: req.tournamentID,
-              status: 'accepted',
-            }
-
-            // Delete current list of request
-            this.$fire.firestore
-              .collection('tournaments')
-              .doc(req.tournamentID)
-              .update({
-                requestListMgr: firebase.firestore.FieldValue.arrayRemove(
-                  currentRequestListMgr
-                ),
-              })
-
-            // Add updated list of request
-            this.$fire.firestore
-              .collection('tournaments')
-              .doc(req.tournamentID)
-              .update({
-                requestListMgr: firebase.firestore.FieldValue.arrayUnion(
-                  updatedRequestListMgr
-                ),
-              })
-          })
-      } catch (error) {
-        // Initialize deletedManagerReq Object
-        const deletedManagerReq = {
-          managerID: req.managerID,
-          managerName: req.managerName,
-          tournamentID: req.tournamentID,
-          tournamentName: req.tournamentName,
-          type: req.type,
-        }
-
-        // Create rejectedMsg
-        const rejectedMsg = {
-          status: 'unread',
-          message:
-            'Your manager request to join ' +
-            req.tournamentName +
-            ' has been rejected. Kindly contact the organizer for more information.',
-        }
-
-        // Delete req from managerReq (OrganizerID)
-        await this.$fire.firestore
-          .collection('users')
-          .doc(this.userId)
-          .update({
-            managerReq: firebase.firestore.FieldValue.arrayRemove(
-              deletedManagerReq
-            ),
-          })
-
-        // Send notification to notificationsMgr (ManagerID)
-        await this.$fire.firestore
-          .collection('users')
-          .doc(req.managerID)
-          .update({
-            notificationsMgr: firebase.firestore.FieldValue.arrayUnion(
-              rejectedMsg
-            ),
-          })
-
-        // Delete list of request (TournamentID)
-        await this.$fire.firestore
-          .collection('tournaments')
-          .doc(req.tournamentID)
-          .get()
-          .then((doc) => {
-            const currentRequestListMgrTemp = doc.data().requestListMgr
-
-            // Get current list of request
-            const currentRequestListMgrFiltered = currentRequestListMgrTemp.find(
-              (element) =>
-                element.managerID === req.managerID &&
-                element.tournamentID === req.tournamentID
-            )
-
-            // Create current list of request
-            const currentRequestListMgr = {
-              managerID: currentRequestListMgrFiltered.managerID,
-              tournamentID: currentRequestListMgrFiltered.tournamentID,
-              status: currentRequestListMgrFiltered.status,
-            }
-
-            // Delete current list of request
-            this.$fire.firestore
-              .collection('tournaments')
-              .doc(req.tournamentID)
-              .update({
-                requestListMgr: firebase.firestore.FieldValue.arrayRemove(
-                  currentRequestListMgr
-                ),
-              })
-          })
-          .then(() => {
-            this.$store.commit('SET_NOTIFICATION', {
-              alert:
-                'You have rejected manager invitation from ' +
-                inv.tournamentName,
-              alertIcon: 'mdi-alert-circle',
-              alertIconStyle: 'mr-2 align-self-top',
-              colorIcon: 'red darken-1',
-              snackbar: true,
+          // Add tournamentID to tournamentsMgr (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(req.managerID)
+            .update({
+              tournamentsMgr: firebase.firestore.FieldValue.arrayUnion(
+                req.tournamentID
+              ),
             })
-          })
+
+          // Delete req from managerReq (OrganizerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(this.userId)
+            .update({
+              managerReq: firebase.firestore.FieldValue.arrayRemove(
+                deletedManagerReq
+              ),
+            })
+
+          // Send notification to notificationsMgr (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(req.managerID)
+            .update({
+              notificationsMgr: firebase.firestore.FieldValue.arrayUnion(
+                acceptedMsg
+              ),
+            })
+
+          // Add manager to tournament manager list
+          await this.$fire.firestore
+            .collection('tournaments')
+            .doc(req.tournamentID)
+            .update({
+              managerRef: firebase.firestore.FieldValue.arrayUnion({
+                uid: req.managerID,
+                status: 'active',
+              }),
+            })
+
+          // Update list of request (TournamentID)
+          await this.$fire.firestore
+            .collection('tournaments')
+            .doc(req.tournamentID)
+            .get()
+            .then((doc) => {
+              const currentRequestListMgrTemp = doc.data().requestListMgr
+
+              // Get current list of request
+              const currentRequestListMgrFiltered = currentRequestListMgrTemp.find(
+                (element) =>
+                  element.managerID === req.managerID &&
+                  element.tournamentID === req.tournamentID
+              )
+
+              // Create current list of request
+              const currentRequestListMgr = {
+                managerID: currentRequestListMgrFiltered.managerID,
+                tournamentID: currentRequestListMgrFiltered.tournamentID,
+                status: currentRequestListMgrFiltered.status,
+              }
+
+              // Create updated list of request
+              const updatedRequestListMgr = {
+                managerID: req.managerID,
+                tournamentID: req.tournamentID,
+                status: 'accepted',
+              }
+
+              // Delete current list of request
+              this.$fire.firestore
+                .collection('tournaments')
+                .doc(req.tournamentID)
+                .update({
+                  requestListMgr: firebase.firestore.FieldValue.arrayRemove(
+                    currentRequestListMgr
+                  ),
+                })
+
+              // Add updated list of request
+              this.$fire.firestore
+                .collection('tournaments')
+                .doc(req.tournamentID)
+                .update({
+                  requestListMgr: firebase.firestore.FieldValue.arrayUnion(
+                    updatedRequestListMgr
+                  ),
+                })
+            })
+        } else if (req.type == 'eventRequest') {
+          // Initialize deletedManagerReq object
+          const deletedManagerReq = {
+            managerID: req.managerID,
+            managerName: req.managerName,
+            eventID: req.eventID,
+            eventName: req.eventName,
+            tournamentID: req.tournamentID,
+            tournamentName: req.tournamentName,
+            type: req.type,
+          }
+
+          // Create acceptedMsg
+          const acceptedMsg = {
+            status: 'unread',
+            message:
+              'Your manager request to join ' +
+              req.eventName +
+              '(' +
+              req.tournamentName +
+              ')' +
+              ' has been approved. Kindly check the details of tournament to register your players.',
+          }
+
+          // Add tournamentID to tournamentsMgr (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(req.managerID)
+            .update({
+              tournamentsMgr: firebase.firestore.FieldValue.arrayUnion(
+                req.tournamentID
+              ),
+            })
+
+          // Delete req from managerReq (OrganizerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(this.userId)
+            .update({
+              managerReq: firebase.firestore.FieldValue.arrayRemove(
+                deletedManagerReq
+              ),
+            })
+
+          // Send notification to notificationsMgr (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(req.managerID)
+            .update({
+              notificationsMgr: firebase.firestore.FieldValue.arrayUnion(
+                acceptedMsg
+              ),
+            })
+
+          // Add manager to tournament manager list
+          await this.$fire.firestore
+            .collection('events')
+            .doc(req.eventID)
+            .collection('tournaments')
+            .doc(req.tournamentID)
+            .update({
+              managerRef: firebase.firestore.FieldValue.arrayUnion({
+                uid: req.managerID,
+                status: 'active',
+              }),
+            })
+
+          // Update list of request (TournamentID)
+          await this.$fire.firestore
+            .collection('events')
+            .doc(req.eventID)
+            .collection('tournaments')
+            .doc(req.tournamentID)
+            .get()
+            .then((doc) => {
+              const currentRequestListMgrTemp = doc.data().requestListMgr
+
+              // Get current list of request
+              const currentRequestListMgrFiltered = currentRequestListMgrTemp.find(
+                (element) =>
+                  element.managerID === req.managerID &&
+                  element.tournamentID === req.tournamentID
+              )
+
+              // Create current list of request
+              const currentRequestListMgr = {
+                managerID: currentRequestListMgrFiltered.managerID,
+                eventID: currentRequestListMgrFiltered.eventID,
+                tournamentID: currentRequestListMgrFiltered.tournamentID,
+                status: currentRequestListMgrFiltered.status,
+              }
+
+              // Create updated list of request
+              const updatedRequestListMgr = {
+                managerID: req.managerID,
+                eventID: req.eventID,
+                tournamentID: req.tournamentID,
+                status: 'accepted',
+              }
+
+              // Delete current list of request
+              this.$fire.firestore
+                .collection('events')
+                .doc(req.eventID)
+                .collection('tournaments')
+                .doc(req.tournamentID)
+                .update({
+                  requestListMgr: firebase.firestore.FieldValue.arrayRemove(
+                    currentRequestListMgr
+                  ),
+                })
+
+              // Add updated list of request
+              this.$fire.firestore
+                .collection('events')
+                .doc(req.eventID)
+                .collection('tournaments')
+                .doc(req.tournamentID)
+                .update({
+                  requestListMgr: firebase.firestore.FieldValue.arrayUnion(
+                    updatedRequestListMgr
+                  ),
+                })
+            })
+        }
+      } catch (error) {
+        console.log(error.code)
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: error.message,
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
       }
     },
 
     // To Reject Manager Request
     async onRejectReq(req, list) {
       try {
-        // Initialize deletedManagerReq Object
-        const deletedManagerReq = {
-          managerID: req.managerID,
-          managerName: req.managerName,
-          tournamentID: req.tournamentID,
-          tournamentName: req.tournamentName,
-          type: req.type,
-        }
+        if (req.type == 'tournamentRequest') {
+          // Initialize deletedManagerReq Object
+          const deletedManagerReq = {
+            managerID: req.managerID,
+            managerName: req.managerName,
+            tournamentID: req.tournamentID,
+            tournamentName: req.tournamentName,
+            type: req.type,
+          }
 
-        // Create rejectedMsg
-        const rejectedMsg = {
-          status: 'unread',
-          message:
-            'Your manager request to join ' +
-            req.tournamentName +
-            ' has been rejected. Kindly contact the organizer for more information.',
-        }
+          // Create rejectedMsg
+          const rejectedMsg = {
+            status: 'unread',
+            message:
+              'Your manager request to join ' +
+              req.tournamentName +
+              ' has been rejected. Kindly contact the organizer for more information.',
+          }
 
-        // Delete req from managerReq (OrganizerID)
-        await this.$fire.firestore
-          .collection('users')
-          .doc(this.userId)
-          .update({
-            managerReq: firebase.firestore.FieldValue.arrayRemove(
-              deletedManagerReq
-            ),
-          })
-
-        // Send notification to notificationsMgr (ManagerID)
-        await this.$fire.firestore
-          .collection('users')
-          .doc(req.managerID)
-          .update({
-            notificationsMgr: firebase.firestore.FieldValue.arrayUnion(
-              rejectedMsg
-            ),
-          })
-
-        // Delete list of request (TournamentID)
-        await this.$fire.firestore
-          .collection('tournaments')
-          .doc(req.tournamentID)
-          .get()
-          .then((doc) => {
-            const currentRequestListMgrTemp = doc.data().requestListMgr
-
-            // Get current list of request
-            const currentRequestListMgrFiltered = currentRequestListMgrTemp.find(
-              (element) =>
-                element.managerID === req.managerID &&
-                element.tournamentID === req.tournamentID
-            )
-
-            // Create current list of request
-            const currentRequestListMgr = {
-              managerID: currentRequestListMgrFiltered.managerID,
-              tournamentID: currentRequestListMgrFiltered.tournamentID,
-              status: currentRequestListMgrFiltered.status,
-            }
-
-            // Delete current list of request
-            this.$fire.firestore
-              .collection('tournaments')
-              .doc(req.tournamentID)
-              .update({
-                requestListMgr: firebase.firestore.FieldValue.arrayRemove(
-                  currentRequestListMgr
-                ),
-              })
-          })
-          .then(() => {
-            this.$store.commit('SET_NOTIFICATION', {
-              alert:
-                'You have rejected manager invitation from ' +
-                inv.tournamentName,
-              alertIcon: 'mdi-alert-circle',
-              alertIconStyle: 'mr-2 align-self-top',
-              colorIcon: 'red darken-1',
-              snackbar: true,
+          // Delete req from managerReq (OrganizerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(this.userId)
+            .update({
+              managerReq: firebase.firestore.FieldValue.arrayRemove(
+                deletedManagerReq
+              ),
             })
-          })
+
+          // Send notification to notificationsMgr (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(req.managerID)
+            .update({
+              notificationsMgr: firebase.firestore.FieldValue.arrayUnion(
+                rejectedMsg
+              ),
+            })
+
+          // Delete list of request (TournamentID)
+          await this.$fire.firestore
+            .collection('tournaments')
+            .doc(req.tournamentID)
+            .get()
+            .then((doc) => {
+              const currentRequestListMgrTemp = doc.data().requestListMgr
+
+              // Get current list of request
+              const currentRequestListMgrFiltered = currentRequestListMgrTemp.find(
+                (element) =>
+                  element.managerID === req.managerID &&
+                  element.tournamentID === req.tournamentID
+              )
+
+              // Create current list of request
+              const currentRequestListMgr = {
+                managerID: currentRequestListMgrFiltered.managerID,
+                tournamentID: currentRequestListMgrFiltered.tournamentID,
+                status: currentRequestListMgrFiltered.status,
+              }
+
+              // Delete current list of request
+              this.$fire.firestore
+                .collection('tournaments')
+                .doc(req.tournamentID)
+                .update({
+                  requestListMgr: firebase.firestore.FieldValue.arrayRemove(
+                    currentRequestListMgr
+                  ),
+                })
+            })
+            .then(() => {
+              this.$store.commit('SET_NOTIFICATION', {
+                alert:
+                  'You have rejected manager invitation from ' +
+                  req.tournamentName,
+                alertIcon: 'mdi-alert-circle',
+                alertIconStyle: 'mr-2 align-self-top',
+                colorIcon: 'red darken-1',
+                snackbar: true,
+              })
+            })
+        } else if (req.type == 'eventRequest') {
+          // Initialize deletedManagerReq Object
+          const deletedManagerReq = {
+            managerID: req.managerID,
+            managerName: req.managerName,
+            eventID: req.eventID,
+            eventName: req.eventName,
+            tournamentID: req.tournamentID,
+            tournamentName: req.tournamentName,
+            type: req.type,
+          }
+
+          // Create rejectedMsg
+          const rejectedMsg = {
+            status: 'unread',
+            message:
+              'Your manager request to join ' +
+              req.eventName +
+              '(' +
+              req.tournamentName +
+              ')' +
+              ' has been rejected. Kindly contact the organizer for more information.',
+          }
+
+          // Delete req from managerReq (OrganizerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(this.userId)
+            .update({
+              managerReq: firebase.firestore.FieldValue.arrayRemove(
+                deletedManagerReq
+              ),
+            })
+
+          // Send notification to notificationsMgr (ManagerID)
+          await this.$fire.firestore
+            .collection('users')
+            .doc(req.managerID)
+            .update({
+              notificationsMgr: firebase.firestore.FieldValue.arrayUnion(
+                rejectedMsg
+              ),
+            })
+
+          // Delete list of request (TournamentID)
+          await this.$fire.firestore
+            .collection('events')
+            .doc(req.eventID)
+            .collection('tournaments')
+            .doc(req.tournamentID)
+            .get()
+            .then((doc) => {
+              const currentRequestListMgrTemp = doc.data().requestListMgr
+
+              // Get current list of request
+              const currentRequestListMgrFiltered = currentRequestListMgrTemp.find(
+                (element) =>
+                  element.managerID === req.managerID &&
+                  element.tournamentID === req.tournamentID
+              )
+
+              // Create current list of request
+              const currentRequestListMgr = {
+                managerID: currentRequestListMgrFiltered.managerID,
+                eventID: currentRequestListMgrFiltered.eventID,
+                tournamentID: currentRequestListMgrFiltered.tournamentID,
+                status: currentRequestListMgrFiltered.status,
+              }
+
+              // Delete current list of request
+              this.$fire.firestore
+                .collection('events')
+                .doc(req.eventID)
+                .collection('tournaments')
+                .doc(req.tournamentID)
+                .update({
+                  requestListMgr: firebase.firestore.FieldValue.arrayRemove(
+                    currentRequestListMgr
+                  ),
+                })
+            })
+            .then(() => {
+              this.$store.commit('SET_NOTIFICATION', {
+                alert:
+                  'You have rejected manager invitation from ' +
+                  req.eventName +
+                  '(' +
+                  req.tournamentName +
+                  ')',
+                alertIcon: 'mdi-alert-circle',
+                alertIconStyle: 'mr-2 align-self-top',
+                colorIcon: 'red darken-1',
+                snackbar: true,
+              })
+            })
+        }
       } catch (error) {
         console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {

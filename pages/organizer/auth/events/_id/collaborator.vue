@@ -340,6 +340,19 @@ export default {
 
               // Get Tournament and User Data
               doc.data().collabRef.forEach((element) => {
+                var tournamentID = element.tournamentID
+                var tournamentName
+                var collaboratorID = element.userID
+                var collaboratorName
+
+                // Initialize List
+                var list = {
+                  tournamentID,
+                  tournamentName,
+                  collaboratorID,
+                  collaboratorName,
+                }
+
                 // Get Tournament Name
                 this.$fire.firestore
                   .collection('events')
@@ -347,24 +360,22 @@ export default {
                   .collection('tournaments')
                   .doc(element.tournamentID)
                   .onSnapshot((docTour) => {
-                    if (docTour.exists) {
-                      // Get User Name
-                      this.$fire.firestore
-                        .collection('users')
-                        .doc(element.userID)
-                        .onSnapshot((docUser) => {
-                          this.collaboratorListTemp.push({
-                            tournamentID: element.tournamentID,
-                            tournamentName: docTour.data().sportType,
-                            collaboratorID: element.userID,
-                            collaboratorName: docUser.data().name,
-                          })
-                        })
-                    }
+                    list.tournamentName = docTour.data().sportType
                   })
+
+                // Get User Name
+                this.$fire.firestore
+                  .collection('users')
+                  .doc(element.userID)
+                  .onSnapshot((docUser) => {
+                    list.collaboratorName = docUser.data().name
+                  })
+
+                // Push element
+                this.collaboratorListTemp.push(list)
               })
-              this.collaboratorList = this.collaboratorListTemp
             }
+            this.collaboratorList = this.collaboratorListTemp
           })
       } else {
         this.$router.push('/')
@@ -513,7 +524,6 @@ export default {
           .then(() => {
             // Set loadingState to false
             this.addCollab = false
-            this.$router.go(-1)
           })
       } catch (error) {
         // Set loadingState to false

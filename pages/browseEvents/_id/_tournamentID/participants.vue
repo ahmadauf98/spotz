@@ -2,7 +2,46 @@
   <v-app>
     <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0 mt-n5 mb-5">
       <div class="nav-mx">
-        
+        <!-- Notifications -->
+        <notifications />
+
+        <!-- Organization Details Part -->
+        <eventTourHeader />
+
+        <v-row>
+          <!-- Left Side -->
+          <v-col cols="12" lg="8" order="2" order-lg="1">
+            <div style="position: sticky; min-height: 280px">
+              <v-overlay
+                :absolute="absolute"
+                :value="overlay"
+                :opacity="opacity"
+                color="#583f97"
+                class="text-center"
+              >
+                <v-icon size="50">mdi-lock</v-icon>
+                <h1>Content Locked</h1>
+                <h1 class="text-subtitle-1">Login to see more info</h1>
+
+                <v-btn
+                  class="font-weight-regular text-capitalize my-2"
+                  :to="`signin`"
+                  outlined
+                  dark
+                  depressed
+                >
+                  Login
+                </v-btn>
+              </v-overlay>
+              <contentLocked />
+            </div>
+          </v-col>
+
+          <!-- Right Side -->
+          <v-col cols="12" lg="4" order="1" order-lg="2">
+            <eventSponsorship />
+          </v-col>
+        </v-row>
       </div>
     </v-main>
   </v-app>
