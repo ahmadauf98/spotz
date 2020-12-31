@@ -287,7 +287,7 @@
 
                       <v-btn
                         v-else
-                        :to="`/organizer/auth/tournaments/${this.$route.params.id}/${this.$route.params.tournamentID}/overview/teamapproval`"
+                        :to="`/organizer/auth/events/${this.$route.params.id}/${this.$route.params.tournamentID}/overview/teamapproval`"
                         color="primary"
                         class="ml-auto text-capitalize"
                         text
