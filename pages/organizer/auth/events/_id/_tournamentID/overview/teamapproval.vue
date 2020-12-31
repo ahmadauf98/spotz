@@ -373,7 +373,7 @@ export default {
               .doc(data.uid)
               .update({
                 notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
-                  messages:
+                  message:
                     'Congratulations! Your ' +
                     this.tournamentRef.title +
                     ' team registration has been approved.',
@@ -420,7 +420,7 @@ export default {
               .doc(data.uid)
               .update({
                 notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
-                  messages:
+                  message:
                     'Sorry! Your ' +
                     this.tournamentRef.title +
                     ' team registration has been rejected. Kindly resubmit back your application in order to get approved by the organizer.',
