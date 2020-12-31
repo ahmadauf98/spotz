@@ -379,6 +379,7 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        this.hostName = user.uid
       } else {
         this.$router.push('/')
       }
