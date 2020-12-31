@@ -320,11 +320,13 @@ export default {
           .collection('events')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            var hostName = doc.data().hostName
+            if (doc.exists) {
+              var hostName = doc.data().hostName
 
-            if (user.uid != hostName) {
-              console.log('No Credential')
-              this.$router.replace('/organizer/auth/dashboard')
+              if (user.uid != hostName) {
+                console.log('No Credential')
+                this.$router.replace('/organizer/auth/dashboard')
+              }
             }
           })
 
@@ -360,7 +362,9 @@ export default {
                   .collection('tournaments')
                   .doc(element.tournamentID)
                   .onSnapshot((docTour) => {
-                    list.tournamentName = docTour.data().sportType
+                    if (docTour.exists) {
+                      list.tournamentName = docTour.data().sportType
+                    }
                   })
 
                 // Get User Name
@@ -368,7 +372,9 @@ export default {
                   .collection('users')
                   .doc(element.userID)
                   .onSnapshot((docUser) => {
-                    list.collaboratorName = docUser.data().name
+                    if (docUser.exists) {
+                      list.collaboratorName = docUser.data().name
+                    }
                   })
 
                 // Push element

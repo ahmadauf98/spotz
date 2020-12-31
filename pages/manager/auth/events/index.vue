@@ -137,40 +137,40 @@ export default {
   mounted() {
     this.userId = this.$fire.auth.currentUser.uid
 
-    return this.$fire.firestore
+    this.$fire.firestore
       .collection('users')
       .doc(this.userId)
       .onSnapshot((doc) => {
-        this.eventsMgrTemp = []
-        doc.data().eventsMgr.forEach((docref) => {
-          // Get events data
-          this.$fire.firestore
-            .collection('events')
-            .doc(docref.eventID)
-            .onSnapshot((docEvent) => {
-              // Get tournaments data
-              this.$fire.firestore
-                .collection('events')
-                .doc(docref.eventID)
-                .collection('tournaments')
-                .doc(docref.tournamentID)
-                .onSnapshot((docTour) => {
-                  var list = {
-                    eventID: docref.eventID,
-                    tournamentID: docref.tournamentID,
-                    photoURL: docEvent.data().photoURL,
-                    tournamentName: docTour.data().sportType,
-                    tournamentGender: docTour.data().gender,
-                    eventTitle: docEvent.data().title,
-                    startDate: docEvent.data().startDate,
-                  }
-                  this.eventsMgrTemp.push(list)
-                })
-            })
-        })
-        this.eventsMgr = this.eventsMgrTemp
-
-        console.log(this.eventsMgr)
+        if (doc.exists) {
+          this.eventsMgrTemp = []
+          doc.data().eventsMgr.forEach((docref) => {
+            // Get events data
+            this.$fire.firestore
+              .collection('events')
+              .doc(docref.eventID)
+              .onSnapshot((docEvent) => {
+                // Get tournaments data
+                this.$fire.firestore
+                  .collection('events')
+                  .doc(docref.eventID)
+                  .collection('tournaments')
+                  .doc(docref.tournamentID)
+                  .onSnapshot((docTour) => {
+                    var list = {
+                      eventID: docref.eventID,
+                      tournamentID: docref.tournamentID,
+                      photoURL: docEvent.data().photoURL,
+                      tournamentName: docTour.data().sportType,
+                      tournamentGender: docTour.data().gender,
+                      eventTitle: docEvent.data().title,
+                      startDate: docEvent.data().startDate,
+                    }
+                    this.eventsMgrTemp.push(list)
+                  })
+              })
+          })
+          this.eventsMgr = this.eventsMgrTemp
+        }
       })
   },
 }

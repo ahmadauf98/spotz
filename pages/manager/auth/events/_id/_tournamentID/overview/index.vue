@@ -3,14 +3,29 @@
     <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
       <v-container class="p-0 my-0" fluid>
         <!-- Notifications -->
-        <notifications />
+        <v-snackbar
+          v-show="notification.alert != '' || notification.alert != null"
+          v-model="notification.snackbar"
+          :timeout="notification.timeout"
+          dark
+          top
+        >
+          <div class="d-flex justify-center align-center">
+            <v-icon
+              :class="notification.alertIconStyle"
+              :color="notification.colorIcon"
+              >{{ notification.alertIcon }}</v-icon
+            >
+            {{ notification.alert }}
+          </div>
+        </v-snackbar>
 
         <!-- Organization Details Part -->
-        <eventTourHeader />
+        <tournamentHeader />
 
         <v-row>
           <!-- Left Side -->
-          <v-row cols="12" lg="8" xl="9" order="2" order-lg="1">
+          <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
             <v-card class="mx-auto py-10 mt-n3 mt-lg-0 px-9" outlined tile>
               <!-- First Row -->
               <v-row>
@@ -140,12 +155,12 @@
                 </v-col>
               </v-row>
             </v-card>
-          </v-row>
+          </v-col>
 
           <!-- Right Side -->
-          <v-row cols="12" lg="4" xl="3" order="1" order-lg="2">
-            <eventSponsorship />
-          </v-row>
+          <v-col cols="12" lg="4" xl="3" order="1" order-lg="2">
+            <tournamentInfo />
+          </v-col>
         </v-row>
       </v-container>
     </v-main>
@@ -153,28 +168,7 @@
 </template>
 
 <script>
-import firebase from 'firebase'
-import eventTourHeader from '~/components/public/eventTourHeader'
-import eventSponsorship from '~/components/organizer/eventSponsorship'
-import notifications from '~/components/notifications'
-
-export default {
-  middleware: 'authenticated',
-
-  layout: 'manager',
-
-  components: {
-    eventTourHeader,
-    eventSponsorship,
-    notifications,
-  },
-
-  data() {
-    return {
-      // User Input Data
-      tournamentProf: '',
-      registrationStatus: '',
-    }
-  },
-}
+export default {}
 </script>
+
+<style lang="scss" scoped></style>

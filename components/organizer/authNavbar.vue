@@ -502,14 +502,15 @@ export default {
               ' has been approved. Kindly check the details of tournament to register your players.',
           }
 
-          // Add tournamentID to tournamentsMgr (ManagerID)
+          // Add tournamentID to eventsMgr (ManagerID)
           await this.$fire.firestore
             .collection('users')
             .doc(req.managerID)
             .update({
-              tournamentsMgr: firebase.firestore.FieldValue.arrayUnion(
-                req.tournamentID
-              ),
+              eventsMgr: firebase.firestore.FieldValue.arrayUnion({
+                eventID: req.eventID,
+                tournamentID: req.tournamentID,
+              }),
             })
 
           // Delete req from managerReq (OrganizerID)
