@@ -238,7 +238,10 @@
                 </v-avatar>
 
                 <!-- File Input Button -->
-                <div v-show="tournamentFormat.passportPhoto == true" class="mt-7 ml-n4">
+                <div
+                  v-show="tournamentFormat.passportPhoto == true"
+                  class="mt-7 ml-n4"
+                >
                   <v-btn
                     @click="choosePhoto"
                     class="mt-15"
@@ -374,7 +377,7 @@
 
               <div class="d-flex justify-center">
                 <v-avatar
-                  v-show="vpassportPhoto != ''"
+                  v-show="tournamentFormat.passportPhoto != false"
                   class="profile"
                   color="grey"
                   size="114"
@@ -383,12 +386,15 @@
                 </v-avatar>
               </div>
 
-              <div v-show="vName != ''" class="d-flex justify-center mt-4">
+              <div
+                v-show="tournamentFormat.name != false"
+                class="d-flex justify-center mt-4"
+              >
                 <h1 class="text-h4 font-weight-light">{{ vName }}</h1>
               </div>
 
               <div
-                v-show="vIdentificationID != ''"
+                v-show="tournamentFormat.identificationID != false"
                 class="d-flex justify-center"
               >
                 <h1 class="text-h6 font-weight-light text-grey">
@@ -396,26 +402,38 @@
                 </h1>
               </div>
 
-              <div v-show="vGender != ''" class="d-flex justify-center mt-4">
+              <div
+                v-show="tournamentFormat.gender != false"
+                class="d-flex justify-center mt-4"
+              >
                 <div class="text-center mx-5">
                   <h1 class="text-h6 font-weight-light text-grey">Gender</h1>
                   <h1 class="text-body-1 mt-n1">{{ vGender }}</h1>
                 </div>
 
-                <div v-show="vNumAthelete != ''" class="text-center mx-5">
+                <div
+                  v-show="tournamentFormat.numAthelete != false"
+                  class="text-center mx-5"
+                >
                   <h1 class="text-h6 font-weight-light text-grey">
                     Athelete ID
                   </h1>
                   <h1 class="text-body-1 mt-n1">{{ vNumAthelete }}</h1>
                 </div>
 
-                <div v-show="vNumMatric != ''" class="text-center mx-5">
+                <div
+                  v-show="tournamentFormat.numMatric != false"
+                  class="text-center mx-5"
+                >
                   <h1 class="text-h6 font-weight-light text-grey">Matric ID</h1>
                   <h1 class="text-body-1 mt-n1">{{ vNumMatric }}</h1>
                 </div>
               </div>
 
-              <div v-show="vAddress != ''" class="d-flex justify-center mt-4">
+              <div
+                v-show="tournamentFormat.address != false"
+                class="d-flex justify-center mt-4"
+              >
                 <h1 class="text-h6 font-weight-light text-grey text-center">
                   {{ vAddress }}
                 </h1>
@@ -423,7 +441,7 @@
 
               <div class="d-flex justify-center mt-3">
                 <v-chip
-                  v-show="vPhoneNumber != ''"
+                  v-show="tournamentFormat.phoneNumber != false"
                   class="ma-2"
                   color="primary"
                 >

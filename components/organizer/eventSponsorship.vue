@@ -22,6 +22,7 @@
         </a>
       </v-col>
 
+      <!-- If Sponsorship is available -->
       <v-col
         v-show="sponsorshipList != ''"
         v-for="(sponsorship, index) in sponsorshipList"
@@ -55,6 +56,20 @@
             </h1>
           </v-card>
         </a>
+      </v-col>
+
+      <!-- If Sponsorship is empty -->
+      <v-col v-show="sponsorshipList == ''" cols="12">
+        <v-card class="mx-auto py-4 px-5 text-center" outlined>
+          <img
+            src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fno-sponsorship.svg?alt=media&token=791149c4-8bbf-4ef7-944e-fb51d5946950"
+            alt="..."
+            width="100"
+          />
+          <h1 class="text-subtitle-1 font-weight-medium text-grey">
+            No Sponsorship
+          </h1>
+        </v-card>
       </v-col>
     </v-row>
 

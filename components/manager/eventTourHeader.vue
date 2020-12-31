@@ -139,8 +139,6 @@ export default {
       eventRef: '',
       tournamentRef: '',
       hostnameProf: '',
-      startDate: '',
-      endDate: '',
 
       // Profile Picture
       selectedFile: null,
@@ -157,16 +155,16 @@ export default {
           .collection('events')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            this.eventRef = doc.data()
-            this.startDate = doc.data().startDate
-            this.endDate = doc.data().endDate
+            if (doc.exists) {
+              this.eventRef = doc.data()
 
-            this.$fire.firestore
-              .collection('users')
-              .doc(doc.data().hostName)
-              .onSnapshot((docRef) => {
-                this.hostnameProf = docRef.data()
-              })
+              this.$fire.firestore
+                .collection('users')
+                .doc(doc.data().hostName)
+                .onSnapshot((docRef) => {
+                  this.hostnameProf = docRef.data()
+                })
+            }
           })
 
         this.$fire.firestore
@@ -175,7 +173,9 @@ export default {
           .collection('tournaments')
           .doc(this.$route.params.tournamentID)
           .onSnapshot((doc) => {
-            this.tournamentRef = doc.data()
+            if (doc.exists) {
+              this.tournamentRef = doc.data()
+            }
           })
       } else {
         this.$router.push('/')

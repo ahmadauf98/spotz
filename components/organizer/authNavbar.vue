@@ -19,7 +19,7 @@
     </v-toolbar-title>
 
     <!-- Navigation Button -->
-    <div class="d-none d-md-inline" v-for="nav in navigation" :key="nav.name">
+    <div class="d-none d-sm-inline" v-for="nav in navigation" :key="nav.name">
       <v-btn
         class="mx-1 px-1 text-capitalize"
         color="#1A202C"

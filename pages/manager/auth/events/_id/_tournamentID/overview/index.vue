@@ -174,7 +174,7 @@ export default {
       registrationStatus: '',
 
       // Current User Info
-      userID: null,
+      userId: null,
 
       // Loading State
       isLoading: false,
@@ -184,7 +184,7 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        this.userID = user.uid
+        this.userId = user.uid
 
         // // Validate Account Credential
         // this.$fire.firestore
@@ -229,13 +229,14 @@ export default {
           })
 
         this.$fire.firestore
-          .collection('tournaments')
+          .collection('events')
           .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
           .collection('team-registration')
           .doc(this.userId)
           .onSnapshot((doc) => {
-            if (doc.data() == null) {
-            } else {
+            if (doc.exists) {
               this.registrationStatus = doc.data().status
             }
           })

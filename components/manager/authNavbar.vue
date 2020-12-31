@@ -19,7 +19,7 @@
     </v-toolbar-title>
 
     <!-- Navigation Button -->
-    <div class="d-none d-md-inline" v-for="nav in navigation" :key="nav.name">
+    <div class="d-none d-sm-inline" v-for="nav in navigation" :key="nav.name">
       <v-btn
         class="mx-1 px-1 text-capitalize"
         color="#1A202C"
@@ -294,8 +294,11 @@ export default {
   data() {
     return {
       navigation: [
-        { name: 'Tournaments', route: '/manager/auth/browseTournaments' },
-        { name: 'Events', route: '/manager/auth/browseEvents' },
+        {
+          name: 'Browse Tournaments',
+          route: '/manager/auth/browseTournaments',
+        },
+        { name: 'Browse Events', route: '/manager/auth/browseEvents' },
       ],
       lists: [
         { title: 'My Tournaments', route: '/manager/auth/tournaments' },

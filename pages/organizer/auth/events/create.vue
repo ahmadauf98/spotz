@@ -496,9 +496,6 @@ export default {
             status: false,
             isOpen: this.isOpen,
 
-            // Registration Data
-            registrationStatus: false,
-
             // Sponsorship Data
             sponsorship: [],
 

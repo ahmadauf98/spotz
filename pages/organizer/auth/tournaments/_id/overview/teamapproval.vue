@@ -357,9 +357,9 @@ export default {
               .update({
                 notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
                   message:
-                    'Congratulations! Your ' +
+                    'Congratulations! Your team registration of ' +
                     this.tournamentRef.title +
-                    ' team registration has been approved.',
+                    ' has been approved.',
                   status: 'unread',
                 }),
               })
@@ -402,9 +402,9 @@ export default {
               .update({
                 notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
                   message:
-                    'Sorry! Your ' +
+                    'Sorry! Your team registration of ' +
                     this.tournamentRef.title +
-                    ' team registration has been rejected. Kindly resubmit back your application in order to get approved by the organizer.',
+                    ' has been rejected. Kindly resubmit back your application in order to get approved by the organizer.',
                   status: 'unread',
                 }),
               })

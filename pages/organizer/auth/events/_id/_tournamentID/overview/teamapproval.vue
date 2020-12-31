@@ -305,6 +305,15 @@ export default {
               })
           })
 
+        // Get Event Data
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.eventRef = doc.data()
+          })
+
+        // Get Tournament Data
         this.$fire.firestore
           .collection('events')
           .doc(this.$route.params.id)
@@ -374,9 +383,11 @@ export default {
               .update({
                 notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
                   message:
-                    'Congratulations! Your ' +
-                    this.tournamentRef.title +
-                    ' team registration has been approved.',
+                    'Congratulations! Your team registration of ' +
+                    this.eventRef.title +
+                    '(' +
+                    this.tournamentRef.sportType +
+                    ') has been approved.',
                   status: 'unread',
                 }),
               })
@@ -421,9 +432,11 @@ export default {
               .update({
                 notificationsMgr: firebase.firestore.FieldValue.arrayUnion({
                   message:
-                    'Sorry! Your ' +
-                    this.tournamentRef.title +
-                    ' team registration has been rejected. Kindly resubmit back your application in order to get approved by the organizer.',
+                    'Sorry! Your team registration of ' +
+                    this.eventRef.title +
+                    '(' +
+                    this.tournamentRef.sportType +
+                    ') has been rejected. Kindly resubmit back your application in order to get approved by the organizer.',
                   status: 'unread',
                 }),
               })

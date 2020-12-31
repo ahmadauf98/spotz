@@ -98,26 +98,24 @@ export default {
       .collection('team-registration')
       .where('status', '==', 'approved')
       .onSnapshot((querySnapshot) => {
-        if (querySnapshot.exists) {
-          this.tempList = []
-          querySnapshot.forEach((doc) => {
-            if (doc.exists) {
-              this.$fire.firestore
-                .collection('users')
-                .doc(doc.data().uid)
-                .onSnapshot((udoc) => {
-                  this.tempList.push({
-                    listplayers: doc.data().listPlayers,
-                    teamName: doc.data().teamName,
-                    uid: doc.data().uid,
-                    managerName: udoc.data().name,
-                    managerEmail: udoc.data().email,
-                  })
+        this.tempList = []
+        querySnapshot.forEach((doc) => {
+          if (doc.exists) {
+            this.$fire.firestore
+              .collection('users')
+              .doc(doc.data().uid)
+              .onSnapshot((udoc) => {
+                this.tempList.push({
+                  listplayers: doc.data().listPlayers,
+                  teamName: doc.data().teamName,
+                  uid: doc.data().uid,
+                  managerName: udoc.data().name,
+                  managerEmail: udoc.data().email,
                 })
-            }
-          })
-          this.officialList = this.tempList
-        }
+              })
+          }
+        })
+        this.officialList = this.tempList
       })
   },
 }

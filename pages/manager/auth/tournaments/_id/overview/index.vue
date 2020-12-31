@@ -193,8 +193,7 @@ export default {
       .collection('team-registration')
       .doc(this.userId)
       .onSnapshot((doc) => {
-        if (doc.data() == null) {
-        } else {
+        if (doc.exists) {
           this.registrationStatus = doc.data().status
         }
       })
