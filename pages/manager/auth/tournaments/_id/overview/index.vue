@@ -3,22 +3,7 @@
     <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
       <v-container class="p-0 my-0" fluid>
         <!-- Notifications -->
-        <v-snackbar
-          v-show="notification.alert != '' || notification.alert != null"
-          v-model="notification.snackbar"
-          :timeout="notification.timeout"
-          dark
-          top
-        >
-          <div class="d-flex justify-center align-center">
-            <v-icon
-              :class="notification.alertIconStyle"
-              :color="notification.colorIcon"
-              >{{ notification.alertIcon }}</v-icon
-            >
-            {{ notification.alert }}
-          </div>
-        </v-snackbar>
+        <notifications />
 
         <!-- Organization Details Part -->
         <tournamentHeader />
@@ -35,7 +20,7 @@
                     <div class="d-flex mt-1 mx-1">
                       <h1 class="text-subtitle-1 font-weight-bold">Status</h1>
                       <v-chip
-                        v-if="tournamentProf.status == false"
+                        v-if="tournamentRef.status == false"
                         class="ml-auto mr-2 font-weight-medium"
                         color="warning"
                         label
@@ -121,7 +106,7 @@
                       >
                         Team registration is
                         <span
-                          v-if="tournamentProf.registrationStatus == true"
+                          v-if="tournamentRef.registrationStatus == true"
                           class="font-weight-medium text-green"
                           >open</span
                         >
@@ -137,7 +122,7 @@
                       <v-btn
                         :to="`/manager/auth/tournaments/${this.$route.params.id}/overview/teamregistration`"
                         :disabled="
-                          tournamentProf.registrationStatus == false ||
+                          tournamentRef.registrationStatus == false ||
                           registrationStatus == 'pending' ||
                           registrationStatus == 'approved'
                         "
@@ -171,7 +156,7 @@
 import firebase from 'firebase'
 import tournamentHeader from '~/components/manager/tournamentHeader'
 import tournamentInfo from '~/components/manager/tournamentInfo'
-import { mapState } from 'vuex'
+import notifications from '~/components/notifications'
 
 export default {
   middleware: 'authenticated',
@@ -181,33 +166,27 @@ export default {
   components: {
     tournamentHeader,
     tournamentInfo,
+    notifications,
   },
 
   data() {
     return {
       // User Input Data
-      tournamentProf: '',
+      tournamentRef: '',
       registrationStatus: '',
     }
   },
 
-  // Fetch Notification Data from Vuex
-  computed: {
-    ...mapState(['notification']),
-  },
+  mounted() {
+    this.userId = this.$fire.auth.currentUser.uid
 
-  // Fetch User's Data
-  created() {
-    return this.$fire.firestore
+    this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)
       .onSnapshot((doc) => {
-        this.tournamentProf = doc.data()
+        this.tournamentRef = doc.data()
       })
-  },
 
-  mounted() {
-    this.userId = this.$fire.auth.currentUser.uid
     this.$fire.firestore
       .collection('tournaments')
       .doc(this.$route.params.id)

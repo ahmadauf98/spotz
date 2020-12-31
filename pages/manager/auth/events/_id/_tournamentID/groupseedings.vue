@@ -6,17 +6,17 @@
         <notifications />
 
         <!-- Organization Details Part -->
-        <tournamentHeader />
+        <eventTourHeader />
 
         <v-row>
           <!-- Left Side -->
           <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
-            <finalstagecomp />
+            <groupseedingscomp />
           </v-col>
 
           <!-- Right Side -->
           <v-col cols="12" lg="4" xl="3" order="1" order-lg="2">
-            <tournamentInfo />
+            <eventSponsorship />
           </v-col>
         </v-row>
       </v-container>
@@ -25,19 +25,18 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import tournamentHeader from '~/components/manager/tournamentHeader'
-import tournamentInfo from '~/components/manager/tournamentInfo'
-import finalstagecomp from '~/components/manager/finalstagecomp'
+import eventTourHeader from '~/components/manager/eventTourHeader'
+import eventSponsorship from '~/components/manager/eventSponsorship'
+import groupseedingscomp from '~/components/organizer/groupseedingscomp'
 import notifications from '~/components/notifications'
 
 export default {
   layout: 'manager',
 
   components: {
-    tournamentHeader,
-    tournamentInfo,
-    finalstagecomp,
+    eventTourHeader,
+    eventSponsorship,
+    groupseedingscomp,
     notifications,
   },
 }
