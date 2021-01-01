@@ -155,7 +155,7 @@ export default {
                 })
             })
             .then(() => {
-              this.$router.push(
+              this.$router.replace(
                 `/manager/auth/browseTournaments/${this.$route.params.id}/${this.$route.params.tournamentID}/participants`
               )
               this.isLoading = false

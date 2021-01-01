@@ -144,6 +144,8 @@
 export default {
   layout: 'homepage',
 
+   middleware: 'autologout',
+
   data() {
     return {
       // Events Data

@@ -124,6 +124,8 @@ import notifications from '~/components/notifications'
 export default {
   layout: 'homepage',
 
+  middleware: 'autologout',
+
   components: {
     eventHeader,
     eventSponsorship,

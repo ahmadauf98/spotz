@@ -187,6 +187,8 @@ import moment from 'moment'
 export default {
   layout: 'homepage',
 
+  middleware: 'autologout',
+
   data() {
     return {
       // Selection Data
