@@ -289,8 +289,6 @@
 import firebase from 'firebase'
 
 export default {
-  middleware: 'authenticated',
-
   data() {
     return {
       navigation: [
@@ -318,35 +316,42 @@ export default {
   },
 
   mounted() {
-    this.userId = this.$fire.auth.currentUser.uid
-    return this.$fire.firestore
-      .collection('users')
-      .doc(this.userId)
-      .onSnapshot((doc) => {
-        this.name = doc.data().name
-        this.email = doc.data().email
-        this.photoURL = doc.data().photoURL
-        this.notificationsMgr = doc.data().notificationsMgr
-        let organizerInv_sort = doc.data().organizerInv
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userId = user.uid
 
-        // Sort organizer invitation
-        if (typeof organizerInv_sort != 'undefined') {
-          this.organizerInv = organizerInv_sort.reverse()
-        }
+        this.$fire.firestore
+          .collection('users')
+          .doc(this.userId)
+          .onSnapshot((doc) => {
+            this.name = doc.data().name
+            this.email = doc.data().email
+            this.photoURL = doc.data().photoURL
+            this.notificationsMgr = doc.data().notificationsMgr
+            let organizerInv_sort = doc.data().organizerInv
 
-        // Filter unread notification manager
-        const manager_unread_list = this.notificationsMgr
+            // Sort organizer invitation
+            if (typeof organizerInv_sort != 'undefined') {
+              this.organizerInv = organizerInv_sort.reverse()
+            }
 
-        if (
-          typeof manager_unread_list != 'undefined' ||
-          manager_unread_list != ''
-        ) {
-          const manager_unread = manager_unread_list.filter(
-            (element) => element.status === 'unread'
-          )
-          this.unreadNotificationMgr = manager_unread
-        }
-      })
+            // Filter unread notification manager
+            const manager_unread_list = this.notificationsMgr
+
+            if (
+              typeof manager_unread_list != 'undefined' ||
+              manager_unread_list != ''
+            ) {
+              const manager_unread = manager_unread_list.filter(
+                (element) => element.status === 'unread'
+              )
+              this.unreadNotificationMgr = manager_unread
+            }
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

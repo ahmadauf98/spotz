@@ -156,9 +156,7 @@ export default {
                 })
             })
             .then(() => {
-              this.$router.replace({
-                path: '/organizer/auth/dashboard',
-              })
+              this.$router.replace('/organizer/auth/dashboard')
               this.isLoading = false
             })
         }

@@ -96,9 +96,9 @@
 </template>
 
 <script>
-export default {
-  middleware: 'authenticated',
+import firebase from 'firebase'
 
+export default {
   layout: 'manager',
 
   data() {
@@ -111,16 +111,21 @@ export default {
     }
   },
 
-  // GET - Fetch User's Data
-  created() {
-    this.userId = this.$fire.auth.currentUser.uid
+  mounted() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userId = user.uid
 
-    return this.$fire.firestore
-      .collection('users')
-      .doc(this.userId)
-      .onSnapshot((doc) => {
-        this.name = doc.data().name
-      })
+        this.$fire.firestore
+          .collection('users')
+          .doc(this.userId)
+          .onSnapshot((doc) => {
+            this.name = doc.data().name
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 }
 </script>

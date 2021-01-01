@@ -1,9 +1,9 @@
 import firebase from 'firebase'
 
 export default function () {
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      firebase.auth().signOut()
-    }
-  })
+  var auth = firebase.auth().currentUser
+
+  if (auth != null) {
+    firebase.auth().signOut()
+  }
 }
