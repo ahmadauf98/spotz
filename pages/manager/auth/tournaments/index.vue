@@ -115,8 +115,9 @@
 </template>
 
 <script>
-export default {
+import firebase from 'firebase'
 
+export default {
   layout: 'manager',
 
   data() {
@@ -133,23 +134,29 @@ export default {
   },
 
   mounted() {
-    this.userId = this.$fire.auth.currentUser.uid
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userId = user.uid
 
-    return this.$fire.firestore
-      .collection('users')
-      .doc(this.userId)
-      .onSnapshot((doc) => {
-        this.tournamentsMgrTemp = []
-        doc.data().tournamentsMgr.forEach((docref) => {
-          this.$fire.firestore
-            .collection('tournaments')
-            .doc(docref)
-            .onSnapshot((doc) => {
-              this.tournamentsMgrTemp.push(doc.data())
+        this.$fire.firestore
+          .collection('users')
+          .doc(this.userId)
+          .onSnapshot((doc) => {
+            this.tournamentsMgrTemp = []
+            doc.data().tournamentsMgr.forEach((docref) => {
+              this.$fire.firestore
+                .collection('tournaments')
+                .doc(docref)
+                .onSnapshot((doc) => {
+                  this.tournamentsMgrTemp.push(doc.data())
+                })
             })
-        })
-        this.tournamentsMgr = this.tournamentsMgrTemp
-      })
+            this.tournamentsMgr = this.tournamentsMgrTemp
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 }
 </script>

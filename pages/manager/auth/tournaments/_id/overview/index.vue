@@ -159,7 +159,6 @@ import tournamentInfo from '~/components/manager/tournamentInfo'
 import notifications from '~/components/notifications'
 
 export default {
-
   layout: 'manager',
 
   components: {
@@ -177,25 +176,31 @@ export default {
   },
 
   mounted() {
-    this.userId = this.$fire.auth.currentUser.uid
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userId = user.uid
 
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .onSnapshot((doc) => {
-        this.tournamentRef = doc.data()
-      })
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            this.tournamentRef = doc.data()
+          })
 
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .collection('team-registration')
-      .doc(this.userId)
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          this.registrationStatus = doc.data().status
-        }
-      })
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .doc(this.userId)
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              this.registrationStatus = doc.data().status
+            }
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 }
 </script>

@@ -25,19 +25,30 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import firebase from 'firebase'
 import tournamentHeader from '~/components/manager/tournamentHeader'
 import tournamentInfo from '~/components/manager/tournamentInfo'
 import finalstagecomp from '~/components/manager/finalstagecomp'
 import notifications from '~/components/notifications'
 
 export default {
+  layout: 'manager',
 
   components: {
     tournamentHeader,
     tournamentInfo,
     finalstagecomp,
     notifications,
+  },
+
+  mounted() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // For future use
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 }
 </script>

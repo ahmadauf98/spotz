@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import firebase from 'firebase'
 import eventTourHeader from '~/components/manager/eventTourHeader'
 import eventSponsorship from '~/components/manager/eventSponsorship'
 import standingscomp from '~/components/organizer/standingscomp'
@@ -38,6 +39,16 @@ export default {
     eventSponsorship,
     standingscomp,
     notifications,
+  },
+
+  mounted() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // For future use
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 }
 </script>

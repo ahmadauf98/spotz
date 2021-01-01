@@ -3,22 +3,7 @@
     <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
       <v-container class="p-0 my-0" fluid>
         <!-- Notifications -->
-        <v-snackbar
-          v-show="notification.alert != '' || notification.alert != null"
-          v-model="notification.snackbar"
-          :timeout="notification.timeout"
-          dark
-          top
-        >
-          <div class="d-flex justify-center align-center">
-            <v-icon
-              :class="notification.alertIconStyle"
-              :color="notification.colorIcon"
-              >{{ notification.alertIcon }}</v-icon
-            >
-            {{ notification.alert }}
-          </div>
-        </v-snackbar>
+        <notifications />
 
         <!-- Organization Details Part -->
         <tournamentHeader />
@@ -473,15 +458,15 @@
 import firebase from 'firebase'
 import tournamentHeader from '~/components/manager/tournamentHeader'
 import tournamentInfo from '~/components/manager/tournamentInfo'
-import { mapState } from 'vuex'
+import notifications from '~/components/notifications'
 
 export default {
-
   layout: 'manager',
 
   components: {
     tournamentHeader,
     tournamentInfo,
+    notifications,
   },
 
   data() {
@@ -538,38 +523,42 @@ export default {
     }
   },
 
-  // Fetch Notification Data from Vuex
-  computed: { ...mapState(['notification']) },
-
   // Fetch Data from firestore
   mounted() {
-    this.userId = this.$fire.auth.currentUser.uid
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userId = user.uid
 
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .collection('team-registration')
-      .doc(this.userId)
-      .onSnapshot((doc) => {
-        if (doc.data() == null) {
-        } else {
-          this.teamName = doc.data().teamName
-          this.tempTeamName = this.teamName
-          this.listPlayers = doc.data().listPlayers
-          this.lengthListPlayers = this.listPlayers.length
-        }
-      })
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .doc(this.userId)
+          .onSnapshot((doc) => {
+            if (doc.data() == null) {
+            } else {
+              this.teamName = doc.data().teamName
+              this.tempTeamName = this.teamName
+              this.listPlayers = doc.data().listPlayers
+              this.lengthListPlayers = this.listPlayers.length
+            }
+          })
 
-    this.$fire.firestore
-      .collection('tournaments')
-      .doc(this.$route.params.id)
-      .collection('team-registration')
-      .doc('format')
-      .onSnapshot((doc) => {
-        this.tournamentFormat = doc.data()
-        this.numPlayers = doc.data().numPlayers
-        this.availablePlayers = Number(this.numPlayers) - this.lengthListPlayers
-      })
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .collection('team-registration')
+          .doc('format')
+          .onSnapshot((doc) => {
+            this.tournamentFormat = doc.data()
+            this.numPlayers = doc.data().numPlayers
+            this.availablePlayers =
+              Number(this.numPlayers) - this.lengthListPlayers
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

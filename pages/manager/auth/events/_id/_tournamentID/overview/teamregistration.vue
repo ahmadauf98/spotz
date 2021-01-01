@@ -525,39 +525,45 @@ export default {
 
   // Fetch Data from firestore
   mounted() {
-    this.userId = this.$fire.auth.currentUser.uid
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.userId = user.uid
 
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .collection('team-registration')
-      .doc(this.userId)
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          this.teamName = doc.data().teamName
-          this.tempTeamName = this.teamName
-          this.listPlayers = doc.data().listPlayers
-          this.lengthListPlayers = this.listPlayers.length
-        }
-      })
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .collection('team-registration')
+          .doc(this.userId)
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              this.teamName = doc.data().teamName
+              this.tempTeamName = this.teamName
+              this.listPlayers = doc.data().listPlayers
+              this.lengthListPlayers = this.listPlayers.length
+            }
+          })
 
-    this.$fire.firestore
-      .collection('events')
-      .doc(this.$route.params.id)
-      .collection('tournaments')
-      .doc(this.$route.params.tournamentID)
-      .collection('team-registration')
-      .doc('format')
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          this.tournamentFormat = doc.data()
-          this.numPlayers = doc.data().numPlayers
-          this.availablePlayers =
-            Number(this.numPlayers) - this.lengthListPlayers
-        }
-      })
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .collection('team-registration')
+          .doc('format')
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              this.tournamentFormat = doc.data()
+              this.numPlayers = doc.data().numPlayers
+              this.availablePlayers =
+                Number(this.numPlayers) - this.lengthListPlayers
+            }
+          })
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 
   methods: {

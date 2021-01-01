@@ -25,13 +25,13 @@
 </template>
 
 <script>
+import firebase from 'firebase'
 import tournamentHeader from '~/components/manager/tournamentHeader'
 import tournamentInfo from '~/components/manager/tournamentInfo'
 import standingscomp from '~/components/manager/standingscomp'
 import notifications from '~/components/notifications'
 
 export default {
-
   layout: 'manager',
 
   components: {
@@ -39,6 +39,16 @@ export default {
     tournamentInfo,
     standingscomp,
     notifications,
+  },
+
+  mounted() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // For future use
+      } else {
+        this.$router.push('/')
+      }
+    })
   },
 }
 </script>
