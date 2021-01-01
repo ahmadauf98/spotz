@@ -101,7 +101,9 @@ export default {
   },
 
   beforeCreate() {
-    var code = this.$route.params.code
+    var code = this.$route.params.oobCode
+
+    console.log(code)
 
     firebase
       .auth()
