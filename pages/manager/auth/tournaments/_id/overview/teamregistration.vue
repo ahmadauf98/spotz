@@ -529,6 +529,23 @@ export default {
       if (user) {
         this.userId = user.uid
 
+        // Validate Account Credential
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              const findManagerId = doc
+                .data()
+                .managerRef.find((element) => element.uid == user.uid)
+
+              if (typeof findManagerId == 'undefined') {
+                console.log('No Credential')
+                this.$router.replace('/manager/auth/dashboard')
+              }
+            }
+          })
+
         this.$fire.firestore
           .collection('tournaments')
           .doc(this.$route.params.id)

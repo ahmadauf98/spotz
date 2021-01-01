@@ -44,7 +44,22 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        // For future use
+        // Validate Account Credential
+        this.$fire.firestore
+          .collection('tournaments')
+          .doc(this.$route.params.id)
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              const findManagerId = doc
+                .data()
+                .managerRef.find((element) => element.uid == user.uid)
+
+              if (typeof findManagerId == 'undefined') {
+                console.log('No Credential')
+                this.$router.replace('/manager/auth/dashboard')
+              }
+            }
+          })
       } else {
         this.$router.push('/')
       }

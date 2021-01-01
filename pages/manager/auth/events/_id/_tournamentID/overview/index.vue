@@ -186,29 +186,24 @@ export default {
       if (user) {
         this.userId = user.uid
 
-        // // Validate Account Credential
-        // this.$fire.firestore
-        //   .collection('events')
-        //   .doc(this.$route.params.id)
-        //   .collection('tournaments')
-        //   .doc(this.$route.params.tournamentID)
-        //   .onSnapshot((doc) => {
-        //     var collaborator = doc.data().collaborator
+        // Validate Account Credential
+        this.$fire.firestore
+          .collection('events')
+          .doc(this.$route.params.id)
+          .collection('tournaments')
+          .doc(this.$route.params.tournamentID)
+          .onSnapshot((doc) => {
+            if (doc.exists) {
+              const findManagerId = doc
+                .data()
+                .managerRef.find((element) => element.uid == user.uid)
 
-        //     this.$fire.firestore
-        //       .collection('events')
-        //       .doc(this.$route.params.id)
-        //       .onSnapshot((doc) => {
-        //         var hostName = doc.data().hostName
-
-        //         if (collaborator != null || hostName) {
-        //           if (user.uid != collaborator && user.uid != hostName) {
-        //             console.log('No Credential')
-        //             this.$router.replace('/organizer/auth/dashboard')
-        //           }
-        //         }
-        //       })
-        //   })
+              if (typeof findManagerId == 'undefined') {
+                console.log('No Credential')
+                this.$router.replace('/manager/auth/dashboard')
+              }
+            }
+          })
 
         // Get data from events
         this.$fire.firestore
