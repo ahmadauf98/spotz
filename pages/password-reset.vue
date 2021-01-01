@@ -100,22 +100,22 @@ export default {
     }
   },
 
-  // beforeCreate() {
-  //   var code = ''
+  beforeCreate() {
+    var code = ''
 
-  //   firebase
-  //     .auth()
-  //     .verifyPasswordResetCode(code)
-  //     .then((email) => {
-  //       // Display a "new password" form with the user's email address
-  //     })
-  //     .catch(() => {
-  //       alert('Invalid Password Reset Link')
-  //     })
-  //     .then(() => {
-  //       this.$router.replace({ path: '/' })
-  //     })
-  // },
+    firebase
+      .auth()
+      .verifyPasswordResetCode(code)
+      .then((email) => {
+        // Display a "new password" form with the user's email address
+      })
+      .catch(() => {
+        alert('Invalid Password Reset Link')
+      })
+      .then(() => {
+        this.$router.replace({ path: '/' })
+      })
+  },
 
   methods: {
     // Reset User's Password
@@ -146,6 +146,7 @@ export default {
       } catch (error) {
         console.log(error.code)
         alert('Unsuccessful, please try again later.')
+        this.$router.replace({ path: '/' })
         // this.isLoading = false
         // this.$store.commit('SET_NOTIFICATION', {
         //   alert: error.message,
