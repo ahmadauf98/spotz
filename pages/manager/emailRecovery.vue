@@ -60,7 +60,7 @@
                     block
                     dark
                   >
-                    <span v-if="isLoading == false">Reset</span>
+                    <span v-if="isLoading == false">Recover</span>
 
                     <v-progress-circular
                       v-else
