@@ -158,7 +158,6 @@ export default {
             .then(() => {
               this.$router.replace({
                 path: '/organizer/auth/dashboard',
-                query: this.$route.query,
               })
               this.isLoading = false
             })
