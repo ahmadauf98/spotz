@@ -32,7 +32,6 @@ import groupseedingscomp from '~/components/manager/groupseedingscomp'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
 
   layout: 'manager',
 

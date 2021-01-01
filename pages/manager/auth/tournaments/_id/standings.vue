@@ -31,7 +31,6 @@ import standingscomp from '~/components/manager/standingscomp'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
 
   layout: 'manager',
 

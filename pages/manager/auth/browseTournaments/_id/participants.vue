@@ -32,7 +32,6 @@ import participantscomp from '~/components/manager/participantscomp'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
 
   layout: 'manager',
 

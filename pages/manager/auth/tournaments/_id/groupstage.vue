@@ -31,7 +31,6 @@ import groupstagecomp from '~/components/manager/groupstagecomp'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
 
   layout: 'manager',
 

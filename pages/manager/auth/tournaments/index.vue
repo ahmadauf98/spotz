@@ -116,7 +116,6 @@
 
 <script>
 export default {
-  middleware: 'authenticated',
 
   layout: 'manager',
 

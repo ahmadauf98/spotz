@@ -271,8 +271,6 @@ import notifications from '~/components/notifications'
 export default {
   layout: 'manager',
 
-  middleware: 'authenticated',
-
   components: {
     notifications,
   },

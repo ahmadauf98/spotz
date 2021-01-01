@@ -159,7 +159,6 @@ import tournamentInfo from '~/components/manager/tournamentInfo'
 import notifications from '~/components/notifications'
 
 export default {
-  middleware: 'authenticated',
 
   layout: 'manager',
 

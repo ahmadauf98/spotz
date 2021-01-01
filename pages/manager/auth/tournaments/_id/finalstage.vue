@@ -32,7 +32,6 @@ import finalstagecomp from '~/components/manager/finalstagecomp'
 import notifications from '~/components/notifications'
 
 export default {
-  layout: 'manager',
 
   components: {
     tournamentHeader,

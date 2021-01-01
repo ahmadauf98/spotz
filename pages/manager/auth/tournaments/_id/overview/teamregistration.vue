@@ -476,7 +476,6 @@ import tournamentInfo from '~/components/manager/tournamentInfo'
 import { mapState } from 'vuex'
 
 export default {
-  middleware: 'authenticated',
 
   layout: 'manager',
 
