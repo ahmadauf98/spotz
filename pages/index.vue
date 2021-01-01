@@ -168,6 +168,8 @@
 export default {
   layout: 'homepage',
 
+  middleware: 'autologout',
+
   data() {
     return {
       events: [
