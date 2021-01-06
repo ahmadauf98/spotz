@@ -4,16 +4,16 @@
       v-show="notification.alert != '' || notification.alert != null"
       v-model="notification.snackbar"
       :timeout="notification.timeout"
+      class="mt-5"
+      :color="notification.colorIcon"
       dark
       top
     >
       <div class="d-flex justify-center align-center">
-        <v-icon
-          :class="notification.alertIconStyle"
-          :color="notification.colorIcon"
-          >{{ notification.alertIcon }}</v-icon
-        >
-        {{ notification.alert }}
+        <v-icon :class="notification.alertIconStyle" color="white">{{
+          notification.alertIcon
+        }}</v-icon>
+        <span class="font-weight-medium">{{ notification.alert }}</span>
       </div>
     </v-snackbar>
   </div>
@@ -21,8 +21,11 @@
 
 <script>
 import { mapState } from 'vuex'
+
 export default {
   // Fetch Notification Data from Vuex
-  computed: { ...mapState(['notification']) },
+  computed: {
+    ...mapState(['notification']),
+  },
 }
 </script>
