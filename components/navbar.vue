@@ -41,7 +41,7 @@
       rounded
       text
     >
-      Organize
+      Organizer
     </v-btn>
 
     <v-btn
