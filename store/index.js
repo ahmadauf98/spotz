@@ -1,3 +1,5 @@
+export const strict = false
+
 export const state = () => ({
   notification: {
     alert: '',
@@ -5,7 +7,7 @@ export const state = () => ({
     alertIconStyle: '',
     colorIcon: '',
     snackbar: false,
-    timeout: 1500,
+    timeout: 1800,
   },
 })
 
