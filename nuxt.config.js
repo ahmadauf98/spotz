@@ -34,7 +34,7 @@ export default {
   css: ['@/assets/css/main.css'],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: [],
+  plugins: ['~/plugins/vee-validate.js'],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
@@ -51,7 +51,7 @@ export default {
     '@nuxtjs/firebase', //https://firebase.nuxtjs.org
   ],
 
-  // Firebase module configureation (https://firebase.nuxtjs.org)
+  // Firebase module configuration (https://firebase.nuxtjs.org)
   firebase: {
     config: {
       apiKey: process.env.API_KEY,
@@ -96,5 +96,5 @@ export default {
   },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
-  build: {},
+  build: { transpile: ['vee-validate/dist/rules'] },
 }
