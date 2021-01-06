@@ -45,9 +45,8 @@
 
                 <ValidationProvider
                   v-slot="{ errors }"
-                  name="Password|required"
-                  rules="min:6"
-                  mode="lazy"
+                  name="Password"
+                  rules="min:6|required"
                 >
                   <!-- Password Input -->
                   <v-text-field

@@ -48,7 +48,6 @@
                   v-slot="{ errors }"
                   name="Password"
                   rules="min:6|required"
-                  mode="lazy"
                 >
                   <!-- Password Input -->
                   <v-text-field
