@@ -3,22 +3,7 @@
     <v-main class="d-none d-sm-flex align-center">
       <v-container class="p-0" fluid>
         <!-- Notifications -->
-        <v-snackbar
-          v-show="notification.alert != '' || notification.alert != null"
-          v-model="notification.snackbar"
-          :timeout="notification.timeout"
-          dark
-          top
-        >
-          <div class="d-flex justify-center align-center">
-            <v-icon
-              :class="notification.alertIconStyle"
-              :color="notification.colorIcon"
-              >{{ notification.alertIcon }}</v-icon
-            >
-            {{ notification.alert }}
-          </div>
-        </v-snackbar>
+        <notifications />
 
         <v-card width="450px" class="py-4 px-8 mx-auto" outlined>
           <!-- Image Logo -->
@@ -37,63 +22,83 @@
 
           <!-- Sign In -->
           <v-card-text>
-            <form @submit.prevent="emailLogin">
-              <!-- Email Input -->
-              <v-text-field
-                v-model="email"
-                type="email"
-                label="Email"
-                prepend-icon="mdi-email"
-                dense
-                outlined
-              ></v-text-field>
-
-              <!-- Password Input -->
-              <v-text-field
-                v-model="password"
-                :type="showPassword ? 'text' : 'password'"
-                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                @click:append="showPassword = !showPassword"
-                label="Password"
-                prepend-icon="mdi-lock"
-                dense
-                outlined
-              ></v-text-field>
-
-              <!-- Forgot Password -->
-              <div class="text-right mt-n5 mb-3">
-                <Nuxt-link
-                  to="/manager/emailRecovery"
-                  class="relative hyperlink caption"
+            <ValidationObserver ref="observer" v-slot="{ invalid }">
+              <form @submit.prevent="emailLogin">
+                <ValidationProvider
+                  v-slot="{ errors }"
+                  name="Email"
+                  rules="email"
+                  mode="lazy"
                 >
-                  Forgot Password?
-                </Nuxt-link>
-              </div>
-
-              <!-- Signin Button -->
-              <v-card-actions>
-                <v-row>
-                  <v-btn
-                    type="submit"
-                    class="h6 font-weight-bold"
-                    color="primary"
-                    depressed
-                    large
-                    block
-                    dark
+                  <!-- Email Input -->
+                  <v-text-field
+                    v-model="email"
+                    type="email"
+                    label="Email"
+                    prepend-icon="mdi-email"
+                    :error-messages="errors"
+                    required
+                    dense
+                    outlined
                   >
-                    <span v-if="isLoading == false">Log in</span>
+                  </v-text-field>
+                </ValidationProvider>
 
-                    <v-progress-circular
-                      v-else
-                      :size="20"
-                      indeterminate
-                      color="white"
-                    ></v-progress-circular>
-                  </v-btn>
-                </v-row>
-              </v-card-actions>
-            </form>
+                <ValidationProvider
+                  v-slot="{ errors }"
+                  name="Password"
+                  rules="min:6"
+                  mode="lazy"
+                >
+                  <!-- Password Input -->
+                  <v-text-field
+                    v-model="password"
+                    :type="showPassword ? 'text' : 'password'"
+                    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    @click:append="showPassword = !showPassword"
+                    label="Password"
+                    prepend-icon="mdi-lock"
+                    :error-messages="errors"
+                    dense
+                    outlined
+                  ></v-text-field>
+                </ValidationProvider>
+
+                <!-- Forgot Password -->
+                <div class="text-right mt-n3 mb-3">
+                  <Nuxt-link
+                    to="/manager/emailRecovery"
+                    class="relative hyperlink caption"
+                  >
+                    Forgot Password?
+                  </Nuxt-link>
+                </div>
+
+                <!-- Signin Button -->
+                <v-card-actions>
+                  <v-row>
+                    <v-btn
+                      type="submit"
+                      class="h6 font-weight-bold"
+                      :disabled="invalid"
+                      color="primary"
+                      depressed
+                      large
+                      block
+                    >
+                      <span v-if="isLoading == false">Login</span>
+
+                      <v-progress-circular
+                        v-else
+                        :size="20"
+                        indeterminate
+                        color="white"
+                      ></v-progress-circular>
+                    </v-btn>
+                  </v-row>
+                </v-card-actions>
+              </form>
+            </ValidationObserver>
 
             <!-- Signup Button -->
             <div class="text-center mt-2">
@@ -110,10 +115,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import notifications from '~/components/notifications'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
   layout: 'auth',
+
+  components: {
+    notifications,
+    ValidationObserver: ValidationObserver,
+    ValidationProvider: ValidationProvider,
+  },
 
   data() {
     return {
@@ -129,19 +141,13 @@ export default {
     }
   },
 
-  // Fetch Notification Data from Vuex
-  computed: {
-    ...mapState(['notification']),
-  },
-
   methods: {
     // Signin with Email Provider
     async emailLogin() {
       this.isLoading = true
       try {
-        if (this.email === null || this.email === '') {
+        if (this.email === '') {
           this.isLoading = false
-          console.log('Error. Undefined email.')
           this.$store.commit('SET_NOTIFICATION', {
             alert: 'Email is required, please enter valid email.',
             alertIcon: 'mdi-alert-circle',
@@ -149,9 +155,8 @@ export default {
             colorIcon: 'red darken-1',
             snackbar: true,
           })
-        } else if (this.password === null || this.password === '') {
+        } else if (this.password === '') {
           this.isLoading = false
-          console.log('Error. Undefined password.')
           this.$store.commit('SET_NOTIFICATION', {
             alert: 'Password is required, please enter strong password.',
             alertIcon: 'mdi-alert-circle',
@@ -176,15 +181,33 @@ export default {
             })
         }
       } catch (error) {
-        console.log(error.code)
         this.isLoading = false
-        this.$store.commit('SET_NOTIFICATION', {
-          alert: error.message,
-          alertIcon: 'mdi-alert-circle',
-          alertIconStyle: 'mr-2 align-self-top',
-          colorIcon: 'red darken-1',
-          snackbar: true,
-        })
+        if (error.code == 'auth/user-not-found') {
+          this.$store.commit('SET_NOTIFICATION', {
+            alert: 'The email address is not register in the system.',
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
+            snackbar: true,
+          })
+        } else if (error.code == 'auth/wrong-password') {
+          this.$store.commit('SET_NOTIFICATION', {
+            alert:
+              'The password is invalid. Please enter the correct password.',
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
+            snackbar: true,
+          })
+        } else {
+          this.$store.commit('SET_NOTIFICATION', {
+            alert: error.message,
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
+            snackbar: true,
+          })
+        }
       }
     },
   },
