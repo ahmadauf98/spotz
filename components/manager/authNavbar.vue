@@ -257,6 +257,13 @@
 
         <v-divider class="mx-3"></v-divider>
 
+        <!-- Organizer Button -->
+        <v-list-item to="/organizer/auth/dashboard">
+          <v-list-item-title>Organizer Dashboard</v-list-item-title>
+        </v-list-item>
+
+        <v-divider class="mx-3"></v-divider>
+
         <!-- Tournament & Event Button -->
         <v-list-item v-for="list in lists" :key="list.name" :to="list.route">
           <v-list-item-title> {{ list.title }}</v-list-item-title>
@@ -267,11 +274,6 @@
         <!-- Settings Button -->
         <v-list-item to="/manager/auth/settings">
           <v-list-item-title>Settings</v-list-item-title>
-        </v-list-item>
-
-        <!-- Organizer Button -->
-        <v-list-item to="/organizer/auth/dashboard">
-          <v-list-item-title>Spotz Organizer</v-list-item-title>
         </v-list-item>
 
         <v-divider class="mx-3"></v-divider>

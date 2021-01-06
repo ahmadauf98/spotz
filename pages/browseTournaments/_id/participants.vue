@@ -11,7 +11,7 @@
         <v-row>
           <!-- Left Side -->
           <v-col cols="12" lg="8" order="2" order-lg="1">
-            <div style="position: sticky; min-height: 316px">
+            <div style="position: sticky; min-height: 313px">
               <v-overlay
                 :absolute="absolute"
                 :value="overlay"

@@ -1,7 +1,28 @@
 <template>
   <v-card class="mx-auto py-5 px-9 mb-4" outlined tile>
-    <!-- First Row -->
     <v-row>
+      <v-col>
+        <v-card
+          v-show="
+            tournamentRef.phoneNumber == '' &&
+            tournamentRef.location == '' &&
+            tournamentRef.email == '' &&
+            tournamentRef.websiteURL == ''
+          "
+          class="mx-auto py-3 px-5"
+          outlined
+        >
+          <h1
+            class="text-subtitle-2 font-weight-medium d-flex justify-center align-center"
+          >
+            <span class="text-caption text-grey">No Information Available</span>
+          </h1>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- First Row -->
+    <v-row v-show="tournamentRef.phoneNumber != ''">
       <v-col>
         <v-card class="mx-auto py-3 px-5" outlined>
           <h1
@@ -15,7 +36,7 @@
     </v-row>
 
     <!-- Second Row -->
-    <v-row>
+    <v-row v-show="tournamentRef.location != ''">
       <v-col>
         <v-card class="mx-auto py-3 px-5" outlined>
           <h1
@@ -29,7 +50,7 @@
     </v-row>
 
     <!-- Third Row -->
-    <v-row>
+    <v-row v-show="tournamentRef.email != ''">
       <v-col>
         <v-card class="mx-auto py-3 px-5" outlined>
           <h1
@@ -43,16 +64,14 @@
     </v-row>
 
     <!-- Fourth Row -->
-    <v-row>
+    <v-row v-show="tournamentRef.websiteURL != ''">
       <v-col>
         <v-card class="mx-auto py-3 px-5" outlined>
           <h1
             class="text-subtitle-2 font-weight-medium d-flex justify-center align-center"
           >
             <v-icon class="mr-1" size="18">mdi-link-variant</v-icon>
-            <a :href="tournamentRef.websiteURL" target="_blank"
-              >{{ tournamentRef.websiteURL }}
-            </a>
+            {{ tournamentRef.websiteURL }}
           </h1>
         </v-card>
       </v-col>

@@ -33,15 +33,6 @@
                         part of the organizer. Wait for your event host to
                         adding you in their event collaborator.
                       </h1>
-                      <v-btn
-                        class="font-weight-regular text-capitalize mb-4"
-                        dark
-                        depressed
-                        color="primary"
-                        to="/organizer/auth/events/create"
-                      >
-                        Create an event
-                      </v-btn>
                     </div>
                   </v-col>
                   <v-col cols="12" md="4" class="d-none d-md-flex align-center">
