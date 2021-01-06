@@ -27,7 +27,7 @@
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="Email"
-                  rules="email"
+                  rules="email|required"
                   mode="lazy"
                 >
                   <!-- Email Input -->
@@ -47,7 +47,7 @@
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="Password"
-                  rules="min:6"
+                  rules="min:6|required"
                   mode="lazy"
                 >
                   <!-- Password Input -->
@@ -66,12 +66,12 @@
 
                 <!-- Forgot Password -->
                 <div class="text-right mt-n3 mb-3">
-                  <Nuxt-link
+                  <NuxtLink
                     to="/manager/emailRecovery"
                     class="relative hyperlink caption"
                   >
                     Forgot Password?
-                  </Nuxt-link>
+                  </NuxtLink>
                 </div>
 
                 <!-- Signin Button -->
@@ -104,7 +104,7 @@
             <div class="text-center mt-2">
               <h1 class="hyperlink caption">
                 Don't have an account?
-                <Nuxt-link to="/manager/signup"> Sign up. </Nuxt-link>
+                <NuxtLink to="/manager/signup"> Sign up. </NuxtLink>
               </h1>
             </div>
           </v-card-text>
@@ -146,40 +146,17 @@ export default {
     async emailLogin() {
       this.isLoading = true
       try {
-        if (this.email === '') {
-          this.isLoading = false
-          this.$store.commit('SET_NOTIFICATION', {
-            alert: 'Email is required, please enter valid email.',
-            alertIcon: 'mdi-alert-circle',
-            alertIconStyle: 'mr-2 align-self-top',
-            colorIcon: 'red darken-1',
-            snackbar: true,
-          })
-        } else if (this.password === '') {
-          this.isLoading = false
-          this.$store.commit('SET_NOTIFICATION', {
-            alert: 'Password is required, please enter strong password.',
-            alertIcon: 'mdi-alert-circle',
-            alertIconStyle: 'mr-2 align-self-top',
-            colorIcon: 'red darken-1',
-            snackbar: true,
-          })
-        } else {
-          await this.$fire.auth
-            .signInWithEmailAndPassword(this.email, this.password)
-            .then((data) => {
-              this.$fire.firestore
-                .collection('users')
-                .doc(data.user.uid)
-                .update({
-                  emailVerified: data.user.emailVerified,
-                })
+        await this.$fire.auth
+          .signInWithEmailAndPassword(this.email, this.password)
+          .then((data) => {
+            this.$fire.firestore.collection('users').doc(data.user.uid).update({
+              emailVerified: data.user.emailVerified,
             })
-            .then(() => {
-              this.$router.replace('/manager/auth/dashboard')
-              this.isLoading = false
-            })
-        }
+          })
+          .then(() => {
+            this.$router.replace('/manager/auth/dashboard')
+            this.isLoading = false
+          })
       } catch (error) {
         this.isLoading = false
         if (error.code == 'auth/user-not-found') {

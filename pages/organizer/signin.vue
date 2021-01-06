@@ -26,7 +26,7 @@
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="Email"
-                  rules="email"
+                  rules="email|required"
                   mode="lazy"
                 >
                   <!-- Email Input -->
@@ -45,7 +45,7 @@
 
                 <ValidationProvider
                   v-slot="{ errors }"
-                  name="Password"
+                  name="Password|required"
                   rules="min:6"
                   mode="lazy"
                 >
@@ -103,7 +103,7 @@
             <div class="text-center mt-2">
               <h1 class="hyperlink caption">
                 Don't have an account?
-                <Nuxt-link to="/organizer/signup"> Sign up. </Nuxt-link>
+                <NuxtLink to="/organizer/signup"> Sign up. </NuxtLink>
               </h1>
             </div>
           </v-card-text>
@@ -146,40 +146,17 @@ export default {
       // Loading state -> true
       this.isLoading = true
       try {
-        if (this.email === '') {
-          this.isLoading = false
-          this.$store.commit('SET_NOTIFICATION', {
-            alert: 'Email is required, please enter a valid email.',
-            alertIcon: 'mdi-alert-circle',
-            alertIconStyle: 'mr-2 align-self-top',
-            colorIcon: 'red darken-1',
-            snackbar: true,
-          })
-        } else if (this.password === '') {
-          this.isLoading = false
-          this.$store.commit('SET_NOTIFICATION', {
-            alert: 'Password is required, please enter strong password.',
-            alertIcon: 'mdi-alert-circle',
-            alertIconStyle: 'mr-2 align-self-top',
-            colorIcon: 'red darken-1',
-            snackbar: true,
-          })
-        } else {
-          await this.$fire.auth
-            .signInWithEmailAndPassword(this.email, this.password)
-            .then((data) => {
-              this.$fire.firestore
-                .collection('users')
-                .doc(data.user.uid)
-                .update({
-                  emailVerified: data.user.emailVerified,
-                })
+        await this.$fire.auth
+          .signInWithEmailAndPassword(this.email, this.password)
+          .then((data) => {
+            this.$fire.firestore.collection('users').doc(data.user.uid).update({
+              emailVerified: data.user.emailVerified,
             })
-            .then(() => {
-              this.$router.replace('/organizer/auth/dashboard')
-              this.isLoading = false
-            })
-        }
+          })
+          .then(() => {
+            this.$router.replace('/organizer/auth/dashboard')
+            this.isLoading = false
+          })
       } catch (error) {
         this.isLoading = false
         if (error.code == 'auth/user-not-found') {
