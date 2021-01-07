@@ -8,16 +8,21 @@
             color="#1a202c"
             class="mb-10"
             @click="chooseHeader"
+            :disabled="isHeaderUploaded"
             fab
             small
-            dark
             absolute
             bottom
             right
           >
-            <v-icon size="20" v-if="!isFileUploaded">mdi-camera</v-icon>
+            <v-icon size="20" color="white" v-if="!isHeaderUploaded"
+              >mdi-camera</v-icon
+            >
             <template v-else>
-              <span>{{ uploadPercentage }}%</span>
+              <v-progress-circular
+                indeterminate
+                color="white"
+              ></v-progress-circular>
             </template>
           </v-btn>
           <input
@@ -34,7 +39,20 @@
             <!-- Profile Picture -->
             <div class="mr-5 mt-n7">
               <v-avatar class="mt-n15" size="150" rounded>
-                <img :src="tournamentRef.photoURL" alt="..." />
+                <img
+                  v-if="!isImageUploaded"
+                  :src="tournamentRef.photoURL"
+                  alt="..."
+                />
+
+                <template v-else>
+                  <v-overlay absolute color="white" opacity="0.5" value="true">
+                    <v-progress-circular
+                      indeterminate
+                      color="primary"
+                    ></v-progress-circular>
+                  </v-overlay>
+                </template>
               </v-avatar>
 
               <div class="mt-n8 ml-15">
@@ -42,14 +60,11 @@
                   @click="choosePhoto"
                   class="ml-15"
                   color="#1a202c"
+                  :disabled="isImageUploaded"
                   fab
                   small
-                  dark
                 >
-                  <v-icon size="20" v-if="!isFileUploaded">mdi-camera</v-icon>
-                  <template v-else>
-                    <span> {{ uploadPercentage }} %</span>
-                  </template>
+                  <v-icon color="white" size="20">mdi-camera</v-icon>
                 </v-btn>
                 <input
                   type="file"
@@ -188,7 +203,8 @@ export default {
       selectedFile: null,
       selectedHeader: null,
       uploadPercentage: null,
-      isFileUploaded: false,
+      isImageUploaded: false,
+      isHeaderUploaded: false,
     }
   },
 
@@ -227,13 +243,30 @@ export default {
 
     onFileSelected(Organization) {
       this.selectedFile = Organization.target.files[0]
-      // console.log(this.selectedFile)
-      this.onUploadPhoto()
+
+      // Check Format of Picture
+      if (
+        this.selectedFile.type === 'image/png' ||
+        this.selectedFile.type === 'image/jpg' ||
+        this.selectedFile.type === 'image/jpeg' ||
+        this.selectedFile.type === 'image/svg+xml' ||
+        this.selectedFile.tupe === 'image/svg'
+      ) {
+        this.onUploadPhoto()
+      } else {
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: 'Error format, please try again.',
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
     },
 
     onUploadPhoto() {
       var metadata = {
-        contentType: 'image/jpeg',
+        contentType: this.selectedFile.type,
       }
 
       var storageRef = this.$fire.storage
@@ -246,17 +279,17 @@ export default {
         'state_changed',
         (snapshot) => {
           var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          console.log('Upload is ' + Math.round(progress) + '% done')
+          // console.log('Upload is ' + Math.round(progress) + '% done')
           this.uploadPercentage = Math.round(progress)
           switch (snapshot.state) {
             case firebase.storage.TaskState.PAUSED: // or 'paused'
-              console.log('Upload is paused')
+              // console.log('Upload is paused')
               break
             case firebase.storage.TaskState.RUNNING: // or 'running'
-              console.log('Upload is running')
+              // console.log('Upload is running')
               break
           }
-          this.isFileUploaded = true
+          this.isImageUploaded = true
         },
 
         (error) => {
@@ -271,7 +304,7 @@ export default {
               console.log('storage/unknown')
               break
           }
-          this.isFileUploaded = false
+          this.isImageUploaded = false
         },
 
         (complete) => {
@@ -281,12 +314,12 @@ export default {
 
           const url = storageRef.getDownloadURL().then((url) => {
             this.photoURL = url
-            console.log(this.photoURL)
+            // console.log(this.photoURL)
             this.updatePhoto()
           })
 
-          console.log('File successfully uploaded.')
-          this.isFileUploaded = false
+          // console.log('File successfully uploaded.')
+          this.isImageUploaded = false
           this.$store.commit('SET_NOTIFICATION', {
             alert: 'Your profile picture is successfully uploaded',
             alertIcon: 'mdi-cloud-check',
@@ -305,13 +338,30 @@ export default {
 
     onHeaderSelected(Organization) {
       this.selectedHeader = Organization.target.files[0]
-      // console.log(this.selectedHeader)
-      this.onUploadHeader()
+
+      // Check Format of Picture
+      if (
+        this.selectedHeader.type === 'image/png' ||
+        this.selectedHeader.type === 'image/jpg' ||
+        this.selectedHeader.type === 'image/jpeg' ||
+        this.selectedHeader.type === 'image/svg+xml' ||
+        this.selectedHeader.tupe === 'image/svg'
+      ) {
+        this.onUploadHeader()
+      } else {
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: 'Error format, please try again.',
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
     },
 
     onUploadHeader() {
       var metadata = {
-        contentType: 'image/jpeg',
+        contentType: this.selectedHeader.type,
       }
 
       var storageRef = this.$fire.storage
@@ -324,17 +374,17 @@ export default {
         'state_changed',
         (snapshot) => {
           var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          console.log('Upload is ' + Math.round(progress) + '% done')
+          // console.log('Upload is ' + Math.round(progress) + '% done')
           this.uploadPercentage = Math.round(progress)
           switch (snapshot.state) {
             case firebase.storage.TaskState.PAUSED: // or 'paused'
-              console.log('Upload is paused')
+              // console.log('Upload is paused')
               break
             case firebase.storage.TaskState.RUNNING: // or 'running'
-              console.log('Upload is running')
+              // console.log('Upload is running')
               break
           }
-          this.isFileUploaded = true
+          this.isHeaderUploaded = true
         },
 
         (error) => {
@@ -349,7 +399,7 @@ export default {
               console.log('storage/unknown')
               break
           }
-          this.isFileUploaded = false
+          this.isHeaderUploaded = false
         },
 
         (complete) => {
@@ -359,12 +409,12 @@ export default {
 
           const url = storageRef.getDownloadURL().then((url) => {
             this.headerURL = url
-            console.log(this.headerURL)
+            // console.log(this.headerURL)
             this.updateHeader()
           })
 
-          console.log('File successfully uploaded.')
-          this.isFileUploaded = false
+          // console.log('File successfully uploaded.')
+          this.isHeaderUploaded = false
           this.$store.commit('SET_NOTIFICATION', {
             alert: 'Your header picture is successfully uploaded',
             alertIcon: 'mdi-cloud-check',
@@ -386,7 +436,6 @@ export default {
             photoURL: this.photoURL,
           })
       } catch (error) {
-        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
@@ -406,7 +455,6 @@ export default {
             headerURL: this.headerURL,
           })
       } catch (error) {
-        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',

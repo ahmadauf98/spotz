@@ -23,7 +23,7 @@
                   </h1>
                 </v-col>
 
-                <!-- TODO:Register Button -->
+                <!-- Register Button -->
                 <v-col cols="4" md="5" xl="3" class="d-flex justify-end">
                   <v-card
                     color="white"
@@ -177,7 +177,7 @@
           </v-tabs>
         </v-row>
 
-        <!-- TODO:Request To be Manager overlay-->
+        <!-- Request To be Manager overlay-->
         <v-overlay :opacity="opacity" :value="requestManager">
           <v-card
             class="mx-auto py-5 px-10 black--text d-block align-center"
@@ -274,13 +274,13 @@ export default {
       startDate: '',
       endDate: '',
 
-      // TODO:Request Button Data
+      // Request Button Data
       managerlength_active: null,
       authStatus: false,
       requestStatus: 'request',
       requestListMgr: '',
 
-      // TODO:Manager Request requestManager
+      // Manager Request requestManager
       opacity: 0.5,
       requestManager: false,
     }

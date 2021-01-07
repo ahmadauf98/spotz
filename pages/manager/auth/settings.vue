@@ -175,21 +175,21 @@
                           <v-row class="d-block">
                             <!-- Profile Photo Input -->
                             <v-col cols="12" class="mb-2 text-center">
-                              <!-- If Profile Photo is empty -->
-                              <v-avatar
-                                v-if="photoURL == null || photoURL == ''"
-                                color="primary"
-                                class="mb-8"
-                                size="150"
-                              >
-                                <v-icon size="100" dark>
-                                  mdi-account-circle
-                                </v-icon>
-                              </v-avatar>
+                              <v-avatar class="mb-8" size="150">
+                                <img
+                                  v-if="!isFileUploaded"
+                                  :src="photoURL"
+                                  alt="..."
+                                />
 
-                              <!-- If else -->
-                              <v-avatar v-else class="mb-8" size="150">
-                                <img :src="photoURL" alt="..." />
+                                <template v-else>
+                                  <v-overlay absolute opacity="0" value="true">
+                                    <v-progress-circular
+                                      indeterminate
+                                      color="primary"
+                                    ></v-progress-circular>
+                                  </v-overlay>
+                                </template>
                               </v-avatar>
 
                               <!-- File Input Button -->
@@ -198,19 +198,13 @@
                                   @click="choosePhoto"
                                   class="ml-15"
                                   color="#1a202c"
-                                  :disabled="isFileUploaded == true"
+                                  :disabled="isFileUploaded"
                                   fab
                                   x-small
-                                  dark
                                 >
-                                  <v-icon size="18" v-if="!isFileUploaded"
+                                  <v-icon color="white" size="18"
                                     >mdi-camera</v-icon
                                   >
-                                  <template v-else>
-                                    <span class="text-black"
-                                      >{{ uploadPercentage }}%</span
-                                    >
-                                  </template>
                                 </v-btn>
                                 <input
                                   type="file"
@@ -368,7 +362,6 @@ export default {
     async emailVerification() {
       try {
         await this.$fire.auth.currentUser.sendEmailVerification().then(() => {
-          console.log('Success.Email verification sent to the user.')
           this.$store.commit('SET_NOTIFICATION', {
             alert:
               'Email verification sent! Please verify your email and login again.',
@@ -379,7 +372,6 @@ export default {
           })
         })
       } catch (error) {
-        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
@@ -390,7 +382,6 @@ export default {
       }
     },
 
-    // POST - Store User's Data
     // Upload Profile Photo
     choosePhoto() {
       this.$refs.photoChoosen.click()
@@ -398,13 +389,30 @@ export default {
 
     onFileSelected(event) {
       this.selectedFile = event.target.files[0]
-      // console.log(this.selectedFile)
-      this.onUploadProfilePhoto()
+
+      // Check Format of Picture
+      if (
+        this.selectedFile.type === 'image/png' ||
+        this.selectedFile.type === 'image/jpg' ||
+        this.selectedFile.type === 'image/jpeg' ||
+        this.selectedFile.type === 'image/svg+xml' ||
+        this.selectedFile.tupe === 'image/svg'
+      ) {
+        this.onUploadProfilePhoto()
+      } else {
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: 'Error format, please try again.',
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
     },
 
     onUploadProfilePhoto() {
       var metadata = {
-        contentType: 'image/jpeg',
+        contentType: this.selectedFile.type,
       }
 
       var storageRef = this.$fire.storage
@@ -421,10 +429,10 @@ export default {
           this.uploadPercentage = Math.round(progress)
           switch (snapshot.state) {
             case firebase.storage.TaskState.PAUSED: // or 'paused'
-              console.log('Upload is paused')
+              // console.log('Upload is paused')
               break
             case firebase.storage.TaskState.RUNNING: // or 'running'
-              console.log('Upload is running')
+              // console.log('Upload is running')
               break
           }
           this.isFileUploaded = true
@@ -465,16 +473,12 @@ export default {
     async update() {
       try {
         // Update User Token
-        await this.$fire.auth.currentUser
-          .updateProfile({
-            displayName: this.name,
-            email: this.email,
-            photoURL: this.photoURL,
-            emailVerified: this.emailVerified,
-          })
-          .then(() => {
-            console.log('User token successfully updated.')
-          })
+        await this.$fire.auth.currentUser.updateProfile({
+          displayName: this.name,
+          email: this.email,
+          photoURL: this.photoURL,
+          emailVerified: this.emailVerified,
+        })
 
         // Update User Realtime Database
         await this.$fire.firestore
@@ -490,7 +494,6 @@ export default {
             about: this.about,
           })
           .then(() => {
-            console.log('Database successfully updated.')
             this.$store.commit('SET_NOTIFICATION', {
               alert: 'All your information has been updated.',
               alertIcon: 'mdi-cloud-check',
@@ -509,7 +512,6 @@ export default {
             snackbar: true,
           })
         } else {
-          console.log(error.code)
           this.$store.commit('SET_NOTIFICATION', {
             alert: error.message,
             alertIcon: 'mdi-alert-circle',

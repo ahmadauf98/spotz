@@ -98,22 +98,17 @@
             <!-- PhotoURL Input -->
             <v-col cols="12" class="mb-2 text-center">
               <!-- If Profile Photo is Null -->
-              <v-avatar
-                v-if="photoURL == null || photoURL == ''"
-                color="#6b46c1"
-                class="mb-8"
-                size="150"
-                rounded
-              >
-                <img
-                  src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2FLogo.jpg?alt=media&token=921893c3-3134-494b-8f8c-332b10666623"
-                  alt="..."
-                />
-              </v-avatar>
+              <v-avatar class="mb-8" size="150" rounded>
+                <img v-if="!isFileUploaded" :src="photoURL" alt="..." />
 
-              <!-- If Profile Photo Not Null -->
-              <v-avatar v-else class="mb-8" size="150" rounded>
-                <img :src="photoURL" alt="..." />
+                <template v-else>
+                  <v-overlay absolute opacity="0" value="true">
+                    <v-progress-circular
+                      indeterminate
+                      color="primary"
+                    ></v-progress-circular>
+                  </v-overlay>
+                </template>
               </v-avatar>
 
               <div class="mt-n15 ml-15">
@@ -121,14 +116,11 @@
                   @click="choosePhoto"
                   class="ml-15"
                   color="#1a202c"
+                  :disabled="isFileUploaded"
                   fab
                   small
-                  dark
                 >
-                  <v-icon v-if="!isFileUploaded" size="20">mdi-camera</v-icon>
-                  <template v-else>
-                    <span>{{ uploadPercentage }}%</span>
-                  </template>
+                  <v-icon color="white" size="18">mdi-camera</v-icon>
                 </v-btn>
                 <input
                   type="file"
@@ -306,12 +298,30 @@ export default {
 
     onFileSelected(event) {
       this.selectedFile = event.target.files[0]
-      this.onUploadProfilePhoto()
+
+      // Check Format of Picture
+      if (
+        this.selectedFile.type === 'image/png' ||
+        this.selectedFile.type === 'image/jpg' ||
+        this.selectedFile.type === 'image/jpeg' ||
+        this.selectedFile.type === 'image/svg+xml' ||
+        this.selectedFile.tupe === 'image/svg'
+      ) {
+        this.onUploadProfilePhoto()
+      } else {
+        this.$store.commit('SET_NOTIFICATION', {
+          alert: 'Error format, please try again.',
+          alertIcon: 'mdi-alert-circle',
+          alertIconStyle: 'mr-2 align-self-top',
+          colorIcon: 'red darken-1',
+          snackbar: true,
+        })
+      }
     },
 
     onUploadProfilePhoto() {
       var metadata = {
-        contentType: 'image/jpeg/png',
+        contentType: this.selectedFile.type,
       }
       var storageRef = this.$fire.storage
         .ref()
@@ -325,10 +335,10 @@ export default {
           this.uploadPercentage = Math.round(progress)
           switch (snapshot.state) {
             case firebase.storage.TaskState.PAUSED: // or 'paused'
-              console.log('Upload is paused')
+              // console.log('Upload is paused')
               break
             case firebase.storage.TaskState.RUNNING: // or 'running'
-              console.log('Upload is running')
+              // console.log('Upload is running')
               break
           }
           this.isFileUploaded = true
@@ -394,8 +404,6 @@ export default {
       } catch (error) {
         // Set loading state to false
         this.isLoading = false
-
-        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',
@@ -438,8 +446,6 @@ export default {
       } catch (error) {
         // Set loading state to false
         this.isLoading = false
-
-        console.log(error.code)
         this.$store.commit('SET_NOTIFICATION', {
           alert: error.message,
           alertIcon: 'mdi-alert-circle',

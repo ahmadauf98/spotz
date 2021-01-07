@@ -227,7 +227,7 @@
                 </v-row>
               </div>
 
-              <!--  -->
+              <!-- Button -->
               <v-card-actions class="mx-13 d-flex">
                 <v-btn
                   @click="onUpdate"
