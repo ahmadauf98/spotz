@@ -866,161 +866,196 @@
             <div class="d-flex justify-center mb-4 mt-n4">
               <h1 class="text-h6 font-weight-bold">Report Score</h1>
             </div>
-
-            <div class="mb-6">
-              <v-card class="pa-4" outlined>
-                <v-row class="d-flex justify-center align-center">
-                  <v-col cols="4" class="d-block">
-                    <h1 class="text-subtitle-1 font-weight-medium text-center">
-                      {{ resultData.homeTeam }}
-                    </h1>
-
-                    <v-col cols="8" class="mx-auto">
-                      <v-text-field
-                        v-show="resultData.isMatchStart == true"
-                        class="text-h4 mb-n10 font-weight-bold"
-                        v-model="resultData.homeScore"
-                        type="number"
-                        min="0"
-                        max="100"
-                        outlined
-                      ></v-text-field>
-
+            <ValidationObserver ref="observer" v-slot="{ invalid }">
+              <div class="mb-6">
+                <v-card class="pa-4" outlined>
+                  <v-row class="d-flex justify-center align-center">
+                    <v-col cols="4" class="d-block">
                       <h1
-                        v-show="resultData.isMatchStart == false"
-                        class="text-center mt-n2"
+                        class="text-subtitle-1 font-weight-medium text-center"
                       >
-                        {{ resultData.homeScore }}
+                        {{ resultData.homeTeam }}
                       </h1>
+
+                      <v-col cols="8" class="mx-auto">
+                        <ValidationProvider
+                          v-slot="{ errors }"
+                          name="Score"
+                          rules="min_value:0|required"
+                        >
+                          <v-text-field
+                            v-show="resultData.isMatchStart == true"
+                            class="text-h4 mb-n10 font-weight-bold"
+                            v-model="resultData.homeScore"
+                            :error-messages="errors"
+                            type="number"
+                            min="0"
+                            max="100"
+                            outlined
+                          ></v-text-field>
+                        </ValidationProvider>
+
+                        <h1
+                          v-show="resultData.isMatchStart == false"
+                          class="text-center mt-n2"
+                        >
+                          {{ resultData.homeScore }}
+                        </h1>
+                      </v-col>
                     </v-col>
-                  </v-col>
 
-                  <v-col cols="2" class="text-center">
-                    <h1 class="text-caption text-grey">
-                      {{ resultData.title }}
-                    </h1>
-                    <v-chip
-                      class="ma-2"
-                      color="green darken-1"
-                      dark
-                      small
-                      label
-                    >
-                      Versus
-                    </v-chip>
-                  </v-col>
+                    <v-col cols="2" class="text-center">
+                      <h1 class="text-caption text-grey">
+                        {{ resultData.title }}
+                      </h1>
+                      <v-chip
+                        class="ma-2"
+                        color="green darken-1"
+                        dark
+                        small
+                        label
+                      >
+                        Versus
+                      </v-chip>
+                    </v-col>
 
-                  <v-col cols="4" class="d-block">
-                    <h1 class="text-subtitle-1 font-weight-medium text-center">
-                      {{ resultData.awayTeam }}
-                    </h1>
-
-                    <v-col cols="8" class="mx-auto">
-                      <v-text-field
-                        v-show="resultData.isMatchStart == true"
-                        class="text-h4 mb-n10 font-weight-bold"
-                        v-model="resultData.awayScore"
-                        type="number"
-                        min="0"
-                        max="100"
-                        outlined
-                      ></v-text-field>
-
+                    <v-col cols="4" class="d-block">
                       <h1
-                        v-show="resultData.isMatchStart == false"
-                        class="text-center mt-n2"
+                        class="text-subtitle-1 font-weight-medium text-center"
                       >
-                        {{ resultData.awayScore }}
+                        {{ resultData.awayTeam }}
                       </h1>
-                    </v-col>
-                  </v-col>
-                </v-row>
 
-                <v-row
-                  v-if="resultData.isTie == true"
-                  class="d-flex justify-center align-center mt-n5 mb-n5"
+                      <v-col cols="8" class="mx-auto">
+                        <ValidationProvider
+                          v-slot="{ errors }"
+                          name="Score"
+                          rules="min_value:0|required"
+                        >
+                          <v-text-field
+                            v-show="resultData.isMatchStart == true"
+                            class="text-h4 mb-n10 font-weight-bold"
+                            v-model="resultData.awayScore"
+                            :error-messages="errors"
+                            type="number"
+                            min="0"
+                            max="100"
+                            outlined
+                          ></v-text-field>
+                        </ValidationProvider>
+
+                        <h1
+                          v-show="resultData.isMatchStart == false"
+                          class="text-center mt-n2"
+                        >
+                          {{ resultData.awayScore }}
+                        </h1>
+                      </v-col>
+                    </v-col>
+                  </v-row>
+
+                  <v-row
+                    v-if="resultData.isTie == true"
+                    class="d-flex justify-center align-center mt-n5 mb-n5"
+                  >
+                    <v-col cols="4" class="d-block">
+                      <v-col cols="5" class="mx-auto">
+                        <ValidationProvider
+                          v-slot="{ errors }"
+                          name="Score"
+                          rules="min_value:0|required"
+                        >
+                          <v-text-field
+                            v-show="resultData.isTie == true"
+                            class="text-subtitle-1 text-grey mt-3 mb-n3"
+                            v-model="resultData.homeSet"
+                            :error-messages="errors"
+                            type="number"
+                            min="0"
+                            max="100"
+                            dense
+                            outlined
+                          ></v-text-field>
+                        </ValidationProvider>
+                      </v-col>
+                    </v-col>
+
+                    <v-col cols="2" class="text-center">
+                      <h1 class="text-caption">Set Point</h1>
+                    </v-col>
+
+                    <v-col cols="4" class="d-block">
+                      <v-col cols="5" class="mx-auto">
+                        <ValidationProvider
+                          v-slot="{ errors }"
+                          name="Score"
+                          rules="min_value:0|required"
+                        >
+                          <v-text-field
+                            v-show="resultData.isTie == true"
+                            class="text-subtitle-1 text-grey mt-3 mb-n3"
+                            v-model="resultData.awaySet"
+                            :error-messages="errors"
+                            type="number"
+                            min="0"
+                            max="100"
+                            dense
+                            outlined
+                          ></v-text-field>
+                        </ValidationProvider>
+                      </v-col>
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </div>
+
+              <div class="d-flex align-center justify-end mb-2">
+                <v-switch
+                  v-show="resultData.isMatchStart == true"
+                  class="mt-n3 mb-n7 mr-auto"
+                  v-model="resultData.isTie"
+                  small
+                  inset
+                  label="Tie"
+                ></v-switch>
+
+                <v-btn
+                  v-show="resultData.isMatchStart == false"
+                  class="ml-auto font-weight-regular text-capitalize"
+                  @click="onStartMatch(resultData, currentBracketData)"
+                  width="150"
+                  dark
+                  depressed
+                  color="orange darken-1"
                 >
-                  <v-col cols="4" class="d-block">
-                    <v-col cols="5" class="mx-auto">
-                      <v-text-field
-                        v-show="resultData.isTie == true"
-                        class="text-subtitle-1 text-grey mt-3 mb-n3"
-                        v-model="resultData.homeSet"
-                        type="number"
-                        min="0"
-                        max="100"
-                        dense
-                        outlined
-                      ></v-text-field>
-                    </v-col>
-                  </v-col>
+                  Start Match
+                </v-btn>
 
-                  <v-col cols="2" class="text-center">
-                    <h1 class="text-caption">Set Point</h1>
-                  </v-col>
+                <v-btn
+                  v-show="resultData.isMatchStart == true"
+                  class="px-10 ml-2 font-weight-regular text-capitalize"
+                  color="primary"
+                  width="150"
+                  @click="onLiveUpdate(resultData, currentBracketData)"
+                  :disabled="invalid"
+                  outlined
+                >
+                  Live Update</v-btn
+                >
 
-                  <v-col cols="4" class="d-block">
-                    <v-col cols="5" class="mx-auto">
-                      <v-text-field
-                        v-show="resultData.isTie == true"
-                        class="text-subtitle-1 text-grey mt-3 mb-n3"
-                        v-model="resultData.awaySet"
-                        type="number"
-                        min="0"
-                        max="100"
-                        dense
-                        outlined
-                      ></v-text-field>
-                    </v-col>
-                  </v-col>
-                </v-row>
-              </v-card>
-            </div>
-
-            <div class="d-flex align-center justify-end mb-2">
-              <v-switch
-                v-show="resultData.isMatchStart == true"
-                class="mt-n3 mb-n7 mr-auto"
-                v-model="resultData.isTie"
-                small
-                inset
-                label="Tie"
-              ></v-switch>
-
-              <v-btn
-                v-show="resultData.isMatchStart == false"
-                class="ml-auto font-weight-regular text-capitalize"
-                @click="onStartMatch(resultData, currentBracketData)"
-                width="150"
-                dark
-                depressed
-                color="orange darken-1"
-              >
-                Start Match
-              </v-btn>
-
-              <v-btn
-                v-show="resultData.isMatchStart == true"
-                class="px-10 ml-2 font-weight-regular text-capitalize"
-                color="primary"
-                width="150"
-                @click="onLiveUpdate(resultData, currentBracketData)"
-                outlined
-              >
-                Live Update</v-btn
-              >
-
-              <v-btn
-                v-show="resultData.isMatchStart == true"
-                class="px-10 ml-2 font-weight-regular text-capitalize"
-                color="primary"
-                width="150"
-                @click="onUpdateResult(resultData, currentBracketData)"
-                depressed
-              >
-                Fulltime</v-btn
-              >
-            </div>
+                <v-btn
+                  v-show="resultData.isMatchStart == true"
+                  class="px-10 ml-2 font-weight-regular text-capitalize"
+                  color="primary"
+                  width="150"
+                  @click="onUpdateResult(resultData, currentBracketData)"
+                  :disabled="invalid"
+                  depressed
+                >
+                  Fulltime</v-btn
+                >
+              </div>
+            </ValidationObserver>
           </v-card>
         </v-overlay>
       </v-container>
@@ -1034,6 +1069,7 @@ import 'firebase/auth'
 import eventTourHeader from '~/components/organizer/eventTourHeader'
 import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
   layout: 'organizer',
@@ -1042,6 +1078,8 @@ export default {
     eventTourHeader,
     eventSponsorship,
     notifications,
+    ValidationObserver: ValidationObserver,
+    ValidationProvider: ValidationProvider,
   },
 
   data() {

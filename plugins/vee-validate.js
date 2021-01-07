@@ -1,5 +1,5 @@
 import { extend } from 'vee-validate'
-import { email, min, required } from 'vee-validate/dist/rules'
+import { email, min, required, min_value } from 'vee-validate/dist/rules'
 
 extend('email', {
   ...email,
@@ -14,4 +14,9 @@ extend('min', {
 extend('required', {
   ...required,
   message: '{_field_} can not be empty',
+})
+
+extend('min_value', {
+  ...min_value,
+  message: '{_field_} must be greater than 0',
 })
