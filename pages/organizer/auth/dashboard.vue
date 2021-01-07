@@ -109,20 +109,28 @@ export default {
   },
 
   mounted() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.userId = user.uid
+    firebase
+      .auth()
+      .setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      .then(() => {
+        firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
+            this.userId = user.uid
 
-        this.$fire.firestore
-          .collection('users')
-          .doc(this.userId)
-          .onSnapshot((doc) => {
-            this.name = doc.data().name
-          })
-      } else {
-        this.$router.push('/')
-      }
-    })
+            this.$fire.firestore
+              .collection('users')
+              .doc(this.userId)
+              .onSnapshot((doc) => {
+                this.name = doc.data().name
+              })
+          } else {
+            this.$router.push('/')
+          }
+        })
+      })
+      .catch((error) => {
+        console.log(error.message)
+      })
   },
 }
 </script>
