@@ -847,26 +847,27 @@
 
         <!-- Update Result Overlay -->
         <v-overlay :opacity="updateResultOpacity" :value="updateResultOverlay">
-          <v-card
-            class="mx-auto py-5 px-10 black--text d-block align-center"
-            min-height="300"
-            width="700"
-            color="white"
-            light
-            outlined
-          >
-            <v-btn
-              @click="updateResultOverlay = false"
-              class="mt-n3 ml-n8"
-              icon
+          <ValidationObserver ref="observer" v-slot="{ invalid }">
+            <v-card
+              class="mx-auto py-5 px-10 black--text d-block align-center"
+              min-height="300"
+              width="700"
+              color="white"
+              light
+              outlined
             >
-              <v-icon>mdi-close-circle</v-icon>
-            </v-btn>
-            <!-- Title -->
-            <div class="d-flex justify-center mb-4 mt-n4">
-              <h1 class="text-h6 font-weight-bold">Report Score</h1>
-            </div>
-            <ValidationObserver ref="observer" v-slot="{ invalid }">
+              <v-btn
+                @click="updateResultOverlay = false"
+                class="mt-n3 ml-n8"
+                icon
+              >
+                <v-icon>mdi-close-circle</v-icon>
+              </v-btn>
+              <!-- Title -->
+              <div class="d-flex justify-center mb-4 mt-n4">
+                <h1 class="text-h6 font-weight-bold">Report Score</h1>
+              </div>
+
               <div class="mb-6">
                 <v-card class="pa-4" outlined>
                   <v-row class="d-flex justify-center align-center">
@@ -880,7 +881,7 @@
                       <v-col cols="8" class="mx-auto">
                         <ValidationProvider
                           v-slot="{ errors }"
-                          name="Score"
+                          name="Home Score"
                           rules="min_value:0|required"
                         >
                           <v-text-field
@@ -929,7 +930,7 @@
                       <v-col cols="8" class="mx-auto">
                         <ValidationProvider
                           v-slot="{ errors }"
-                          name="Score"
+                          name="Away Score"
                           rules="min_value:0|required"
                         >
                           <v-text-field
@@ -958,11 +959,11 @@
                     v-if="resultData.isTie == true"
                     class="d-flex justify-center align-center mt-n5 mb-n5"
                   >
-                    <v-col cols="4" class="d-block">
+                    <v-col cols="5" class="d-block">
                       <v-col cols="5" class="mx-auto">
                         <ValidationProvider
                           v-slot="{ errors }"
-                          name="Score"
+                          name="Home Set"
                           rules="min_value:0|required"
                         >
                           <v-text-field
@@ -984,11 +985,11 @@
                       <h1 class="text-caption">Set Point</h1>
                     </v-col>
 
-                    <v-col cols="4" class="d-block">
+                    <v-col cols="5" class="d-block">
                       <v-col cols="5" class="mx-auto">
                         <ValidationProvider
                           v-slot="{ errors }"
-                          name="Score"
+                          name="Away Set"
                           rules="min_value:0|required"
                         >
                           <v-text-field
@@ -1055,8 +1056,8 @@
                   Fulltime</v-btn
                 >
               </div>
-            </ValidationObserver>
-          </v-card>
+            </v-card>
+          </ValidationObserver>
         </v-overlay>
       </v-container>
     </v-main>

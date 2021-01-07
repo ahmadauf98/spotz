@@ -1709,7 +1709,7 @@
                     <v-col cols="8" class="mx-auto">
                       <ValidationProvider
                         v-slot="{ errors }"
-                        name="Score"
+                        name="Home Score"
                         rules="min_value:0|required"
                       >
                         <v-text-field
@@ -1756,7 +1756,7 @@
                     <v-col cols="8" class="mx-auto">
                       <ValidationProvider
                         v-slot="{ errors }"
-                        name="Score"
+                        name="Away Score"
                         rules="min_value:0|required"
                       >
                         <v-text-field

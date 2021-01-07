@@ -1728,7 +1728,7 @@
                       <v-col cols="8" class="mx-auto">
                         <ValidationProvider
                           v-slot="{ errors }"
-                          name="Score"
+                          name="Home Score"
                           rules="min_value:0|required"
                         >
                           <v-text-field
@@ -1741,14 +1741,14 @@
                             max="100"
                             outlined
                           ></v-text-field>
-                        </ValidationProvider>
 
-                        <h1
-                          v-show="resultData.isMatchStart == false"
-                          class="text-center mt-n2"
-                        >
-                          {{ resultData.homeScore }}
-                        </h1>
+                          <h1
+                            v-show="resultData.isMatchStart == false"
+                            class="text-center mt-n2"
+                          >
+                            {{ resultData.homeScore }}
+                          </h1>
+                        </ValidationProvider>
                       </v-col>
                     </v-col>
 
@@ -1777,7 +1777,7 @@
                       <v-col cols="8" class="mx-auto">
                         <ValidationProvider
                           v-slot="{ errors }"
-                          name="Score"
+                          name="Away Score"
                           rules="min_value:0|required"
                         >
                           <v-text-field
@@ -1790,14 +1790,14 @@
                             max="100"
                             outlined
                           ></v-text-field>
-                        </ValidationProvider>
 
-                        <h1
-                          v-show="resultData.isMatchStart == false"
-                          class="text-center mt-n2"
-                        >
-                          {{ resultData.awayScore }}
-                        </h1>
+                          <h1
+                            v-show="resultData.isMatchStart == false"
+                            class="text-center mt-n2"
+                          >
+                            {{ resultData.awayScore }}
+                          </h1>
+                        </ValidationProvider>
                       </v-col>
                     </v-col>
                   </v-row>

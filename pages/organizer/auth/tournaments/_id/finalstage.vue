@@ -881,7 +881,7 @@
                       <v-col cols="8" class="mx-auto">
                         <ValidationProvider
                           v-slot="{ errors }"
-                          name="Score"
+                          name="Home Score"
                           rules="min_value:0|required"
                         >
                           <v-text-field
@@ -930,7 +930,7 @@
                       <v-col cols="8" class="mx-auto">
                         <ValidationProvider
                           v-slot="{ errors }"
-                          name="Score"
+                          name="Away Score"
                           rules="min_value:0|required"
                         >
                           <v-text-field
@@ -959,11 +959,11 @@
                     v-if="resultData.isTie == true"
                     class="d-flex justify-center align-center mt-n5 mb-n5"
                   >
-                    <v-col cols="4" class="d-block">
+                    <v-col cols="5" class="d-block">
                       <v-col cols="5" class="mx-auto">
                         <ValidationProvider
                           v-slot="{ errors }"
-                          name="Score"
+                          name="Home Set"
                           rules="min_value:0|required"
                         >
                           <v-text-field
@@ -985,11 +985,11 @@
                       <h1 class="text-caption">Set Point</h1>
                     </v-col>
 
-                    <v-col cols="4" class="d-block">
+                    <v-col cols="5" class="d-block">
                       <v-col cols="5" class="mx-auto">
                         <ValidationProvider
                           v-slot="{ errors }"
-                          name="Score"
+                          name="Away Set"
                           rules="min_value:0|required "
                         >
                           <v-text-field
