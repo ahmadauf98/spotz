@@ -276,7 +276,7 @@
                                   <!-- Email Input-->
                                   <v-col cols="12">
                                     <v-text-field
-                                      label="Email"
+                                      label="Organizer Email"
                                       v-model="email"
                                       placeholder="username@email.com"
                                       type="email"
@@ -291,7 +291,7 @@
                               <v-col cols="12" class="mb-n6">
                                 <v-textarea
                                   outlined
-                                  label="Description"
+                                  label="Event Description"
                                   v-model="description"
                                 ></v-textarea>
                               </v-col>
@@ -345,7 +345,10 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/storage'
+import 'firebase/firestore'
 import moment from 'moment'
 import notifications from '~/components/notifications'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'

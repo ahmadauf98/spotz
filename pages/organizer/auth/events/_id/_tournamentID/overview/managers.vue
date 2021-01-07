@@ -323,7 +323,9 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
 import eventTourHeader from '~/components/organizer/eventTourHeader'
 import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'

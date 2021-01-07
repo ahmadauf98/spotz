@@ -250,7 +250,9 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/storage'
 import moment from 'moment'
 import countryList from '~/countries.json'
 import notifications from '~/components/notifications'

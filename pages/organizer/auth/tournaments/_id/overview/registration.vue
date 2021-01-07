@@ -277,7 +277,8 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/auth'
 import moment from 'moment'
 import tournamentHeader from '~/components/organizer/tournamentHeader'
 import tournamentInfo from '~/components/organizer/tournamentInfo'

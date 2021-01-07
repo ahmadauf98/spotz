@@ -56,7 +56,7 @@
                         >
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
-                              v-model="startDate"
+                              v-model="startDate_Format"
                               label="Start Date"
                               readonly
                               dense
@@ -67,6 +67,7 @@
                           </template>
                           <v-date-picker
                             v-model="startDate"
+                            :allowed-dates="allowedDates_Start"
                             no-title
                             scrollable
                           >
@@ -105,7 +106,7 @@
                         >
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
-                              v-model="endDate"
+                              v-model="endDate_Format"
                               label="End Date"
                               readonly
                               dense
@@ -114,7 +115,12 @@
                               v-on="on"
                             ></v-text-field>
                           </template>
-                          <v-date-picker v-model="endDate" no-title scrollable>
+                          <v-date-picker
+                            v-model="endDate"
+                            :allowed-dates="allowedDates_End"
+                            no-title
+                            scrollable
+                          >
                             <v-spacer></v-spacer>
                             <v-btn
                               text
@@ -142,7 +148,8 @@
                       <!-- Website URL Input -->
                       <v-col cols="12">
                         <v-text-field
-                          label="Official Website URL"
+                          label="Organizer Website"
+                          placeholder="www.example.com"
                           v-model="websiteURL"
                           outlined
                           dense
@@ -157,6 +164,7 @@
                         <v-text-field
                           label="Phone Number"
                           v-model="phoneNumber"
+                          placeholder="012-3456789 or 01-23456789"
                           outlined
                           dense
                         ></v-text-field>
@@ -172,6 +180,7 @@
                         <v-text-field
                           label="Location"
                           v-model="location"
+                          placeholder="State, Country"
                           outlined
                           dense
                         ></v-text-field>
@@ -183,8 +192,9 @@
                       <!-- Email Input-->
                       <v-col cols="12">
                         <v-text-field
-                          label="Email"
+                          label="Organizer Email"
                           v-model="email"
+                          placeholder="username@email.com"
                           type="email"
                           outlined
                           dense
@@ -197,7 +207,7 @@
                   <v-col cols="12" class="mb-n6">
                     <v-textarea
                       outlined
-                      label="Description"
+                      label="Event Description"
                       v-model="description"
                     ></v-textarea>
                   </v-col>
@@ -230,7 +240,9 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import moment from 'moment'
 import eventHeader from '~/components/organizer/eventHeader'
 import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
@@ -255,8 +267,10 @@ export default {
       // User Input Data
       title: '',
       description: '',
-      startDate: '',
-      endDate: '',
+      startDate: null,
+      startDate_d: null,
+      endDate: null,
+      endDate_d: null,
       websiteURL: '',
       phoneNumber: '',
       location: '',
@@ -268,6 +282,44 @@ export default {
       menuStart: false,
       menuEnd: false,
     }
+  },
+
+  computed: {
+    // Formating startDate (YYYY-MM-DD) to (DD MMMM YYYY)
+    startDate_Format: function () {
+      if (this.startDate == null) {
+        return null
+      } else {
+        return moment(this.startDate, 'YYYY-MM-DD').format('DD MMMM YYYY')
+      }
+    },
+
+    // Formating startDate (DD MMMM YYYY) to (YYYY-MM-DD)
+    startDate_Format_D: function () {
+      if (this.startDate_d == null) {
+        return null
+      } else {
+        return moment(this.startDate_d, 'DD MMMM YYYY').format('YYYY-MM-DD')
+      }
+    },
+
+    // Formating endDate (YYYY-MM-DD) to (DD MMMM YYYY)
+    endDate_Format: function () {
+      if (this.endDate == null) {
+        return null
+      } else {
+        return moment(this.endDate, 'YYYY-MM-DD').format('DD MMMM YYYY')
+      }
+    },
+
+    // Formating endDate (DD MMMM YYYY) to (YYYY-MM-DD)
+    endDate_Format_D: function () {
+      if (this.endDate_d == null) {
+        return null
+      } else {
+        return moment(this.endDate_d, 'DD MMMM YYYY').format('YYYY-MM-DD')
+      }
+    },
   },
 
   mounted() {
@@ -297,13 +349,17 @@ export default {
               this.eventRef = doc.data()
               this.title = doc.data().title
               this.description = doc.data().description
-              this.startDate = doc.data().startDate
-              this.endDate = doc.data().endDate
+              this.startDate_d = doc.data().startDate
+              this.endDate_d = doc.data().endDate
               this.websiteURL = doc.data().websiteURL
               this.phoneNumber = doc.data().phoneNumber
               this.location = doc.data().location
               this.email = doc.data().email
               this.isOpen = doc.data().isOpen
+
+              // Ovewrite startDate & endDate value
+              this.startDate = this.startDate_Format_D
+              this.endDate = this.endDate_Format_D
             }
           })
       } else {
@@ -313,6 +369,18 @@ export default {
   },
 
   methods: {
+    allowedDates_Start(val) {
+      return val >= moment().format('YYYY-MM-DD')
+    },
+
+    allowedDates_End(val) {
+      if (this.startDate == null) {
+        return val >= moment().format('YYYY-MM-DD')
+      } else {
+        return val >= this.startDate
+      }
+    },
+
     async onUpdate() {
       try {
         await this.$fire.firestore
@@ -321,8 +389,8 @@ export default {
           .update({
             title: this.title,
             description: this.description,
-            startDate: this.startDate,
-            endDate: this.endDate,
+            startDate: this.startDate_Format,
+            endDate: this.endDate_Format,
             websiteURL: this.websiteURL,
             phoneNumber: this.phoneNumber,
             location: this.location,
