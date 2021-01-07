@@ -334,17 +334,19 @@ export default {
               .collection('events')
               .doc(this.$route.params.id)
               .onSnapshot((doc) => {
-                var hostName = doc.data().hostName
+                if (doc.exists) {
+                  var hostName = doc.data().hostName
 
-                if (collaborator != null || hostName) {
-                  if (user.uid != collaborator && user.uid != hostName) {
-                    console.log('No Credential')
-                    this.$router.replace('/organizer/auth/dashboard')
+                  if (collaborator != null || hostName) {
+                    if (user.uid != collaborator && user.uid != hostName) {
+                      console.log('No Credential')
+                      this.$router.replace('/organizer/auth/dashboard')
+                    }
                   }
                 }
               })
           })
-          
+
         this.$fire.firestore
           .collection('events')
           .doc(this.$route.params.id)

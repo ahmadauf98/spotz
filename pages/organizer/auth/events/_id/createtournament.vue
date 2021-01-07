@@ -420,11 +420,13 @@ export default {
           .collection('events')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            var hostName = doc.data().hostName
+            if (doc.exists) {
+              var hostName = doc.data().hostName
 
-            if (user.uid != hostName) {
-              console.log('No Credential')
-              this.$router.replace('/organizer/auth/dashboard')
+              if (user.uid != hostName) {
+                console.log('No Credential')
+                this.$router.replace('/organizer/auth/dashboard')
+              }
             }
           })
 
@@ -433,7 +435,9 @@ export default {
           .collection('events')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            hostName = doc.data().hostName
+            if (doc.exists) {
+              hostName = doc.data().hostName
+            }
           })
       } else {
         this.$router.push('/')
