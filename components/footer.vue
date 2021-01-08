@@ -72,9 +72,9 @@
             <v-col cols="12" lg="4" xl="3" class="mt-n5">
               <h1 class="text-caption text-grey mb-2">Final Year Project in</h1>
               <img
+                class="logo"
                 src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2FUniversiti%2BMalaya.png?alt=media&token=6fefee2f-6b43-4b96-bd13-8877842f7127"
                 alt="..."
-                width="200"
               />
             </v-col>
           </v-row>
@@ -99,3 +99,31 @@ export default {
   }),
 }
 </script>
+
+<style scoped>
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  .logo {
+    width: 150px;
+  }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .logo {
+    width: 200px;
+  }
+}
+
+/* Medium devices (landscape tablets, 960px and up) */
+@media only screen and (min-width: 960px) {
+}
+
+/* Large devices (laptops/desktops, 1264px and up) */
+@media only screen and (min-width: 1264px) {
+}
+
+/* Extra large devices (large laptops and desktops, 1904px and up) */
+@media only screen and (min-width: 1904px) {
+}
+</style>

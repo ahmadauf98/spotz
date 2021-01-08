@@ -3,6 +3,8 @@
     <v-main>
       <!-- Navigation Bar -->
       <navbar />
+      <navbarM />
+
       <!-- Body Content -->
       <nuxt />
       <!-- Footer -->
@@ -13,11 +15,13 @@
 
 <script>
 import navbar from '~/components/navbar'
+import navbarM from '~/components/navbar-m'
 import pubFooter from '~/components/footer'
 
 export default {
   components: {
     navbar,
+    navbarM,
     pubFooter,
   },
 }
