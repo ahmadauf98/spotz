@@ -20,12 +20,17 @@ export default {
 
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    titleTemplate: '%s - spotz',
-    title: 'spotz',
+    titleTemplate: '%s',
+    title: 'Spotz - Sports Management System',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
+      {
+        hid: 'description',
+        name: 'description',
+        content:
+          'Join the others who trust Spotz to handle their sports events and tournaments. Customized for "Sukan Mahasiswa Universiti Malaya (SUKMUM)" but can be adapted to the others as well.',
+      },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
