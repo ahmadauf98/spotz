@@ -31,6 +31,53 @@ export default {
         content:
           'Join the others who trust Spotz to handle their sports events and tournaments. Customized for "Sukan Mahasiswa Universiti Malaya (SUKMUM)" but can be adapted to the others as well.',
       },
+      { property: 'og:site_name', content: 'AA Dev' },
+      { hid: 'og:type', property: 'og:type', content: 'website' },
+      {
+        hid: 'og:url',
+        property: 'og:url',
+        content: 'https://spotz-v1.vercel.app',
+      },
+      {
+        hid: 'og:title',
+        property: 'og:title',
+        content: 'Spotz - Sports Management System',
+      },
+      {
+        hid: 'og:description',
+        property: 'og:description',
+        content:
+          'Join the others who trust Spotz to handle their sports events and tournaments. Customized for "Sukan Mahasiswa Universiti Malaya (SUKMUM)" but can be adapted to the others as well.',
+      },
+      {
+        hid: 'og:image',
+        property: 'og:image',
+        content: '/meta-logo.png',
+      },
+      { property: 'og:image:width', content: '740' },
+      { property: 'og:image:height', content: '300' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      {
+        hid: 'twitter:url',
+        name: 'twitter:url',
+        content: 'https://spotz-v1.vercel.app',
+      },
+      {
+        hid: 'twitter:title',
+        name: 'twitter:title',
+        content: 'Spotz - Sports Management System',
+      },
+      {
+        hid: 'twitter:description',
+        name: 'twitter:description',
+        content:
+          'Join the others who trust Spotz to handle their sports events and tournaments. Customized for "Sukan Mahasiswa Universiti Malaya (SUKMUM)" but can be adapted to the others as well.',
+      },
+      {
+        hid: 'twitter:image',
+        name: 'twitter:image',
+        content: '/meta-logo.png',
+      },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
