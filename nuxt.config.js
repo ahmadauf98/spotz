@@ -52,7 +52,7 @@ export default {
       {
         hid: 'og:image',
         property: 'og:image',
-        content: '~/static/meta-logo.png',
+        content: '/favicon.ico',
       },
       { property: 'og:image:width', content: '740' },
       { property: 'og:image:height', content: '300' },
@@ -76,7 +76,7 @@ export default {
       {
         hid: 'twitter:image',
         name: 'twitter:image',
-        content: '/static/meta-logo.png',
+        content: '/favicon.ico',
       },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
