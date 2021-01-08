@@ -80,7 +80,7 @@ export default {
         content: '/meta-logo.png',
       },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/meta-logo.png' }],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
