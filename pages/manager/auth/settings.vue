@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main class="mx-md-10 mx-lg-15 px-lg-15 py-0">
+    <v-main class="mx-md-10 mx-lg-15 px-lg-15 py-0 mb-10">
       <v-container class="p-0" fluid>
         <div class="mx-xl-15 px-xl-15">
           <!-- Notifications -->

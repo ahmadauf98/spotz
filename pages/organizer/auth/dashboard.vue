@@ -1,5 +1,5 @@
 <template>
-  <v-main class="mx-md-10 mx-lg-15 px-lg-15 py-0 mb-10">
+  <v-main class="mx-md-10 mx-lg-15 px-lg-15 px-xl-0 py-0 mb-10">
     <div class="mx-xl-15 px-xl-15">
       <!-- Greeting User -->
       <h1 class="my-6">Welcome back, {{ name }}.</h1>

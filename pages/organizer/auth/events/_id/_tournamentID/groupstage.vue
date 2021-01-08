@@ -1,1830 +1,1856 @@
 <template>
   <v-app>
-    <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
-      <!-- Notifications -->
-      <notifications />
+    <v-main class="py-0 mb-10">
+      <v-container class="p-0 my-0" fluid>
+        <!-- Notifications -->
+        <notifications />
 
-      <!-- Organization Details Part -->
-      <eventTourHeader />
+        <!-- Organization Details Part -->
+        <eventTourHeader />
 
-      <v-row>
-        <!-- Left Side -->
-        <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
-          <!-- If Grouping Not Draw -->
-          <v-card
-            v-if="tournamentRef.isGroupDraw == false"
-            class="mx-auto py-10 px-9"
-            outlined
-            tile
-          >
-            <v-row class="mt-n4 mb-n5 d-flex align-center">
-              <v-col cols="12" md="8" order="2" order-md="1">
-                <h1
-                  class="mb-2 text-center text-md-left text-subtitle-1 font-weight-bold"
-                >
-                  Group Stage
-                </h1>
-                <div>
+        <v-row>
+          <!-- Left Side -->
+          <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
+            <!-- If Grouping Not Draw -->
+            <v-card
+              v-if="tournamentRef.isGroupDraw == false"
+              class="mx-auto py-10 px-9"
+              outlined
+              tile
+            >
+              <v-row class="mt-n4 mb-n5 d-flex align-center">
+                <v-col cols="12" md="8" order="2" order-md="1">
                   <h1
-                    class="text-subtitle-1 font-weight-regular text-center text-md-left mb-5"
+                    class="mb-2 text-center text-md-left text-subtitle-1 font-weight-bold"
                   >
-                    Currently there is no group draw yet. Kindly click on
-                    <strong>Draw Group</strong> button to draw team in a group.
-                    This process is only can be done once. Please ensure you
-                    pick the right team.
+                    Group Stage
                   </h1>
-
-                  <div class="d-flex justify-center justify-md-start">
-                    <v-btn
-                      class="font-weight-regular mb-4 text-capitalize"
-                      :to="`/organizer/auth/events/${this.$route.params.id}/${this.$route.params.tournamentID}/overview/seedings`"
-                      :disabled="tournamentRef.participants != teamListNumber"
-                      color="primary"
-                      depressed
+                  <div>
+                    <h1
+                      class="text-subtitle-1 font-weight-regular text-center text-md-left mb-5"
                     >
-                      Manage Seedings
-                    </v-btn>
+                      Currently there is no group draw yet. Kindly click on
+                      <strong>Draw Group</strong> button to draw team in a
+                      group. This process is only can be done once. Please
+                      ensure you pick the right team.
+                    </h1>
+
+                    <div class="d-flex justify-center justify-md-start">
+                      <v-btn
+                        class="font-weight-regular mb-4 text-capitalize"
+                        :to="`/organizer/auth/events/${this.$route.params.id}/${this.$route.params.tournamentID}/overview/seedings`"
+                        :disabled="tournamentRef.participants != teamListNumber"
+                        color="primary"
+                        depressed
+                      >
+                        Manage Seedings
+                      </v-btn>
+                    </div>
                   </div>
-                </div>
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-                class="d-flex justify-center align-top"
-                order="1"
-                order-md="2"
-              >
-                <div class="px-5">
-                  <img
-                    src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fmanagers-tournament.svg?alt=media&token=ec47c873-a84d-4353-b823-e0fe7bff619b"
-                    width="220px"
-                    alt="..."
-                  />
-                </div>
-              </v-col>
-            </v-row>
-          </v-card>
-
-          <!-- If Grouping is Drawed -->
-          <v-card
-            v-else
-            class="mx-auto py-10 mt-n3 mt-lg-0 px-9 mb-5"
-            outlined
-            tile
-          >
-            <div>
-              <div class="d-flex align-center">
-                <h1 class="text-subtitle-1 font-weight-bold">Group Stage</h1>
-              </div>
-
-              <v-row>
-                <!-- Group A -->
+                </v-col>
                 <v-col
-                  v-show="
-                    tournamentRef.gGroupNumber == 2 ||
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  cols="6"
+                  cols="12"
+                  md="4"
+                  class="d-flex justify-center align-top"
+                  order="1"
+                  order-md="2"
                 >
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-center">Group A</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(gA, index) in group_A"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-center">
-                              {{ gA.teamName }}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </v-col>
-
-                <!-- Group B -->
-                <v-col
-                  v-show="
-                    tournamentRef.gGroupNumber == 2 ||
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  cols="6"
-                >
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-center">Group B</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(gB, index) in group_B"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-center">{{ gB.teamName }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </v-col>
-
-                <!-- Group C -->
-                <v-col
-                  v-show="
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  cols="6"
-                >
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-center">Group C</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(gC, index) in group_C"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-center">{{ gC.teamName }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </v-col>
-
-                <!-- Group D -->
-                <v-col
-                  v-show="
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  cols="6"
-                >
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-center">Group D</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(gD, index) in group_D"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-center">{{ gD.teamName }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </v-col>
-
-                <!-- Group E -->
-                <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-center">Group E</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(gE, index) in group_E"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-center">{{ gE.teamName }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </v-col>
-
-                <!-- Group F -->
-                <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-center">Group F</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(gF, index) in group_F"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-center">{{ gF.teamName }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </v-col>
-
-                <!-- Group G -->
-                <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-center">Group G</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(gG, index) in group_G"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-center">{{ gG.teamName }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </v-col>
-
-                <!-- Group H -->
-                <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-center">Group H</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(gH, index) in group_H"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-center">{{ gH.teamName }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
+                  <div class="px-5">
+                    <img
+                      src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fmanagers-tournament.svg?alt=media&token=ec47c873-a84d-4353-b823-e0fe7bff619b"
+                      width="220px"
+                      alt="..."
+                    />
+                  </div>
                 </v-col>
               </v-row>
-
-              <div class="mt-5">
-                <div class="d-flex align-center">
-                  <h1 class="text-subtitle-1 font-weight-bold">
-                    Tournament Fixtures
-                  </h1>
-
-                  <v-btn
-                    v-show="tournamentRef.isGroupStage == false"
-                    class="ml-auto"
-                    color="primary"
-                    outlined
-                    small
-                    @click="onLive"
-                  >
-                    <v-icon small>mdi-record</v-icon>Start Tournament</v-btn
-                  >
-                </div>
-
-                <!-- Group A Fixture -->
-                <div
-                  v-show="
-                    tournamentRef.gGroupNumber == 2 ||
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  class="text-center justify-center mt-3"
-                >
-                  <h1 class="text-subtitle-2 font-weight-bold text-left">
-                    Group A
-                  </h1>
-
-                  <v-row>
-                    <v-col
-                      v-for="(fixture, index) in fixture_A"
-                      :key="index"
-                      cols="12"
-                    >
-                      <v-card class="pa-2" outlined>
-                        <v-row class="d-flex align-center">
-                          <v-btn
-                            v-show="
-                              tournamentRef.isGroupStage == true &&
-                              fixture.isFulltime == false
-                            "
-                            class="ml-auto mx-3 mb-n8"
-                            @click="updateResult(fixture, fixture_A, table_A)"
-                            color="grey darken-1"
-                            icon
-                          >
-                            <v-icon>mdi-square-edit-outline</v-icon>
-                          </v-btn>
-                        </v-row>
-
-                        <v-row class="d-flex justify-center align-center">
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.homeTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
-
-                          <v-col cols="2">
-                            <h1
-                              v-show="
-                                fixture.isMatchStart == true &&
-                                fixture.isFulltime == false
-                              "
-                              class="text-caption text-active"
-                            >
-                              Live
-                            </h1>
-
-                            <h1
-                              v-show="
-                                tournamentRef.isGroupStage == true &&
-                                fixture.isFulltime == true
-                              "
-                              class="text-caption text-grey"
-                            >
-                              Full-Time
-                            </h1>
-
-                            <v-chip
-                              class="ma-1 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
-
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </div>
-
-                <!-- Group B Fixture -->
-                <div
-                  v-show="
-                    tournamentRef.gGroupNumber == 2 ||
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  class="text-center justify-center mt-3"
-                >
-                  <h1 class="text-subtitle-2 font-weight-bold text-left">
-                    Group B
-                  </h1>
-
-                  <v-row>
-                    <v-col
-                      v-for="(fixture, index) in fixture_B"
-                      :key="index"
-                      cols="12"
-                    >
-                      <v-card class="pa-2" outlined>
-                        <v-row class="d-flex align-center">
-                          <v-btn
-                            v-show="
-                              tournamentRef.isGroupStage == true &&
-                              fixture.isFulltime == false
-                            "
-                            class="ml-auto mx-3 mb-n8"
-                            @click="updateResult(fixture, fixture_B, table_B)"
-                            color="grey darken-1"
-                            icon
-                          >
-                            <v-icon>mdi-square-edit-outline</v-icon>
-                          </v-btn>
-                        </v-row>
-
-                        <v-row class="d-flex justify-center align-center">
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.homeTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
-
-                          <v-col cols="2">
-                            <h1
-                              v-show="
-                                fixture.isMatchStart == true &&
-                                fixture.isFulltime == false
-                              "
-                              class="text-caption text-active"
-                            >
-                              Live
-                            </h1>
-
-                            <h1
-                              v-show="
-                                tournamentRef.isGroupStage == true &&
-                                fixture.isFulltime == true
-                              "
-                              class="text-caption text-grey"
-                            >
-                              Full-Time
-                            </h1>
-
-                            <v-chip
-                              class="ma-1 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
-
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </div>
-
-                <!-- Group C Fixture -->
-                <div
-                  v-show="
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  class="text-center justify-center mt-3"
-                >
-                  <h1 class="text-subtitle-2 font-weight-bold text-left">
-                    Group C
-                  </h1>
-
-                  <v-row>
-                    <v-col
-                      v-for="(fixture, index) in fixture_C"
-                      :key="index"
-                      cols="12"
-                    >
-                      <v-card class="pa-2" outlined>
-                        <v-row class="d-flex align-center">
-                          <v-btn
-                            v-show="
-                              tournamentRef.isGroupStage == true &&
-                              fixture.isFulltime == false
-                            "
-                            class="ml-auto mx-3 mb-n8"
-                            @click="updateResult(fixture, fixture_C, table_C)"
-                            color="grey darken-1"
-                            icon
-                          >
-                            <v-icon>mdi-square-edit-outline</v-icon>
-                          </v-btn>
-                        </v-row>
-
-                        <v-row class="d-flex justify-center align-center">
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.homeTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
-
-                          <v-col cols="2">
-                            <h1
-                              v-show="
-                                fixture.isMatchStart == true &&
-                                fixture.isFulltime == false
-                              "
-                              class="text-caption text-active"
-                            >
-                              Live
-                            </h1>
-
-                            <h1
-                              v-show="
-                                tournamentRef.isGroupStage == true &&
-                                fixture.isFulltime == true
-                              "
-                              class="text-caption text-grey"
-                            >
-                              Full-Time
-                            </h1>
-
-                            <v-chip
-                              class="ma-1 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
-
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </div>
-
-                <!-- Group D Fixture -->
-                <div
-                  v-show="
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  class="text-center justify-center mt-3"
-                >
-                  <h1 class="text-subtitle-2 font-weight-bold text-left">
-                    Group D
-                  </h1>
-
-                  <v-row>
-                    <v-col
-                      v-for="(fixture, index) in fixture_D"
-                      :key="index"
-                      cols="12"
-                    >
-                      <v-card class="pa-2" outlined>
-                        <v-row class="d-flex align-center">
-                          <v-btn
-                            v-show="
-                              tournamentRef.isGroupStage == true &&
-                              fixture.isFulltime == false
-                            "
-                            class="ml-auto mx-3 mb-n8"
-                            @click="updateResult(fixture, fixture_D, table_D)"
-                            color="grey darken-1"
-                            icon
-                          >
-                            <v-icon>mdi-square-edit-outline</v-icon>
-                          </v-btn>
-                        </v-row>
-
-                        <v-row class="d-flex justify-center align-center">
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.homeTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
-
-                          <v-col cols="2">
-                            <h1
-                              v-show="
-                                fixture.isMatchStart == true &&
-                                fixture.isFulltime == false
-                              "
-                              class="text-caption text-active"
-                            >
-                              Live
-                            </h1>
-
-                            <h1
-                              v-show="
-                                tournamentRef.isGroupStage == true &&
-                                fixture.isFulltime == true
-                              "
-                              class="text-caption text-grey"
-                            >
-                              Full-Time
-                            </h1>
-
-                            <v-chip
-                              class="ma-1 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
-
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </div>
-
-                <!-- Group E Fixture -->
-                <div
-                  v-show="tournamentRef.gGroupNumber == 8"
-                  class="text-center justify-center mt-3"
-                >
-                  <h1 class="text-subtitle-2 font-weight-bold text-left">
-                    Group E
-                  </h1>
-
-                  <v-row>
-                    <v-col
-                      v-for="(fixture, index) in fixture_E"
-                      :key="index"
-                      cols="12"
-                    >
-                      <v-card class="pa-2" outlined>
-                        <v-row class="d-flex align-center">
-                          <v-btn
-                            v-show="
-                              tournamentRef.isGroupStage == true &&
-                              fixture.isFulltime == false
-                            "
-                            class="ml-auto mx-3 mb-n8"
-                            @click="updateResult(fixture, fixture_E, table_E)"
-                            color="grey darken-1"
-                            icon
-                          >
-                            <v-icon>mdi-square-edit-outline</v-icon>
-                          </v-btn>
-                        </v-row>
-
-                        <v-row class="d-flex justify-center align-center">
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.homeTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
-
-                          <v-col cols="2">
-                            <h1
-                              v-show="
-                                fixture.isMatchStart == true &&
-                                fixture.isFulltime == false
-                              "
-                              class="text-caption text-active"
-                            >
-                              Live
-                            </h1>
-
-                            <h1
-                              v-show="
-                                tournamentRef.isGroupStage == true &&
-                                fixture.isFulltime == true
-                              "
-                              class="text-caption text-grey"
-                            >
-                              Full-Time
-                            </h1>
-
-                            <v-chip
-                              class="ma-1 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
-
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </div>
-
-                <!-- Group F Fixture -->
-                <div
-                  v-show="tournamentRef.gGroupNumber == 8"
-                  class="text-center justify-center mt-3"
-                >
-                  <h1 class="text-subtitle-2 font-weight-bold text-left">
-                    Group F
-                  </h1>
-
-                  <v-row>
-                    <v-col
-                      v-for="(fixture, index) in fixture_F"
-                      :key="index"
-                      cols="12"
-                    >
-                      <v-card class="pa-2" outlined>
-                        <v-row class="d-flex align-center">
-                          <v-btn
-                            v-show="
-                              tournamentRef.isGroupStage == true &&
-                              fixture.isFulltime == false
-                            "
-                            class="ml-auto mx-3 mb-n8"
-                            @click="updateResult(fixture, fixture_F, table_F)"
-                            color="grey darken-1"
-                            icon
-                          >
-                            <v-icon>mdi-square-edit-outline</v-icon>
-                          </v-btn>
-                        </v-row>
-
-                        <v-row class="d-flex justify-center align-center">
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.homeTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
-
-                          <v-col cols="2">
-                            <h1
-                              v-show="
-                                fixture.isMatchStart == true &&
-                                fixture.isFulltime == false
-                              "
-                              class="text-caption text-active"
-                            >
-                              Live
-                            </h1>
-
-                            <h1
-                              v-show="
-                                tournamentRef.isGroupStage == true &&
-                                fixture.isFulltime == true
-                              "
-                              class="text-caption text-grey"
-                            >
-                              Full-Time
-                            </h1>
-
-                            <v-chip
-                              class="ma-1 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
-
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </div>
-
-                <!-- Group G Fixture -->
-                <div
-                  v-show="tournamentRef.gGroupNumber == 8"
-                  class="text-center justify-center mt-3"
-                >
-                  <h1 class="text-subtitle-2 font-weight-bold text-left">
-                    Group G
-                  </h1>
-
-                  <v-row>
-                    <v-col
-                      v-for="(fixture, index) in fixture_G"
-                      :key="index"
-                      cols="12"
-                    >
-                      <v-card class="pa-2" outlined>
-                        <v-row class="d-flex align-center">
-                          <v-btn
-                            v-show="
-                              tournamentRef.isGroupStage == true &&
-                              fixture.isFulltime == false
-                            "
-                            class="ml-auto mx-3 mb-n8"
-                            @click="updateResult(fixture, fixture_G, table_G)"
-                            color="grey darken-1"
-                            icon
-                          >
-                            <v-icon>mdi-square-edit-outline</v-icon>
-                          </v-btn>
-                        </v-row>
-
-                        <v-row class="d-flex justify-center align-center">
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.homeTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
-
-                          <v-col cols="2">
-                            <h1
-                              v-show="
-                                fixture.isMatchStart == true &&
-                                fixture.isFulltime == false
-                              "
-                              class="text-caption text-active"
-                            >
-                              Live
-                            </h1>
-
-                            <h1
-                              v-show="
-                                tournamentRef.isGroupStage == true &&
-                                fixture.isFulltime == true
-                              "
-                              class="text-caption text-grey"
-                            >
-                              Full-Time
-                            </h1>
-
-                            <v-chip
-                              class="ma-1 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
-
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </div>
-
-                <!-- Group H Fixture -->
-                <div
-                  v-show="tournamentRef.gGroupNumber == 8"
-                  class="text-center justify-center mt-3"
-                >
-                  <h1 class="text-subtitle-2 font-weight-bold text-left">
-                    Group H
-                  </h1>
-
-                  <v-row>
-                    <v-col
-                      v-for="(fixture, index) in fixture_H"
-                      :key="index"
-                      cols="12"
-                    >
-                      <v-card class="pa-2" outlined>
-                        <v-row class="d-flex align-center">
-                          <v-btn
-                            v-show="
-                              tournamentRef.isGroupStage == true &&
-                              fixture.isFulltime == false
-                            "
-                            class="ml-auto mx-3 mb-n8"
-                            @click="updateResult(fixture, fixture_H, table_H)"
-                            color="grey darken-1"
-                            icon
-                          >
-                            <v-icon>mdi-square-edit-outline</v-icon>
-                          </v-btn>
-                        </v-row>
-
-                        <v-row class="d-flex justify-center align-center">
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.homeTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.homeScore }}
-                            </h1>
-                          </v-col>
-
-                          <v-col cols="2">
-                            <h1
-                              v-show="
-                                fixture.isMatchStart == true &&
-                                fixture.isFulltime == false
-                              "
-                              class="text-caption text-active"
-                            >
-                              Live
-                            </h1>
-
-                            <h1
-                              v-show="
-                                tournamentRef.isGroupStage == true &&
-                                fixture.isFulltime == true
-                              "
-                              class="text-caption text-grey"
-                            >
-                              Full-Time
-                            </h1>
-
-                            <v-chip
-                              class="ma-1 mx-auto"
-                              color="primary"
-                              small
-                              label
-                            >
-                              Versus
-                            </v-chip>
-                          </v-col>
-
-                          <v-col cols="4">
-                            <h1
-                              class="text-subtitle-1 font-weight-medium text-center"
-                            >
-                              {{ fixture.awayTeam }}
-                            </h1>
-
-                            <h1
-                              v-show="tournamentRef.isGroupStage == true"
-                              class="text-center"
-                            >
-                              {{ fixture.awayScore }}
-                            </h1>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </div>
-              </div>
-
-              <div class="mt-5">
-                <div class="d-flex align-center">
-                  <h1 class="text-subtitle-1 font-weight-bold">Standings</h1>
-                </div>
-
-                <!-- Group A Table -->
-                <div
-                  v-show="
-                    tournamentRef.gGroupNumber == 2 ||
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  class="text-center justify-center mt-3"
-                >
-                  <div class="d-flex align-center">
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group A
-                    </h1>
-                    <v-btn
-                      v-show="tournamentRef.isGroupStage == true"
-                      class="ml-auto text-capitalize"
-                      @click="getQualifiedTeam(table_A)"
-                      dark
-                      text
-                      color="primary"
-                      small
-                    >
-                      Finalize Result
-                    </v-btn>
-                  </div>
-
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-right text-grey"></th>
-                            <th class="text-left text-grey">Team</th>
-                            <th class="text-center text-grey">MP</th>
-                            <th class="text-center text-grey">W</th>
-                            <th class="text-center text-grey">D</th>
-                            <th class="text-center text-grey">L</th>
-                            <th class="text-center text-grey">GF</th>
-                            <th class="text-center text-grey">GA</th>
-                            <th class="text-center text-grey">GD</th>
-                            <th class="text-center text-grey">Pts</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(table, index) in table_A"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-right">{{ index + 1 }}</td>
-                            <td class="text-left">
-                              {{ table.teamName }}
-                            </td>
-                            <td class="text-center">{{ table.matches }}</td>
-                            <td class="text-center">{{ table.win }}</td>
-                            <td class="text-center">{{ table.draw }}</td>
-                            <td class="text-center">{{ table.lost }}</td>
-                            <td class="text-center">{{ table.goals_for }}</td>
-                            <td class="text-center">
-                              {{ table.goals_against }}
-                            </td>
-                            <td class="text-center">
-                              {{ table.goals_difference }}
-                            </td>
-                            <td class="text-center">{{ table.points }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </div>
-
-                <!-- Group B Table -->
-                <div
-                  v-show="
-                    tournamentRef.gGroupNumber == 2 ||
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  class="text-center justify-center mt-5"
-                >
-                  <div class="d-flex align-center">
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group B
-                    </h1>
-                    <v-btn
-                      v-show="tournamentRef.isGroupStage == true"
-                      class="ml-auto text-capitalize"
-                      @click="getQualifiedTeam(table_B)"
-                      dark
-                      text
-                      color="primary"
-                      small
-                    >
-                      Finalize Result
-                    </v-btn>
-                  </div>
-
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-right text-grey"></th>
-                            <th class="text-left text-grey">Team</th>
-                            <th class="text-center text-grey">MP</th>
-                            <th class="text-center text-grey">W</th>
-                            <th class="text-center text-grey">D</th>
-                            <th class="text-center text-grey">L</th>
-                            <th class="text-center text-grey">GF</th>
-                            <th class="text-center text-grey">GA</th>
-                            <th class="text-center text-grey">GD</th>
-                            <th class="text-center text-grey">Pts</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(table, index) in table_B"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-right">{{ index + 1 }}</td>
-                            <td class="text-left">{{ table.teamName }}</td>
-                            <td class="text-center">{{ table.matches }}</td>
-                            <td class="text-center">{{ table.win }}</td>
-                            <td class="text-center">{{ table.draw }}</td>
-                            <td class="text-center">{{ table.lost }}</td>
-                            <td class="text-center">{{ table.goals_for }}</td>
-                            <td class="text-center">
-                              {{ table.goals_against }}
-                            </td>
-                            <td class="text-center">
-                              {{ table.goals_difference }}
-                            </td>
-                            <td class="text-center">{{ table.points }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </div>
-
-                <!-- Group C Table -->
-                <div
-                  v-show="
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  class="text-center justify-center mt-5"
-                >
-                  <div class="d-flex align-center">
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group C
-                    </h1>
-                    <v-btn
-                      v-show="tournamentRef.isGroupStage == true"
-                      class="ml-auto text-capitalize"
-                      @click="getQualifiedTeam(table_C)"
-                      dark
-                      text
-                      color="primary"
-                      small
-                    >
-                      Finalize Result
-                    </v-btn>
-                  </div>
-
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-right text-grey"></th>
-                            <th class="text-left text-grey">Team</th>
-                            <th class="text-center text-grey">MP</th>
-                            <th class="text-center text-grey">W</th>
-                            <th class="text-center text-grey">D</th>
-                            <th class="text-center text-grey">L</th>
-                            <th class="text-center text-grey">GF</th>
-                            <th class="text-center text-grey">GA</th>
-                            <th class="text-center text-grey">GD</th>
-                            <th class="text-center text-grey">Pts</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(table, index) in table_C"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-right">{{ index + 1 }}</td>
-                            <td class="text-left">{{ table.teamName }}</td>
-                            <td class="text-center">{{ table.matches }}</td>
-                            <td class="text-center">{{ table.win }}</td>
-                            <td class="text-center">{{ table.draw }}</td>
-                            <td class="text-center">{{ table.lost }}</td>
-                            <td class="text-center">{{ table.goals_for }}</td>
-                            <td class="text-center">
-                              {{ table.goals_against }}
-                            </td>
-                            <td class="text-center">
-                              {{ table.goals_difference }}
-                            </td>
-                            <td class="text-center">{{ table.points }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </div>
-
-                <!-- Group D Table -->
-                <div
-                  v-show="
-                    tournamentRef.gGroupNumber == 4 ||
-                    tournamentRef.gGroupNumber == 8
-                  "
-                  class="text-center justify-center mt-5"
-                >
-                  <div class="d-flex align-center">
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group D
-                    </h1>
-                    <v-btn
-                      v-show="tournamentRef.isGroupStage == true"
-                      class="ml-auto text-capitalize"
-                      @click="getQualifiedTeam(table_D)"
-                      dark
-                      text
-                      color="primary"
-                      small
-                    >
-                      Finalize Result
-                    </v-btn>
-                  </div>
-
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-right text-grey"></th>
-                            <th class="text-left text-grey">Team</th>
-                            <th class="text-center text-grey">MP</th>
-                            <th class="text-center text-grey">W</th>
-                            <th class="text-center text-grey">D</th>
-                            <th class="text-center text-grey">L</th>
-                            <th class="text-center text-grey">GF</th>
-                            <th class="text-center text-grey">GA</th>
-                            <th class="text-center text-grey">GD</th>
-                            <th class="text-center text-grey">Pts</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(table, index) in table_D"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-right">{{ index + 1 }}</td>
-                            <td class="text-left">{{ table.teamName }}</td>
-                            <td class="text-center">{{ table.matches }}</td>
-                            <td class="text-center">{{ table.win }}</td>
-                            <td class="text-center">{{ table.draw }}</td>
-                            <td class="text-center">{{ table.lost }}</td>
-                            <td class="text-center">{{ table.goals_for }}</td>
-                            <td class="text-center">
-                              {{ table.goals_against }}
-                            </td>
-                            <td class="text-center">
-                              {{ table.goals_difference }}
-                            </td>
-                            <td class="text-center">{{ table.points }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </div>
-
-                <!-- Group E Table -->
-                <div
-                  v-show="tournamentRef.gGroupNumber == 8"
-                  class="text-center justify-center mt-5"
-                >
-                  <div class="d-flex align-center">
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group E
-                    </h1>
-                    <v-btn
-                      v-show="tournamentRef.isGroupStage == true"
-                      class="ml-auto text-capitalize"
-                      @click="getQualifiedTeam(table_E)"
-                      dark
-                      text
-                      color="primary"
-                      small
-                    >
-                      Finalize Result
-                    </v-btn>
-                  </div>
-
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-right text-grey"></th>
-                            <th class="text-left text-grey">Team</th>
-                            <th class="text-center text-grey">MP</th>
-                            <th class="text-center text-grey">W</th>
-                            <th class="text-center text-grey">D</th>
-                            <th class="text-center text-grey">L</th>
-                            <th class="text-center text-grey">GF</th>
-                            <th class="text-center text-grey">GA</th>
-                            <th class="text-center text-grey">GD</th>
-                            <th class="text-center text-grey">Pts</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(table, index) in table_E"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-right">{{ index + 1 }}</td>
-                            <td class="text-left">{{ table.teamName }}</td>
-                            <td class="text-center">{{ table.matches }}</td>
-                            <td class="text-center">{{ table.win }}</td>
-                            <td class="text-center">{{ table.draw }}</td>
-                            <td class="text-center">{{ table.lost }}</td>
-                            <td class="text-center">{{ table.goals_for }}</td>
-                            <td class="text-center">
-                              {{ table.goals_against }}
-                            </td>
-                            <td class="text-center">
-                              {{ table.goals_difference }}
-                            </td>
-                            <td class="text-center">{{ table.points }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </div>
-
-                <!-- Group F Table -->
-                <div
-                  v-show="tournamentRef.gGroupNumber == 8"
-                  class="text-center justify-center mt-5"
-                >
-                  <div class="d-flex align-center">
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group F
-                    </h1>
-                    <v-btn
-                      v-show="tournamentRef.isGroupStage == true"
-                      class="ml-auto text-capitalize"
-                      @click="getQualifiedTeam(table_F)"
-                      dark
-                      text
-                      color="primary"
-                      small
-                    >
-                      Finalize Result
-                    </v-btn>
-                  </div>
-
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-right text-grey"></th>
-                            <th class="text-left text-grey">Team</th>
-                            <th class="text-center text-grey">MP</th>
-                            <th class="text-center text-grey">W</th>
-                            <th class="text-center text-grey">D</th>
-                            <th class="text-center text-grey">L</th>
-                            <th class="text-center text-grey">GF</th>
-                            <th class="text-center text-grey">GA</th>
-                            <th class="text-center text-grey">GD</th>
-                            <th class="text-center text-grey">Pts</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(table, index) in table_F"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-right">{{ index + 1 }}</td>
-                            <td class="text-left">{{ table.teamName }}</td>
-                            <td class="text-center">{{ table.matches }}</td>
-                            <td class="text-center">{{ table.win }}</td>
-                            <td class="text-center">{{ table.draw }}</td>
-                            <td class="text-center">{{ table.lost }}</td>
-                            <td class="text-center">{{ table.goals_for }}</td>
-                            <td class="text-center">
-                              {{ table.goals_against }}
-                            </td>
-                            <td class="text-center">
-                              {{ table.goals_difference }}
-                            </td>
-                            <td class="text-center">{{ table.points }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </div>
-
-                <!-- Group G Table -->
-                <div
-                  v-show="tournamentRef.gGroupNumber == 8"
-                  class="text-center justify-center mt-5"
-                >
-                  <div class="d-flex align-center">
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group G
-                    </h1>
-                    <v-btn
-                      v-show="tournamentRef.isGroupStage == true"
-                      class="ml-auto text-capitalize"
-                      @click="getQualifiedTeam(table_G)"
-                      dark
-                      text
-                      color="primary"
-                      small
-                    >
-                      Finalize Result
-                    </v-btn>
-                  </div>
-
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-right text-grey"></th>
-                            <th class="text-left text-grey">Team</th>
-                            <th class="text-center text-grey">MP</th>
-                            <th class="text-center text-grey">W</th>
-                            <th class="text-center text-grey">D</th>
-                            <th class="text-center text-grey">L</th>
-                            <th class="text-center text-grey">GF</th>
-                            <th class="text-center text-grey">GA</th>
-                            <th class="text-center text-grey">GD</th>
-                            <th class="text-center text-grey">Pts</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(table, index) in table_G"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-right">{{ index + 1 }}</td>
-                            <td class="text-left">{{ table.teamName }}</td>
-                            <td class="text-center">{{ table.matches }}</td>
-                            <td class="text-center">{{ table.win }}</td>
-                            <td class="text-center">{{ table.draw }}</td>
-                            <td class="text-center">{{ table.lost }}</td>
-                            <td class="text-center">{{ table.goals_for }}</td>
-                            <td class="text-center">
-                              {{ table.goals_against }}
-                            </td>
-                            <td class="text-center">
-                              {{ table.goals_difference }}
-                            </td>
-                            <td class="text-center">{{ table.points }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </div>
-
-                <!-- Group H Table -->
-                <div
-                  v-show="tournamentRef.gGroupNumber == 8"
-                  class="text-center justify-center mt-5"
-                >
-                  <div class="d-flex align-center">
-                    <h1 class="text-subtitle-2 font-weight-bold text-left mb-2">
-                      Group H
-                    </h1>
-                    <v-btn
-                      v-show="tournamentRef.isGroupStage == true"
-                      class="ml-auto text-capitalize"
-                      @click="getQualifiedTeam(table_H)"
-                      dark
-                      text
-                      color="primary"
-                      small
-                    >
-                      Finalize Result
-                    </v-btn>
-                  </div>
-
-                  <v-card outlined>
-                    <v-simple-table>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-right text-grey"></th>
-                            <th class="text-left text-grey">Team</th>
-                            <th class="text-center text-grey">MP</th>
-                            <th class="text-center text-grey">W</th>
-                            <th class="text-center text-grey">D</th>
-                            <th class="text-center text-grey">L</th>
-                            <th class="text-center text-grey">GF</th>
-                            <th class="text-center text-grey">GA</th>
-                            <th class="text-center text-grey">GD</th>
-                            <th class="text-center text-grey">Pts</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(table, index) in table_H"
-                            :key="index"
-                            class="text-center"
-                          >
-                            <td class="text-right">{{ index + 1 }}</td>
-                            <td class="text-left">{{ table.teamName }}</td>
-                            <td class="text-center">{{ table.matches }}</td>
-                            <td class="text-center">{{ table.win }}</td>
-                            <td class="text-center">{{ table.draw }}</td>
-                            <td class="text-center">{{ table.lost }}</td>
-                            <td class="text-center">{{ table.goals_for }}</td>
-                            <td class="text-center">
-                              {{ table.goals_against }}
-                            </td>
-                            <td class="text-center">
-                              {{ table.goals_difference }}
-                            </td>
-                            <td class="text-center">{{ table.points }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-card>
-                </div>
-              </div>
-            </div>
-          </v-card>
-        </v-col>
-
-        <!-- Right Side -->
-        <v-col cols="12" lg="4" xl="3" order="1" order-lg="2">
-          <eventSponsorship />
-        </v-col>
-      </v-row>
-
-      <!-- Update Result Overlay -->
-      <v-overlay :opacity="updateResultOpacity" :value="updateResultOverlay">
-        <ValidationObserver ref="observer" v-slot="{ invalid }">
-          <v-card
-            class="mx-auto py-5 px-10 black--text d-block align-center"
-            min-height="300"
-            width="700"
-            color="white"
-            light
-            outlined
-          >
-            <v-btn
-              @click="updateResultOverlay = false"
-              class="mt-n3 ml-n8"
-              icon
+            </v-card>
+
+            <!-- If Grouping is Drawed -->
+            <v-card
+              v-else
+              class="mx-auto py-10 mt-n3 mt-lg-0 px-9 mb-5"
+              outlined
+              tile
             >
-              <v-icon>mdi-close-circle</v-icon>
-            </v-btn>
-            <!-- Title -->
-            <div class="d-flex justify-center mb-4 mt-n4">
-              <h1 class="text-h6 font-weight-bold">Report Score</h1>
-            </div>
+              <div>
+                <div class="d-flex align-center">
+                  <h1 class="text-subtitle-1 font-weight-bold">Group Stage</h1>
+                </div>
 
-            <div class="mb-6">
-              <v-card class="pa-4" outlined>
-                <v-row class="d-flex justify-center align-center">
-                  <v-col cols="4" class="d-block">
-                    <h1 class="text-subtitle-1 font-weight-medium text-center">
-                      {{ resultData.homeTeam }}
-                    </h1>
-
-                    <v-col cols="8" class="mx-auto">
-                      <ValidationProvider
-                        v-slot="{ errors }"
-                        name="Home Score"
-                        rules="min_value:0|required"
-                      >
-                        <v-text-field
-                          v-show="resultData.isMatchStart == true"
-                          class="text-h4 mb-n10 font-weight-bold"
-                          v-model="resultData.homeScore"
-                          :error-messages="errors"
-                          type="number"
-                          min="0"
-                          max="100"
-                          outlined
-                        ></v-text-field>
-                      </ValidationProvider>
-
-                      <h1
-                        v-show="resultData.isMatchStart == false"
-                        class="text-center mt-n2"
-                      >
-                        {{ resultData.homeScore }}
-                      </h1>
-                    </v-col>
+                <v-row>
+                  <!-- Group A -->
+                  <v-col
+                    v-show="
+                      tournamentRef.gGroupNumber == 2 ||
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    cols="6"
+                  >
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-center">Group A</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(gA, index) in group_A"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-center">
+                                {{ gA.teamName }}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
                   </v-col>
 
-                  <v-col cols="2" class="text-center">
-                    <h1 class="text-caption text-grey">
-                      Match {{ resultData.round }}
-                    </h1>
-                    <v-chip
-                      class="ma-2"
-                      color="green darken-1"
-                      dark
-                      small
-                      label
-                    >
-                      Versus
-                    </v-chip>
+                  <!-- Group B -->
+                  <v-col
+                    v-show="
+                      tournamentRef.gGroupNumber == 2 ||
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    cols="6"
+                  >
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-center">Group B</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(gB, index) in group_B"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-center">{{ gB.teamName }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
                   </v-col>
 
-                  <v-col cols="4" class="d-block">
-                    <h1 class="text-subtitle-1 font-weight-medium text-center">
-                      {{ resultData.awayTeam }}
-                    </h1>
+                  <!-- Group C -->
+                  <v-col
+                    v-show="
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    cols="6"
+                  >
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-center">Group C</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(gC, index) in group_C"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-center">{{ gC.teamName }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </v-col>
 
-                    <v-col cols="8" class="mx-auto">
-                      <ValidationProvider
-                        v-slot="{ errors }"
-                        name="Away Score"
-                        rules="min_value:0|required"
-                      >
-                        <v-text-field
-                          v-show="resultData.isMatchStart == true"
-                          class="text-h4 mb-n10 font-weight-bold"
-                          v-model="resultData.awayScore"
-                          :error-messages="errors"
-                          type="number"
-                          min="0"
-                          max="100"
-                          outlined
-                        ></v-text-field>
-                      </ValidationProvider>
+                  <!-- Group D -->
+                  <v-col
+                    v-show="
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    cols="6"
+                  >
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-center">Group D</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(gD, index) in group_D"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-center">{{ gD.teamName }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </v-col>
 
-                      <h1
-                        v-show="resultData.isMatchStart == false"
-                        class="text-center mt-n2"
-                      >
-                        {{ resultData.awayScore }}
-                      </h1>
-                    </v-col>
+                  <!-- Group E -->
+                  <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-center">Group E</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(gE, index) in group_E"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-center">{{ gE.teamName }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </v-col>
+
+                  <!-- Group F -->
+                  <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-center">Group F</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(gF, index) in group_F"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-center">{{ gF.teamName }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </v-col>
+
+                  <!-- Group G -->
+                  <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-center">Group G</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(gG, index) in group_G"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-center">{{ gG.teamName }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </v-col>
+
+                  <!-- Group H -->
+                  <v-col v-show="tournamentRef.gGroupNumber == 8" cols="6">
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-center">Group H</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(gH, index) in group_H"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-center">{{ gH.teamName }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
                   </v-col>
                 </v-row>
-              </v-card>
-            </div>
 
-            <div class="d-flex justify-end mb-2">
+                <div class="mt-5">
+                  <div class="d-flex align-center">
+                    <h1 class="text-subtitle-1 font-weight-bold">
+                      Tournament Fixtures
+                    </h1>
+
+                    <v-btn
+                      v-show="tournamentRef.isGroupStage == false"
+                      class="ml-auto"
+                      color="primary"
+                      outlined
+                      small
+                      @click="onLive"
+                    >
+                      <v-icon small>mdi-record</v-icon>Start Tournament</v-btn
+                    >
+                  </div>
+
+                  <!-- Group A Fixture -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 2 ||
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
+                      Group A
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_A"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isGroupStage == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_A, table_A)"
+                              color="grey darken-1"
+                              icon
+                            >
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
+
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
+
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
+
+                              <h1
+                                v-show="
+                                  tournamentRef.isGroupStage == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group B Fixture -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 2 ||
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
+                      Group B
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_B"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isGroupStage == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_B, table_B)"
+                              color="grey darken-1"
+                              icon
+                            >
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
+
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
+
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
+
+                              <h1
+                                v-show="
+                                  tournamentRef.isGroupStage == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group C Fixture -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
+                      Group C
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_C"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isGroupStage == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_C, table_C)"
+                              color="grey darken-1"
+                              icon
+                            >
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
+
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
+
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
+
+                              <h1
+                                v-show="
+                                  tournamentRef.isGroupStage == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group D Fixture -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
+                      Group D
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_D"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isGroupStage == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_D, table_D)"
+                              color="grey darken-1"
+                              icon
+                            >
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
+
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
+
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
+
+                              <h1
+                                v-show="
+                                  tournamentRef.isGroupStage == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group E Fixture -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
+                      Group E
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_E"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isGroupStage == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_E, table_E)"
+                              color="grey darken-1"
+                              icon
+                            >
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
+
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
+
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
+
+                              <h1
+                                v-show="
+                                  tournamentRef.isGroupStage == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group F Fixture -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
+                      Group F
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_F"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isGroupStage == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_F, table_F)"
+                              color="grey darken-1"
+                              icon
+                            >
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
+
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
+
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
+
+                              <h1
+                                v-show="
+                                  tournamentRef.isGroupStage == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group G Fixture -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
+                      Group G
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_G"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isGroupStage == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_G, table_G)"
+                              color="grey darken-1"
+                              icon
+                            >
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
+
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
+
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
+
+                              <h1
+                                v-show="
+                                  tournamentRef.isGroupStage == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+
+                  <!-- Group H Fixture -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-3"
+                  >
+                    <h1 class="text-subtitle-2 font-weight-bold text-left">
+                      Group H
+                    </h1>
+
+                    <v-row>
+                      <v-col
+                        v-for="(fixture, index) in fixture_H"
+                        :key="index"
+                        cols="12"
+                      >
+                        <v-card class="pa-2" outlined>
+                          <v-row class="d-flex align-center">
+                            <v-btn
+                              v-show="
+                                tournamentRef.isGroupStage == true &&
+                                fixture.isFulltime == false
+                              "
+                              class="ml-auto mx-3 mb-n8"
+                              @click="updateResult(fixture, fixture_H, table_H)"
+                              color="grey darken-1"
+                              icon
+                            >
+                              <v-icon>mdi-square-edit-outline</v-icon>
+                            </v-btn>
+                          </v-row>
+
+                          <v-row class="d-flex justify-center align-center">
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.homeTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.homeScore }}
+                              </h1>
+                            </v-col>
+
+                            <v-col cols="2">
+                              <h1
+                                v-show="
+                                  fixture.isMatchStart == true &&
+                                  fixture.isFulltime == false
+                                "
+                                class="text-caption text-active"
+                              >
+                                Live
+                              </h1>
+
+                              <h1
+                                v-show="
+                                  tournamentRef.isGroupStage == true &&
+                                  fixture.isFulltime == true
+                                "
+                                class="text-caption text-grey"
+                              >
+                                Full-Time
+                              </h1>
+
+                              <v-chip
+                                class="ma-1 mx-auto"
+                                color="primary"
+                                small
+                                label
+                              >
+                                Versus
+                              </v-chip>
+                            </v-col>
+
+                            <v-col cols="4">
+                              <h1
+                                class="text-subtitle-1 font-weight-medium text-center"
+                              >
+                                {{ fixture.awayTeam }}
+                              </h1>
+
+                              <h1
+                                v-show="tournamentRef.isGroupStage == true"
+                                class="text-center"
+                              >
+                                {{ fixture.awayScore }}
+                              </h1>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </div>
+                </div>
+
+                <div class="mt-5">
+                  <div class="d-flex align-center">
+                    <h1 class="text-subtitle-1 font-weight-bold">Standings</h1>
+                  </div>
+
+                  <!-- Group A Table -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 2 ||
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-3"
+                  >
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group A
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isGroupStage == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_A)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
+
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-right text-grey"></th>
+                              <th class="text-left text-grey">Team</th>
+                              <th class="text-center text-grey">MP</th>
+                              <th class="text-center text-grey">W</th>
+                              <th class="text-center text-grey">D</th>
+                              <th class="text-center text-grey">L</th>
+                              <th class="text-center text-grey">GF</th>
+                              <th class="text-center text-grey">GA</th>
+                              <th class="text-center text-grey">GD</th>
+                              <th class="text-center text-grey">Pts</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(table, index) in table_A"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-right">{{ index + 1 }}</td>
+                              <td class="text-left">
+                                {{ table.teamName }}
+                              </td>
+                              <td class="text-center">{{ table.matches }}</td>
+                              <td class="text-center">{{ table.win }}</td>
+                              <td class="text-center">{{ table.draw }}</td>
+                              <td class="text-center">{{ table.lost }}</td>
+                              <td class="text-center">{{ table.goals_for }}</td>
+                              <td class="text-center">
+                                {{ table.goals_against }}
+                              </td>
+                              <td class="text-center">
+                                {{ table.goals_difference }}
+                              </td>
+                              <td class="text-center">{{ table.points }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </div>
+
+                  <!-- Group B Table -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 2 ||
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-5"
+                  >
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group B
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isGroupStage == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_B)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
+
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-right text-grey"></th>
+                              <th class="text-left text-grey">Team</th>
+                              <th class="text-center text-grey">MP</th>
+                              <th class="text-center text-grey">W</th>
+                              <th class="text-center text-grey">D</th>
+                              <th class="text-center text-grey">L</th>
+                              <th class="text-center text-grey">GF</th>
+                              <th class="text-center text-grey">GA</th>
+                              <th class="text-center text-grey">GD</th>
+                              <th class="text-center text-grey">Pts</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(table, index) in table_B"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-right">{{ index + 1 }}</td>
+                              <td class="text-left">{{ table.teamName }}</td>
+                              <td class="text-center">{{ table.matches }}</td>
+                              <td class="text-center">{{ table.win }}</td>
+                              <td class="text-center">{{ table.draw }}</td>
+                              <td class="text-center">{{ table.lost }}</td>
+                              <td class="text-center">{{ table.goals_for }}</td>
+                              <td class="text-center">
+                                {{ table.goals_against }}
+                              </td>
+                              <td class="text-center">
+                                {{ table.goals_difference }}
+                              </td>
+                              <td class="text-center">{{ table.points }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </div>
+
+                  <!-- Group C Table -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-5"
+                  >
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group C
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isGroupStage == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_C)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
+
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-right text-grey"></th>
+                              <th class="text-left text-grey">Team</th>
+                              <th class="text-center text-grey">MP</th>
+                              <th class="text-center text-grey">W</th>
+                              <th class="text-center text-grey">D</th>
+                              <th class="text-center text-grey">L</th>
+                              <th class="text-center text-grey">GF</th>
+                              <th class="text-center text-grey">GA</th>
+                              <th class="text-center text-grey">GD</th>
+                              <th class="text-center text-grey">Pts</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(table, index) in table_C"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-right">{{ index + 1 }}</td>
+                              <td class="text-left">{{ table.teamName }}</td>
+                              <td class="text-center">{{ table.matches }}</td>
+                              <td class="text-center">{{ table.win }}</td>
+                              <td class="text-center">{{ table.draw }}</td>
+                              <td class="text-center">{{ table.lost }}</td>
+                              <td class="text-center">{{ table.goals_for }}</td>
+                              <td class="text-center">
+                                {{ table.goals_against }}
+                              </td>
+                              <td class="text-center">
+                                {{ table.goals_difference }}
+                              </td>
+                              <td class="text-center">{{ table.points }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </div>
+
+                  <!-- Group D Table -->
+                  <div
+                    v-show="
+                      tournamentRef.gGroupNumber == 4 ||
+                      tournamentRef.gGroupNumber == 8
+                    "
+                    class="text-center justify-center mt-5"
+                  >
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group D
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isGroupStage == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_D)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
+
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-right text-grey"></th>
+                              <th class="text-left text-grey">Team</th>
+                              <th class="text-center text-grey">MP</th>
+                              <th class="text-center text-grey">W</th>
+                              <th class="text-center text-grey">D</th>
+                              <th class="text-center text-grey">L</th>
+                              <th class="text-center text-grey">GF</th>
+                              <th class="text-center text-grey">GA</th>
+                              <th class="text-center text-grey">GD</th>
+                              <th class="text-center text-grey">Pts</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(table, index) in table_D"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-right">{{ index + 1 }}</td>
+                              <td class="text-left">{{ table.teamName }}</td>
+                              <td class="text-center">{{ table.matches }}</td>
+                              <td class="text-center">{{ table.win }}</td>
+                              <td class="text-center">{{ table.draw }}</td>
+                              <td class="text-center">{{ table.lost }}</td>
+                              <td class="text-center">{{ table.goals_for }}</td>
+                              <td class="text-center">
+                                {{ table.goals_against }}
+                              </td>
+                              <td class="text-center">
+                                {{ table.goals_difference }}
+                              </td>
+                              <td class="text-center">{{ table.points }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </div>
+
+                  <!-- Group E Table -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-5"
+                  >
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group E
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isGroupStage == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_E)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
+
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-right text-grey"></th>
+                              <th class="text-left text-grey">Team</th>
+                              <th class="text-center text-grey">MP</th>
+                              <th class="text-center text-grey">W</th>
+                              <th class="text-center text-grey">D</th>
+                              <th class="text-center text-grey">L</th>
+                              <th class="text-center text-grey">GF</th>
+                              <th class="text-center text-grey">GA</th>
+                              <th class="text-center text-grey">GD</th>
+                              <th class="text-center text-grey">Pts</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(table, index) in table_E"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-right">{{ index + 1 }}</td>
+                              <td class="text-left">{{ table.teamName }}</td>
+                              <td class="text-center">{{ table.matches }}</td>
+                              <td class="text-center">{{ table.win }}</td>
+                              <td class="text-center">{{ table.draw }}</td>
+                              <td class="text-center">{{ table.lost }}</td>
+                              <td class="text-center">{{ table.goals_for }}</td>
+                              <td class="text-center">
+                                {{ table.goals_against }}
+                              </td>
+                              <td class="text-center">
+                                {{ table.goals_difference }}
+                              </td>
+                              <td class="text-center">{{ table.points }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </div>
+
+                  <!-- Group F Table -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-5"
+                  >
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group F
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isGroupStage == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_F)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
+
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-right text-grey"></th>
+                              <th class="text-left text-grey">Team</th>
+                              <th class="text-center text-grey">MP</th>
+                              <th class="text-center text-grey">W</th>
+                              <th class="text-center text-grey">D</th>
+                              <th class="text-center text-grey">L</th>
+                              <th class="text-center text-grey">GF</th>
+                              <th class="text-center text-grey">GA</th>
+                              <th class="text-center text-grey">GD</th>
+                              <th class="text-center text-grey">Pts</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(table, index) in table_F"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-right">{{ index + 1 }}</td>
+                              <td class="text-left">{{ table.teamName }}</td>
+                              <td class="text-center">{{ table.matches }}</td>
+                              <td class="text-center">{{ table.win }}</td>
+                              <td class="text-center">{{ table.draw }}</td>
+                              <td class="text-center">{{ table.lost }}</td>
+                              <td class="text-center">{{ table.goals_for }}</td>
+                              <td class="text-center">
+                                {{ table.goals_against }}
+                              </td>
+                              <td class="text-center">
+                                {{ table.goals_difference }}
+                              </td>
+                              <td class="text-center">{{ table.points }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </div>
+
+                  <!-- Group G Table -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-5"
+                  >
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group G
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isGroupStage == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_G)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
+
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-right text-grey"></th>
+                              <th class="text-left text-grey">Team</th>
+                              <th class="text-center text-grey">MP</th>
+                              <th class="text-center text-grey">W</th>
+                              <th class="text-center text-grey">D</th>
+                              <th class="text-center text-grey">L</th>
+                              <th class="text-center text-grey">GF</th>
+                              <th class="text-center text-grey">GA</th>
+                              <th class="text-center text-grey">GD</th>
+                              <th class="text-center text-grey">Pts</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(table, index) in table_G"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-right">{{ index + 1 }}</td>
+                              <td class="text-left">{{ table.teamName }}</td>
+                              <td class="text-center">{{ table.matches }}</td>
+                              <td class="text-center">{{ table.win }}</td>
+                              <td class="text-center">{{ table.draw }}</td>
+                              <td class="text-center">{{ table.lost }}</td>
+                              <td class="text-center">{{ table.goals_for }}</td>
+                              <td class="text-center">
+                                {{ table.goals_against }}
+                              </td>
+                              <td class="text-center">
+                                {{ table.goals_difference }}
+                              </td>
+                              <td class="text-center">{{ table.points }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </div>
+
+                  <!-- Group H Table -->
+                  <div
+                    v-show="tournamentRef.gGroupNumber == 8"
+                    class="text-center justify-center mt-5"
+                  >
+                    <div class="d-flex align-center">
+                      <h1
+                        class="text-subtitle-2 font-weight-bold text-left mb-2"
+                      >
+                        Group H
+                      </h1>
+                      <v-btn
+                        v-show="tournamentRef.isGroupStage == true"
+                        class="ml-auto text-capitalize"
+                        @click="getQualifiedTeam(table_H)"
+                        dark
+                        text
+                        color="primary"
+                        small
+                      >
+                        Finalize Result
+                      </v-btn>
+                    </div>
+
+                    <v-card outlined>
+                      <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-right text-grey"></th>
+                              <th class="text-left text-grey">Team</th>
+                              <th class="text-center text-grey">MP</th>
+                              <th class="text-center text-grey">W</th>
+                              <th class="text-center text-grey">D</th>
+                              <th class="text-center text-grey">L</th>
+                              <th class="text-center text-grey">GF</th>
+                              <th class="text-center text-grey">GA</th>
+                              <th class="text-center text-grey">GD</th>
+                              <th class="text-center text-grey">Pts</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(table, index) in table_H"
+                              :key="index"
+                              class="text-center"
+                            >
+                              <td class="text-right">{{ index + 1 }}</td>
+                              <td class="text-left">{{ table.teamName }}</td>
+                              <td class="text-center">{{ table.matches }}</td>
+                              <td class="text-center">{{ table.win }}</td>
+                              <td class="text-center">{{ table.draw }}</td>
+                              <td class="text-center">{{ table.lost }}</td>
+                              <td class="text-center">{{ table.goals_for }}</td>
+                              <td class="text-center">
+                                {{ table.goals_against }}
+                              </td>
+                              <td class="text-center">
+                                {{ table.goals_difference }}
+                              </td>
+                              <td class="text-center">{{ table.points }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </v-card>
+                  </div>
+                </div>
+              </div>
+            </v-card>
+          </v-col>
+
+          <!-- Right Side -->
+          <v-col cols="12" lg="4" xl="3" order="1" order-lg="2">
+            <eventSponsorship />
+          </v-col>
+        </v-row>
+
+        <!-- Update Result Overlay -->
+        <v-overlay :opacity="updateResultOpacity" :value="updateResultOverlay">
+          <ValidationObserver ref="observer" v-slot="{ invalid }">
+            <v-card
+              class="mx-auto py-5 px-10 black--text d-block align-center"
+              min-height="300"
+              width="700"
+              color="white"
+              light
+              outlined
+            >
               <v-btn
-                v-show="resultData.isMatchStart == false"
-                class="ml-auto font-weight-regular text-capitalize"
-                @click="onStartMatch(resultData, currentGroupData)"
-                width="150"
-                dark
-                depressed
-                color="orange darken-1"
+                @click="updateResultOverlay = false"
+                class="mt-n3 ml-n8"
+                icon
               >
-                Start Match
+                <v-icon>mdi-close-circle</v-icon>
               </v-btn>
+              <!-- Title -->
+              <div class="d-flex justify-center mb-4 mt-n4">
+                <h1 class="text-h6 font-weight-bold">Report Score</h1>
+              </div>
 
-              <v-btn
-                v-show="resultData.isMatchStart == true"
-                class="px-10 ml-2 font-weight-regular text-capitalize"
-                color="primary"
-                width="150"
-                @click="onLiveUpdate(resultData, currentGroupData)"
-                :disabled="invalid"
-                outlined
-              >
-                Live Update</v-btn
-              >
+              <div class="mb-6">
+                <v-card class="pa-4" outlined>
+                  <v-row class="d-flex justify-center align-center">
+                    <v-col cols="4" class="d-block">
+                      <h1
+                        class="text-subtitle-1 font-weight-medium text-center"
+                      >
+                        {{ resultData.homeTeam }}
+                      </h1>
 
-              <v-btn
-                v-show="resultData.isMatchStart == true"
-                class="px-10 ml-2 font-weight-regular text-capitalize"
-                color="primary"
-                width="150"
-                @click="
-                  onUpdateResult(resultData, currentGroupData, currentTableData)
-                "
-                :disabled="invalid"
-                depressed
-              >
-                Fulltime</v-btn
-              >
-            </div>
-          </v-card>
-        </ValidationObserver>
-      </v-overlay>
+                      <v-col cols="8" class="mx-auto">
+                        <ValidationProvider
+                          v-slot="{ errors }"
+                          name="Home Score"
+                          rules="min_value:0|required"
+                        >
+                          <v-text-field
+                            v-show="resultData.isMatchStart == true"
+                            class="text-h4 mb-n10 font-weight-bold"
+                            v-model="resultData.homeScore"
+                            :error-messages="errors"
+                            type="number"
+                            min="0"
+                            max="100"
+                            outlined
+                          ></v-text-field>
+                        </ValidationProvider>
+
+                        <h1
+                          v-show="resultData.isMatchStart == false"
+                          class="text-center mt-n2"
+                        >
+                          {{ resultData.homeScore }}
+                        </h1>
+                      </v-col>
+                    </v-col>
+
+                    <v-col cols="2" class="text-center">
+                      <h1 class="text-caption text-grey">
+                        Match {{ resultData.round }}
+                      </h1>
+                      <v-chip
+                        class="ma-2"
+                        color="green darken-1"
+                        dark
+                        small
+                        label
+                      >
+                        Versus
+                      </v-chip>
+                    </v-col>
+
+                    <v-col cols="4" class="d-block">
+                      <h1
+                        class="text-subtitle-1 font-weight-medium text-center"
+                      >
+                        {{ resultData.awayTeam }}
+                      </h1>
+
+                      <v-col cols="8" class="mx-auto">
+                        <ValidationProvider
+                          v-slot="{ errors }"
+                          name="Away Score"
+                          rules="min_value:0|required"
+                        >
+                          <v-text-field
+                            v-show="resultData.isMatchStart == true"
+                            class="text-h4 mb-n10 font-weight-bold"
+                            v-model="resultData.awayScore"
+                            :error-messages="errors"
+                            type="number"
+                            min="0"
+                            max="100"
+                            outlined
+                          ></v-text-field>
+                        </ValidationProvider>
+
+                        <h1
+                          v-show="resultData.isMatchStart == false"
+                          class="text-center mt-n2"
+                        >
+                          {{ resultData.awayScore }}
+                        </h1>
+                      </v-col>
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </div>
+
+              <div class="d-flex justify-end mb-2">
+                <v-btn
+                  v-show="resultData.isMatchStart == false"
+                  class="ml-auto font-weight-regular text-capitalize"
+                  @click="onStartMatch(resultData, currentGroupData)"
+                  width="150"
+                  dark
+                  depressed
+                  color="orange darken-1"
+                >
+                  Start Match
+                </v-btn>
+
+                <v-btn
+                  v-show="resultData.isMatchStart == true"
+                  class="px-10 ml-2 font-weight-regular text-capitalize"
+                  color="primary"
+                  width="150"
+                  @click="onLiveUpdate(resultData, currentGroupData)"
+                  :disabled="invalid"
+                  outlined
+                >
+                  Live Update</v-btn
+                >
+
+                <v-btn
+                  v-show="resultData.isMatchStart == true"
+                  class="px-10 ml-2 font-weight-regular text-capitalize"
+                  color="primary"
+                  width="150"
+                  @click="
+                    onUpdateResult(
+                      resultData,
+                      currentGroupData,
+                      currentTableData
+                    )
+                  "
+                  :disabled="invalid"
+                  depressed
+                >
+                  Fulltime</v-btn
+                >
+              </div>
+            </v-card>
+          </ValidationObserver>
+        </v-overlay>
+      </v-container>
     </v-main>
   </v-app>
 </template>
@@ -2751,6 +2777,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table A has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_B':
             this.group_1 = {
@@ -2779,6 +2814,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table B has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_C':
             this.group_1 = {
@@ -2807,6 +2851,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table C  has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_D':
             this.group_1 = {
@@ -2835,6 +2888,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table D has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_E':
             this.group_1 = {
@@ -2863,6 +2925,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table E has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_F':
             this.group_1 = {
@@ -2891,6 +2962,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table F has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_G':
             this.group_1 = {
@@ -2919,6 +2999,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table G has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_H':
             this.group_1 = {
@@ -2947,6 +3036,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table H has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
         }
       } catch (error) {

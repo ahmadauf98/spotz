@@ -30,10 +30,7 @@
                       <img :src="hostnameProf.photoURL" alt="..." />
                     </v-avatar>
                     <h1 class="text-subtitle-2 font-weight-medium ml-3">
-                      Organized by <br />
-                      <a href="#" class="text-decoration-none">{{
-                        hostnameProf.name
-                      }}</a>
+                      Organized by <br />{{ hostnameProf.name }}
                     </h1>
                   </v-card>
                 </v-col>

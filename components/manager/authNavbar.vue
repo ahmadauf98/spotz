@@ -1,7 +1,7 @@
 <template>
   <!-- Navigation Bar -->
   <v-app-bar
-    class="d-none d-sm-inline px-2 px-md-15"
+    class="d-none d-sm-inline nav-padding"
     elevate-on-scroll
     color="white"
     app
@@ -222,7 +222,13 @@
     <!-- Username Dropdown -->
     <v-menu offset-y left>
       <template v-slot:activator="{ on, attrs }">
-        <v-btn class="py-6 mx-1" text color="#1A202C" v-bind="attrs" v-on="on">
+        <v-btn
+          class="py-6 ml-1 mr-n6"
+          text
+          color="#1A202C"
+          v-bind="attrs"
+          v-on="on"
+        >
           <!-- Profile Photo -->
           <v-avatar class="mr-1" size="35">
             <img :src="photoURL" alt="..." />
@@ -259,28 +265,48 @@
 
         <!-- Organizer Button -->
         <v-list-item to="/organizer/auth/dashboard">
-          <v-list-item-title>Organizer Dashboard</v-list-item-title>
+          <v-list-item-title class="d-flex align-center">
+            <v-icon class="mr-1 ml-0" size="24" color="#3c3c3c"
+              >mdi-view-dashboard-outline</v-icon
+            >
+            Organizer Dashboard</v-list-item-title
+          >
         </v-list-item>
 
         <v-divider class="mx-3"></v-divider>
 
         <!-- Tournament & Event Button -->
         <v-list-item v-for="list in lists" :key="list.name" :to="list.route">
-          <v-list-item-title> {{ list.title }}</v-list-item-title>
+          <v-list-item-title class="d-flex align-center">
+            <v-icon class="mr-1 ml-0" size="24" color="#3c3c3c">{{
+              list.icon
+            }}</v-icon
+            >{{ list.title }}</v-list-item-title
+          >
         </v-list-item>
 
         <v-divider class="mx-3"></v-divider>
 
         <!-- Settings Button -->
         <v-list-item to="/manager/auth/settings">
-          <v-list-item-title>Settings</v-list-item-title>
+          <v-list-item-title class="d-flex align-center">
+            <v-icon class="mr-1 ml-0" size="24" color="#3c3c3c"
+              >mdi-cog-outline</v-icon
+            >
+            Settings</v-list-item-title
+          >
         </v-list-item>
 
         <v-divider class="mx-3"></v-divider>
 
         <!-- Logout Button -->
         <v-list-item @click.prevent="logout">
-          <v-list-item-title>Log out</v-list-item-title>
+          <v-list-item-title class="d-flex align-center">
+            <v-icon class="mr-1 ml-0" size="24" color="#3c3c3c"
+              >mdi-logout</v-icon
+            >
+            Log out</v-list-item-title
+          >
         </v-list-item>
       </v-list>
     </v-menu>
@@ -301,8 +327,16 @@ export default {
         { name: 'Browse Events', route: '/manager/auth/browseEvents' },
       ],
       lists: [
-        { title: 'My Tournaments', route: '/manager/auth/tournaments' },
-        { title: 'My Events', route: '/manager/auth/events' },
+        {
+          title: 'My Tournaments',
+          route: '/manager/auth/tournaments',
+          icon: 'mdi-tournament',
+        },
+        {
+          title: 'My Events',
+          route: '/manager/auth/events',
+          icon: 'mdi-floor-plan',
+        },
       ],
       // Input Data
       name: '',
@@ -810,3 +844,37 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .nav-padding {
+    padding: 0px 15px;
+  }
+}
+
+/* Medium devices (landscape tablets, 960px and up) */
+@media only screen and (min-width: 960px) {
+  .nav-padding {
+    padding: 0px 50px;
+  }
+}
+
+/* Large devices (laptops/desktops, 1264px and up) */
+@media only screen and (min-width: 1264px) {
+  .nav-padding {
+    padding: 0px 100px;
+  }
+}
+
+/* Extra large devices (large laptops and desktops, 1904px and up) */
+@media only screen and (min-width: 1904px) {
+  .nav-padding {
+    padding: 0px 220px;
+  }
+}
+</style>

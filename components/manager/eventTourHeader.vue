@@ -17,23 +17,20 @@
             <v-row class="mx-1 mt-4 d-block">
               <v-row class="d-flex align-center mt-n6">
                 <!-- Title -->
-                <v-col cols="8" md="7" xl="10">
+                <v-col cols="8" md="7" xl="9">
                   <h1 class="text-h4 font-weight-bold mb-md-n3">
                     {{ eventRef.title }} &mdash; {{ tournamentRef.sportType }}
                   </h1>
                 </v-col>
 
                 <!-- Hostname -->
-                <v-col cols="4" md="5" xl="2" class="d-flex justify-end">
+                <v-col cols="4" md="5" xl="3" class="d-flex justify-end">
                   <v-card outlined class="d-flex align-center py-2 px-4">
                     <v-avatar size="50">
                       <img :src="hostnameProf.photoURL" alt="..." />
                     </v-avatar>
                     <h1 class="text-subtitle-2 font-weight-medium ml-3">
-                      Organized by <br />
-                      <a href="#" class="text-decoration-none">{{
-                        hostnameProf.name
-                      }}</a>
+                      Organized by <br />{{ hostnameProf.name }}
                     </h1>
                   </v-card>
                 </v-col>

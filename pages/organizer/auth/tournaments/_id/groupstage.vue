@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
+    <v-main class="py-0 mb-10">
       <v-container class="p-0 my-0" fluid>
         <!-- Notifications -->
         <notifications />
@@ -2684,6 +2684,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table A has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_B':
             this.group_1 = {
@@ -2710,6 +2719,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table B has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_C':
             this.group_1 = {
@@ -2736,6 +2754,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table C  has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_D':
             this.group_1 = {
@@ -2762,6 +2789,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table D has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_E':
             this.group_1 = {
@@ -2788,6 +2824,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table E has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_F':
             this.group_1 = {
@@ -2814,6 +2859,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table F has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_G':
             this.group_1 = {
@@ -2840,6 +2894,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table G has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
           case 'table_H':
             this.group_1 = {
@@ -2866,6 +2929,15 @@ export default {
                 },
                 { merge: true }
               )
+              .then(() => {
+                this.$store.commit('SET_NOTIFICATION', {
+                  alert: 'Table H has been finalized.',
+                  alertIcon: 'mdi-cloud-check',
+                  alertIconStyle: 'mr-2 align-self-top',
+                  colorIcon: 'green darken-1',
+                  snackbar: true,
+                })
+              })
             break
         }
       } catch (error) {

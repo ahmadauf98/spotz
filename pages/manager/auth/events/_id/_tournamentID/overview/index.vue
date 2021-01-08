@@ -1,5 +1,5 @@
 <template>
-  <v-main class="mx-md-5 mx-lg-0 mx-xl-15 px-xl-10 my-0 py-0">
+  <v-main class="py-0 mb-10">
     <v-container class="p-0 my-0" fluid>
       <!-- Notifications -->
       <notifications />

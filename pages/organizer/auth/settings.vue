@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main class="mx-md-10 mx-lg-15 px-lg-15 py-0">
+    <v-main class="mx-md-10 mx-lg-15 px-lg-15 py-0 mb-10">
       <v-container class="p-0" fluid>
         <div class="mx-xl-15 px-xl-15">
           <!-- Notifications -->
@@ -83,7 +83,7 @@
                       <!-- Title -->
                       <h1 class="text-subtitle-2 font-weight-regular mb-2">
                         This is your public presence on Spotz. All information
-                        will be display in your profile.
+                        will be display in your dashboard.
                       </h1>
 
                       <!-- Information Details -->
