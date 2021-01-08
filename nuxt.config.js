@@ -76,7 +76,8 @@ export default {
       {
         hid: 'twitter:image',
         name: 'twitter:image',
-        content: '~/meta-logo.png',
+        href: '/meta-logo.png',
+        content: '/meta-logo.png',
       },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
