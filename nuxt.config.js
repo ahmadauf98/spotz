@@ -74,8 +74,8 @@ export default {
           'Join the others who trust Spotz to handle their sports events and tournaments. Customized for "Sukan Mahasiswa Universiti Malaya (SUKMUM)" but can be adapted to the others as well.',
       },
       {
-        hid: 'twitter:image',
-        name: 'twitter:image',
+        hid: 'twitter:image0',
+        name: 'twitter:image0',
         content: '/meta-logo.png',
       },
     ],
