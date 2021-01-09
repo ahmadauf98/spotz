@@ -493,72 +493,83 @@ export default {
 
     async onInvite() {
       try {
-        // Find userID by email
-        const snapshot = await this.$fire.firestore
-          .collection('users')
-          .where('email', '==', this.userEmail)
-          .get()
+        if (this.userEmail == '') {
+          // Notify User -> Form Validation Error
+          this.$store.commit('SET_NOTIFICATION', {
+            alert: 'Please select Manager.',
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
+            snackbar: true,
+          })
+        } else {
+          // Find userID by email
+          const snapshot = await this.$fire.firestore
+            .collection('users')
+            .where('email', '==', this.userEmail)
+            .get()
 
-        this.getUser = snapshot.docs.map((doc) => doc.data())
+          this.getUser = snapshot.docs.map((doc) => doc.data())
 
-        // Initialize ManagerID & OrganizerID
-        if (this.collaborator != null) {
-          if (this.collaborator == this.userID) {
-            var organizerID = this.userID
+          // Initialize ManagerID & OrganizerID
+          if (this.collaborator != null) {
+            if (this.collaborator == this.userID) {
+              var organizerID = this.userID
+            } else {
+              var organizerID = this.eventRef.hostName
+            }
           } else {
             var organizerID = this.eventRef.hostName
           }
-        } else {
-          var organizerID = this.eventRef.hostName
-        }
 
-        let managerID = this.getUser[0].uid
-        let eventID = this.eventRef.eventID
-        let eventName = this.eventRef.title
-        let sportType = this.tournamentRef.sportType
-        let gender = this.tournamentRef.gender
-        let tournamentID = this.tournamentRef.tournamentID
+          let managerID = this.getUser[0].uid
+          let eventID = this.eventRef.eventID
+          let eventName = this.eventRef.title
+          let sportType = this.tournamentRef.sportType
+          let gender = this.tournamentRef.gender
+          let tournamentID = this.tournamentRef.tournamentID
 
-        // Send Invitation to Manager
-        await this.$fire.firestore
-          .collection('users')
-          .doc(managerID)
-          .update({
-            organizerInv: firebase.firestore.FieldValue.arrayUnion({
-              organizerID: organizerID,
-              eventID: eventID,
-              tournamentID: tournamentID,
-              eventName: eventName,
-              gender: gender,
-              sportType: sportType,
-              type: 'managerInv',
-              category: 'eventsMgr',
-            }),
-          })
-
-        // Add Pending Status to Manager List
-        await this.$fire.firestore
-          .collection('events')
-          .doc(this.eventRef.eventID)
-          .collection('tournaments')
-          .doc(this.tournamentRef.tournamentID)
-          .update({
-            managerRef: firebase.firestore.FieldValue.arrayUnion({
-              uid: managerID,
-              status: 'pending',
-            }),
-          })
-          .then(() => {
-            this.invMgr = false
-            this.userEmail = ''
-            this.$store.commit('SET_NOTIFICATION', {
-              alert: 'Invitation has been sent',
-              alertIcon: 'mdi-email-send',
-              alertIconStyle: 'mr-2 align-self-top',
-              colorIcon: 'green darken-1',
-              snackbar: true,
+          // Send Invitation to Manager
+          await this.$fire.firestore
+            .collection('users')
+            .doc(managerID)
+            .update({
+              organizerInv: firebase.firestore.FieldValue.arrayUnion({
+                organizerID: organizerID,
+                eventID: eventID,
+                tournamentID: tournamentID,
+                eventName: eventName,
+                gender: gender,
+                sportType: sportType,
+                type: 'managerInv',
+                category: 'eventsMgr',
+              }),
             })
-          })
+
+          // Add Pending Status to Manager List
+          await this.$fire.firestore
+            .collection('events')
+            .doc(this.eventRef.eventID)
+            .collection('tournaments')
+            .doc(this.tournamentRef.tournamentID)
+            .update({
+              managerRef: firebase.firestore.FieldValue.arrayUnion({
+                uid: managerID,
+                status: 'pending',
+              }),
+            })
+            .then(() => {
+              this.invMgr = false
+              this.userEmail = ''
+              this.$store.commit('SET_NOTIFICATION', {
+                alert: 'Invitation has been sent',
+                alertIcon: 'mdi-email-send',
+                alertIconStyle: 'mr-2 align-self-top',
+                colorIcon: 'green darken-1',
+                snackbar: true,
+              })
+            })
+        }
       } catch (error) {
         this.invMgr = false
         console.log(error)
