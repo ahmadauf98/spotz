@@ -545,6 +545,15 @@ export default {
                 .data()
                 .managerRef.find((element) => element.uid == user.uid)
 
+              this.managerStatus = findManagerId.status
+
+              if (this.managerStatus == 'disabled') {
+                console.log('Manager Status Disabled')
+                this.$router.replace(
+                  `/manager/auth/tournaments/${this.$route.params.id}/overview`
+                )
+              }
+
               if (typeof findManagerId == 'undefined') {
                 console.log('No Credential')
                 this.$router.replace('/manager/auth/dashboard')

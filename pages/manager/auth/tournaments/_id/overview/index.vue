@@ -2,7 +2,7 @@
   <v-app>
     <v-main class="py-0 mb-10">
       <v-container class="p-0 my-0" fluid>
-        <!-- Notifications -->  
+        <!-- Notifications -->
         <notifications />
 
         <!-- Organization Details Part -->
@@ -102,6 +102,7 @@
 
                     <div class="d-flex mt-3 mx-1">
                       <h1
+                        v-if="managerStatus == 'active'"
                         class="text-subtitle-1 text-justify font-weight-regular"
                       >
                         Team registration is
@@ -112,9 +113,31 @@
                         >
                         <span v-else class="font-weight-medium text-red"
                           >closed</span
-                        >. Hence, you are required to complete the players
-                        registration before the due date. Organizer will approve
-                        or reject your application.
+                        >.
+
+                        <span v-if="tournamentRef.registrationStatus == true">
+                          Hence, you are required to complete the players
+                          registration before the due date. Organizer will
+                          approve or reject your application.
+                        </span>
+
+                        <span v-else
+                          >Hence, you need to wait for the organizer to open the
+                          registration. Kindly contact the organizer for more
+                          information.</span
+                        >
+                      </h1>
+
+                      <h1
+                        v-else
+                        class="text-subtitle-1 text-justify font-weight-regular"
+                      >
+                        Your manager account status has been
+                        <span class="font-weight-medium text-grey"
+                          >disabled</span
+                        >
+                        by the organizer. Kindly contact the organizer for more
+                        information regarding this issue.
                       </h1>
                     </div>
 
@@ -124,7 +147,8 @@
                         :disabled="
                           tournamentRef.registrationStatus == false ||
                           registrationStatus == 'pending' ||
-                          registrationStatus == 'approved'
+                          registrationStatus == 'approved' ||
+                          managerStatus == 'disabled'
                         "
                         color="primary"
                         class="ml-auto text-capitalize"
@@ -172,6 +196,7 @@ export default {
       // User Input Data
       tournamentRef: '',
       registrationStatus: '',
+      managerStatus: '',
     }
   },
 
@@ -189,6 +214,8 @@ export default {
               const findManagerId = doc
                 .data()
                 .managerRef.find((element) => element.uid == user.uid)
+
+              this.managerStatus = findManagerId.status
 
               if (typeof findManagerId == 'undefined') {
                 console.log('No Credential')
