@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main class="mx-md-10 mx-lg-15 px-lg-15 py-0">
+    <v-main class="mx-md-10 mx-lg-15 px-lg-15 mx-xl-n5 px-xl-0 py-0">
       <v-container class="p-0" fluid>
         <div class="mx-xl-15 px-xl-15">
           <div class="mx-xl-15 px-xl-15">
@@ -18,8 +18,13 @@
                   short documentation.</a
                 >
                 <br />
-                If you decided a single tournament is all you need, you can
-                start that<a href="#" class="text-decoration-none"> here.</a>
+                If you decide to have a single tournament, you can start create
+                a tournament<NuxtLink
+                  to="/organizer/auth/tournaments/create"
+                  class="text-decoration-none"
+                >
+                  here.</NuxtLink
+                >
               </h1>
 
               <ValidationObserver ref="observer" v-slot="{ invalid }">

@@ -1,7 +1,7 @@
 <template>
   <v-main
     style="min-height: 600px"
-    class="mx-md-10 mx-lg-15 px-lg-15 py-0 mb-10"
+    class="mx-md-10 mx-lg-15 px-lg-15 mx-xl-0 px-xl-0 py-0 mb-10"
   >
     <v-container class="p-0" fluid>
       <div class="mx-xl-15 px-xl-15">
