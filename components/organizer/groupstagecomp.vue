@@ -9,6 +9,7 @@
     >
       <v-row class="mt-n4 mb-n5 d-flex align-center">
         <v-col cols="12" md="8" order="2" order-md="1">
+         
           <h1
             class="mb-2 text-center text-md-left text-subtitle-1 font-weight-bold"
           >

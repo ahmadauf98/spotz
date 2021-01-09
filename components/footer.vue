@@ -32,38 +32,54 @@
             <v-col cols="12" lg="4">
               <v-row class="mt-n6 d-flex justify-center">
                 <v-col cols="4" md="6">
-                  <h1
-                    class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left"
-                  >
-                    About
-                  </h1>
-                  <h1
-                    class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left"
-                  >
-                    Contact
-                  </h1>
-                  <h1
-                    class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left"
-                  >
-                    Our Team
-                  </h1>
+                  <NuxtLink to="#" class="text-decoration-none">
+                    <h1
+                      class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left text-black"
+                    >
+                      About
+                    </h1>
+                  </NuxtLink>
+
+                  <NuxtLink to="#" class="text-decoration-none">
+                    <h1
+                      class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left text-black"
+                    >
+                      Contact
+                    </h1>
+                  </NuxtLink>
+
+                  <NuxtLink to="#" class="text-decoration-none">
+                    <h1
+                      class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left text-black"
+                    >
+                      Our Team
+                    </h1>
+                  </NuxtLink>
                 </v-col>
                 <v-col cols="4" md="6">
-                  <h1
-                    class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left"
-                  >
-                    FAQ
-                  </h1>
-                  <h1
-                    class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left"
-                  >
-                    Terms & Condition
-                  </h1>
-                  <h1
-                    class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left"
-                  >
-                    Privacy Policy
-                  </h1>
+                  <NuxtLink to="#" class="text-decoration-none">
+                    <h1
+                      class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left text-black"
+                    >
+                      FAQ
+                    </h1>
+                  </NuxtLink>
+
+                  <NuxtLink to="#" class="text-decoration-none">
+                    <h1
+                      class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left text-black"
+                    >
+                      Terms & Condition
+                    </h1>
+                  </NuxtLink>
+
+                  <NuxtLink to="#" class="text-decoration-none">
+                    <h1
+                      class="text-subtitle-1 font-weight-medium mb-1 text-center text-lg-left text-black"
+                    >
+                      Privacy Policy
+                    </h1>
+                  </NuxtLink>
                 </v-col>
               </v-row>
             </v-col>
