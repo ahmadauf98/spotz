@@ -160,7 +160,7 @@ export default {
         this.isLoading = false
         if (error.code == 'auth/user-not-found') {
           this.$store.commit('SET_NOTIFICATION', {
-            alert: 'The email address is not register in the system.',
+            alert: 'The email address is not registered in the system.',
             alertIcon: 'mdi-alert-circle',
             alertIconStyle: 'mr-2 align-self-top',
             colorIcon: 'red darken-1',
@@ -169,7 +169,7 @@ export default {
         } else if (error.code == 'auth/wrong-password') {
           this.$store.commit('SET_NOTIFICATION', {
             alert:
-              'The password is invalid. Please enter the correct password.',
+              'Incorrect password. Please enter the correct password.',
             alertIcon: 'mdi-alert-circle',
             alertIconStyle: 'mr-2 align-self-top',
             colorIcon: 'red darken-1',

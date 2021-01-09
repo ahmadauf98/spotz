@@ -461,190 +461,204 @@ export default {
       this.tournamentID = uniqid()
 
       try {
-        // Create & Store Tournament to Firestore
-        await this.$fire.firestore
-          .collection('events')
-          .doc(this.$route.params.id)
-          .collection('tournaments')
-          .doc(this.tournamentID)
-          .set({
-            // Basic Details
-            tournamentID: this.tournamentID,
-            sportType: this.sportType,
-            gender: this.gender,
-
-            // Collaborator Data
-            collaborator: null,
-
-            // Registration & Manager Data
-            registrationStatus: false,
-
-            // Manager Data
-            managerRef: [],
-            requestListMgr: [],
-
-            // Tournament Data
-            gStage: this.gStage,
-            participants: this.participants,
-            gRound: this.gRound,
-            gTeamNumbers: this.gTeamNumbers,
-            gGroupNumber: this.gGroupNumber,
-            gQualifyTeam: this.gQualifyTeam,
-            fStage: this.fStage,
-            fIs3rdPlace: this.fIs3rdPlace,
-            isGroupDraw: false,
+        if (this.gTeamNumbers < 3 || this.gTeamNumbers > 6) {
+          // Loading State -> False
+          this.isLoading = false
+          // Notify User -> Form Validation Error
+          this.$store.commit('SET_NOTIFICATION', {
+            alert:
+              'Please pick the number of teams competing in each group between 3 to 6 only.',
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
+            snackbar: true,
           })
-
-        // Create New Seedings
-        if (this.gGroupNumber == 2) {
+        } else {
+          // Create & Store Tournament to Firestore
           await this.$fire.firestore
             .collection('events')
             .doc(this.$route.params.id)
             .collection('tournaments')
             .doc(this.tournamentID)
-            .collection('group-stage')
-            .doc('seedings')
-            .set({ group_A: [], group_B: [] })
-        } else if (this.gGroupNumber == 4) {
-          await this.$fire.firestore
-            .collection('events')
-            .doc(this.$route.params.id)
-            .collection('tournaments')
-            .doc(this.tournamentID)
-            .collection('group-stage')
-            .doc('seedings')
-            .doc('seedings')
-            .set({ group_A: [], group_B: [], group_C: [], group_D: [] })
-        } else if (this.gGroupNumber == 8) {
-          await this.$fire.firestore
-            .collection('events')
-            .doc(this.$route.params.id)
-            .collection('tournaments')
-            .doc(this.tournamentID)
-            .collection('group-stage')
-            .doc('seedings')
             .set({
-              group_A: [],
-              group_B: [],
-              group_C: [],
-              group_D: [],
-              group_E: [],
-              group_F: [],
-              group_G: [],
-              group_H: [],
+              // Basic Details
+              tournamentID: this.tournamentID,
+              sportType: this.sportType,
+              gender: this.gender,
+
+              // Collaborator Data
+              collaborator: null,
+
+              // Registration & Manager Data
+              registrationStatus: false,
+
+              // Manager Data
+              managerRef: [],
+              requestListMgr: [],
+
+              // Tournament Data
+              gStage: this.gStage,
+              participants: this.participants,
+              gRound: this.gRound,
+              gTeamNumbers: this.gTeamNumbers,
+              gGroupNumber: this.gGroupNumber,
+              gQualifyTeam: this.gQualifyTeam,
+              fStage: this.fStage,
+              fIs3rdPlace: this.fIs3rdPlace,
+              isGroupDraw: false,
+            })
+
+          // Create New Seedings
+          if (this.gGroupNumber == 2) {
+            await this.$fire.firestore
+              .collection('events')
+              .doc(this.$route.params.id)
+              .collection('tournaments')
+              .doc(this.tournamentID)
+              .collection('group-stage')
+              .doc('seedings')
+              .set({ group_A: [], group_B: [] })
+          } else if (this.gGroupNumber == 4) {
+            await this.$fire.firestore
+              .collection('events')
+              .doc(this.$route.params.id)
+              .collection('tournaments')
+              .doc(this.tournamentID)
+              .collection('group-stage')
+              .doc('seedings')
+              .doc('seedings')
+              .set({ group_A: [], group_B: [], group_C: [], group_D: [] })
+          } else if (this.gGroupNumber == 8) {
+            await this.$fire.firestore
+              .collection('events')
+              .doc(this.$route.params.id)
+              .collection('tournaments')
+              .doc(this.tournamentID)
+              .collection('group-stage')
+              .doc('seedings')
+              .set({
+                group_A: [],
+                group_B: [],
+                group_C: [],
+                group_D: [],
+                group_E: [],
+                group_F: [],
+                group_G: [],
+                group_H: [],
+              })
+          }
+
+          // Initialize Default Team
+          if (this.gGroupNumber == 2) {
+            for (var index = 0; index < this.gTeamNumbers; index++) {
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.tournamentID)
+                .collection('group-stage')
+                .doc('seedings')
+                .update({
+                  group_A: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'A' + index,
+                    teamName: 'Team A' + (index + 1),
+                  }),
+                  group_B: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'B' + index,
+                    teamName: 'Team B' + (index + 1),
+                  }),
+                })
+            }
+          } else if (this.gGroupNumber == 4) {
+            for (var index = 0; index < this.gTeamNumbers; index++) {
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.tournamentID)
+                .collection('group-stage')
+                .doc('seedings')
+                .update({
+                  group_A: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'A' + index,
+                    teamName: 'Team A' + (index + 1),
+                  }),
+                  group_B: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'B' + index,
+                    teamName: 'Team B' + (index + 1),
+                  }),
+                  group_C: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'C' + index,
+                    teamName: 'Team C' + (index + 1),
+                  }),
+                  group_D: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'D' + index,
+                    teamName: 'Team D' + (index + 1),
+                  }),
+                })
+            }
+          } else if (this.gGroupNumber == 8) {
+            for (var index = 0; index < this.gTeamNumbers; index++) {
+              await this.$fire.firestore
+                .collection('events')
+                .doc(this.$route.params.id)
+                .collection('tournaments')
+                .doc(this.tournamentID)
+                .collection('group-stage')
+                .doc('seedings')
+                .update({
+                  group_A: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'A' + index,
+                    teamName: 'Team A' + (index + 1),
+                  }),
+                  group_B: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'B' + index,
+                    teamName: 'Team B' + (index + 1),
+                  }),
+                  group_C: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'C' + index,
+                    teamName: 'Team C' + (index + 1),
+                  }),
+                  group_D: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'D' + index,
+                    teamName: 'Team D' + (index + 1),
+                  }),
+                  group_E: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'E' + index,
+                    teamName: 'Team E' + (index + 1),
+                  }),
+                  group_F: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'F' + index,
+                    teamName: 'Team F' + (index + 1),
+                  }),
+                  group_G: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'G' + index,
+                    teamName: 'Team G' + (index + 1),
+                  }),
+                  group_H: firebase.firestore.FieldValue.arrayUnion({
+                    id: 'H' + index,
+                    teamName: 'Team H' + (index + 1),
+                  }),
+                })
+            }
+          }
+
+          // Add tournamentID to events doc
+          await this.$fire.firestore
+            .collection('events')
+            .doc(this.$route.params.id)
+            .update({
+              tournamentRef: firebase.firestore.FieldValue.arrayUnion(
+                this.tournamentID
+              ),
+            })
+            .then(() => {
+              // Loading State -> False
+              this.isLoading = false
+              // Push Current Page -> Tournament List
+              this.$router.go(-1)
             })
         }
-
-        // Initialize Default Team
-        if (this.gGroupNumber == 2) {
-          for (var index = 0; index < this.gTeamNumbers; index++) {
-            await this.$fire.firestore
-              .collection('events')
-              .doc(this.$route.params.id)
-              .collection('tournaments')
-              .doc(this.tournamentID)
-              .collection('group-stage')
-              .doc('seedings')
-              .update({
-                group_A: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'A' + index,
-                  teamName: 'Team A' + (index + 1),
-                }),
-                group_B: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'B' + index,
-                  teamName: 'Team B' + (index + 1),
-                }),
-              })
-          }
-        } else if (this.gGroupNumber == 4) {
-          for (var index = 0; index < this.gTeamNumbers; index++) {
-            await this.$fire.firestore
-              .collection('events')
-              .doc(this.$route.params.id)
-              .collection('tournaments')
-              .doc(this.tournamentID)
-              .collection('group-stage')
-              .doc('seedings')
-              .update({
-                group_A: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'A' + index,
-                  teamName: 'Team A' + (index + 1),
-                }),
-                group_B: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'B' + index,
-                  teamName: 'Team B' + (index + 1),
-                }),
-                group_C: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'C' + index,
-                  teamName: 'Team C' + (index + 1),
-                }),
-                group_D: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'D' + index,
-                  teamName: 'Team D' + (index + 1),
-                }),
-              })
-          }
-        } else if (this.gGroupNumber == 8) {
-          for (var index = 0; index < this.gTeamNumbers; index++) {
-            await this.$fire.firestore
-              .collection('events')
-              .doc(this.$route.params.id)
-              .collection('tournaments')
-              .doc(this.tournamentID)
-              .collection('group-stage')
-              .doc('seedings')
-              .update({
-                group_A: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'A' + index,
-                  teamName: 'Team A' + (index + 1),
-                }),
-                group_B: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'B' + index,
-                  teamName: 'Team B' + (index + 1),
-                }),
-                group_C: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'C' + index,
-                  teamName: 'Team C' + (index + 1),
-                }),
-                group_D: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'D' + index,
-                  teamName: 'Team D' + (index + 1),
-                }),
-                group_E: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'E' + index,
-                  teamName: 'Team E' + (index + 1),
-                }),
-                group_F: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'F' + index,
-                  teamName: 'Team F' + (index + 1),
-                }),
-                group_G: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'G' + index,
-                  teamName: 'Team G' + (index + 1),
-                }),
-                group_H: firebase.firestore.FieldValue.arrayUnion({
-                  id: 'H' + index,
-                  teamName: 'Team H' + (index + 1),
-                }),
-              })
-          }
-        }
-
-        // Add tournamentID to events doc
-        await this.$fire.firestore
-          .collection('events')
-          .doc(this.$route.params.id)
-          .update({
-            tournamentRef: firebase.firestore.FieldValue.arrayUnion(
-              this.tournamentID
-            ),
-          })
-          .then(() => {
-            // Loading State -> False
-            this.isLoading = false
-            // Push Current Page -> Tournament List
-            this.$router.go(-1)
-          })
       } catch (error) {
         // Loading State -> False
         this.isLoading = false

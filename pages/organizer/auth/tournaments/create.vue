@@ -836,7 +836,7 @@ export default {
           // Notify User -> Form Validation Error
           this.$store.commit('SET_NOTIFICATION', {
             alert:
-              'Please pick number of teams compete in each group between 3 to 6 only.',
+              'Please pick the number of teams competing in each group between 3 to 6 only.',
             alertIcon: 'mdi-alert-circle',
             alertIconStyle: 'mr-2 align-self-top',
             colorIcon: 'red darken-1',
