@@ -40,7 +40,7 @@
                         A single competition
                       </h1>
                       <h1 class="text-subtitle-1 font-weight-regular mb-5">
-                        Discover all the eventss for your team to participate
+                        Discover all the events for your team to participate
                         in. For private tournament, kindly contact your
                         organizer to be invited.
                       </h1>
