@@ -473,6 +473,18 @@ export default {
             colorIcon: 'red darken-1',
             snackbar: true,
           })
+        } else if (Number.isInteger(this.gTeamNumbers) == false) {
+          // Loading State -> False
+          this.isLoading = false
+          // Notify User -> Form Validation Error
+          this.$store.commit('SET_NOTIFICATION', {
+            alert:
+              'Please pick integer number only in the number of teams field.',
+            alertIcon: 'mdi-alert-circle',
+            alertIconStyle: 'mr-2 align-self-top',
+            colorIcon: 'red darken-1',
+            snackbar: true,
+          })
         } else {
           // Create & Store Tournament to Firestore
           await this.$fire.firestore
