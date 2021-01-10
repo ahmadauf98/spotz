@@ -142,16 +142,18 @@ export default {
           .collection('users')
           .doc(this.userId)
           .onSnapshot((doc) => {
-            this.tournamentsMgrTemp = []
-            doc.data().tournamentsMgr.forEach((docref) => {
-              this.$fire.firestore
-                .collection('tournaments')
-                .doc(docref)
-                .onSnapshot((doc) => {
-                  this.tournamentsMgrTemp.push(doc.data())
-                })
-            })
-            this.tournamentsMgr = this.tournamentsMgrTemp
+            if (doc.exists) {
+              this.tournamentsMgrTemp = []
+              doc.data().tournamentsMgr.forEach((docref) => {
+                this.$fire.firestore
+                  .collection('tournaments')
+                  .doc(docref)
+                  .onSnapshot((doc) => {
+                    this.tournamentsMgrTemp.push(doc.data())
+                  })
+              })
+              this.tournamentsMgr = this.tournamentsMgrTemp
+            }
           })
       } else {
         this.$router.push('/')

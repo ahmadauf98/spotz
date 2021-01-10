@@ -228,7 +228,9 @@ export default {
           .collection('tournaments')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            this.tournamentRef = doc.data()
+            if (doc.exists) {
+              this.tournamentRef = doc.data()
+            }
           })
 
         this.$fire.firestore

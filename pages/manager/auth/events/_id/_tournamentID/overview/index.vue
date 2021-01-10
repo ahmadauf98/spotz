@@ -235,7 +235,9 @@ export default {
           .collection('events')
           .doc(this.$route.params.id)
           .onSnapshot((doc) => {
-            this.eventRef = doc.data()
+            if (doc.exists) {
+              this.eventRef = doc.data()
+            }
           })
 
         // Get data from tournaments
@@ -245,7 +247,9 @@ export default {
           .collection('tournaments')
           .doc(this.$route.params.tournamentID)
           .onSnapshot((doc) => {
-            this.tournamentRef = doc.data()
+            if (doc.exists) {
+              this.tournamentRef = doc.data()
+            }
           })
 
         this.$fire.firestore

@@ -120,7 +120,9 @@ export default {
               .collection('users')
               .doc(this.userId)
               .onSnapshot((doc) => {
-                this.name = doc.data().name
+                if (doc.exists) {
+                  this.name = doc.data().name
+                }
               })
           } else {
             this.$router.push('/')
