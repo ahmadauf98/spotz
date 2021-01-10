@@ -30,11 +30,11 @@
           <!-- Tournaments Create -->
           <v-row v-if="tournamentsRef == null || tournamentsRef == ''">
             <v-col>
-              <v-card class="mx-auto" outlined>
-                <v-row class="p-15">
+              <v-card class="pa-2" outlined>
+                <v-row>
                   <v-col cols="12" md="7" lg="8">
                     <div class="px-5">
-                      <h1 class="text-subtitle-1 font-weight-bold mb-8">
+                      <h1 class="text-subtitle-1 font-weight-bold mb-6">
                         Create Tournament
                       </h1>
                       <h1 class="text-h4 font-weight-medium mb-2">
@@ -45,7 +45,7 @@
                         participants, and more.
                       </h1>
                       <v-btn
-                        class="font-weight-regular text-capitalize mb-4"
+                        class="font-weight-regular text-capitalize"
                         dark
                         depressed
                         color="primary"

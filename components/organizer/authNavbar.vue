@@ -255,7 +255,7 @@
         <v-divider class="mx-3"></v-divider>
 
         <!-- Manager Button -->
-        <v-list-item to="/manager/auth/dashboard">
+        <v-list-item @click="onSwitch()">
           <v-list-item-title class="d-flex align-center">
             <v-icon class="mr-1 ml-0" size="24" color="#3c3c3c"
               >mdi-view-dashboard-outline</v-icon
@@ -379,6 +379,19 @@ export default {
   },
 
   methods: {
+    // Switch to Manager Dashboard
+    onSwitch() {
+      this.$router.push('/manager/auth/dashboard')
+
+      this.$store.commit('SET_NOTIFICATION', {
+        alert: 'Switching to Manager Dashboard',
+        alertIcon: 'mdi-account',
+        alertIconStyle: 'mr-2 align-self-top',
+        colorIcon: 'primary',
+        snackbar: true,
+      })
+    },
+
     // To change status of organization notifications
     async onChangeStatus(list, notifications) {
       try {

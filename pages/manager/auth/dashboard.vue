@@ -1,17 +1,29 @@
 <template>
   <v-main class="mx-md-10 mx-lg-15 px-lg-15 px-xl-0 py-0 mb-10">
-    <div class="mx-xl-15 px-xl-15">
-      <!-- Greeting User -->
-      <h1 class="my-6">Welcome back, {{ name }}.</h1>
+    <div class="mx-4 mx-md-0 mx-xl-15 px-xl-15">
+      <!-- Notifications -->
+      <notifications />
 
-      <!-- Tournament Part -->
+      <!-- Greeting User -->
+      <h1 class="my-6">Welcome, {{ name }}.</h1>
+
       <v-row class="mb-5">
+        <!-- Tournament Part -->
         <v-col>
-          <v-card class="mx-auto" outlined>
-            <v-row class="p-15">
-              <v-col cols="12" md="7" lg="8">
-                <div class="px-5">
-                  <h1 class="text-subtitle-1 font-weight-bold mb-8">
+          <v-card class="pa-5" outlined>
+            <v-row>
+              <!-- Illustration -->
+              <v-col cols="12" class="d-none d-md-flex justify-center">
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fbrowse-tournament.svg?alt=media&token=812c33ef-7d07-472c-8ea3-82938f9c0142"
+                  width="250px"
+                  alt="..."
+                />
+              </v-col>
+
+              <v-col cols="12">
+                <div class="px-3">
+                  <h1 class="text-subtitle-1 font-weight-bold mb-4">
                     Tournaments
                   </h1>
                   <h1 class="text-h4 font-weight-medium mb-2">
@@ -23,7 +35,7 @@
                     be invited.
                   </h1>
                   <v-btn
-                    class="font-weight-regular mb-4 text-capitalize"
+                    class="font-weight-regular text-capitalize"
                     depressed
                     dark
                     color="#6B46C1"
@@ -33,30 +45,28 @@
                   </v-btn>
                 </div>
               </v-col>
-              <v-col cols="12" md="4" class="d-none d-md-flex align-center">
-                <div class="px-5 py-md-0 py-lg-0">
-                  <img
-                    src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fbrowse-tournament.svg?alt=media&token=812c33ef-7d07-472c-8ea3-82938f9c0142"
-                    width="250px"
-                    alt="..."
-                  />
-                </div>
-              </v-col>
             </v-row>
           </v-card>
         </v-col>
-      </v-row>
 
-      <!-- Event Part -->
-      <v-row>
+        <!-- Event Part -->
         <v-col>
-          <v-card class="mx-auto" outlined>
-            <v-row class="p-15">
-              <v-col cols="12" md="7" lg="8">
-                <div class="px-5">
-                  <h1 class="text-subtitle-1 font-weight-bold mb-8">Events</h1>
+          <v-card class="pa-5" outlined>
+            <v-row>
+              <!-- Illustration -->
+              <v-col cols="12" class="d-none d-md-flex justify-center mb-2">
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fbrowse-event.svg?alt=media&token=0eaa4eb7-104b-4b64-9307-08b172e36b7f"
+                  width="250px"
+                  alt="..."
+                />
+              </v-col>
+
+              <v-col cols="12">
+                <div class="px-3">
+                  <h1 class="text-subtitle-1 font-weight-bold mb-4">Events</h1>
                   <h1 class="text-h4 font-weight-medium mb-2">
-                    Multiple tournaments in a single event
+                    Multiple tournaments
                   </h1>
                   <h1 class="text-subtitle-1 font-weight-regular mb-5">
                     Discover all the events for your team to participate in. For
@@ -64,7 +74,7 @@
                     invited.
                   </h1>
                   <v-btn
-                    class="font-weight-regular mb-4 text-capitalize"
+                    class="font-weight-regular text-capitalize"
                     dark
                     depressed
                     color="#6B46C1"
@@ -72,15 +82,6 @@
                   >
                     Browse events
                   </v-btn>
-                </div>
-              </v-col>
-              <v-col cols="12" md="4" class="d-none d-md-flex align-center">
-                <div class="px-5 py-md-0 py-lg-0">
-                  <img
-                    src="https://firebasestorage.googleapis.com/v0/b/sports-management-system-v2.appspot.com/o/website%2Fbrowse-event.svg?alt=media&token=0eaa4eb7-104b-4b64-9307-08b172e36b7f"
-                    width="250px"
-                    alt="..."
-                  />
                 </div>
               </v-col>
             </v-row>
@@ -93,9 +94,14 @@
 
 <script>
 import firebase from 'firebase'
+import notifications from '~/components/notifications'
 
 export default {
   layout: 'manager',
+
+  components: {
+    notifications,
+  },
 
   data() {
     return {

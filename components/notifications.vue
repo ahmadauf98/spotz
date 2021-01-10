@@ -13,7 +13,9 @@
         <v-icon :class="notification.alertIconStyle" color="white">{{
           notification.alertIcon
         }}</v-icon>
-        <span class="font-weight-medium">{{ notification.alert }}</span>
+        <span class="font-weight-medium text-white">{{
+          notification.alert
+        }}</span>
       </div>
     </v-snackbar>
   </div>

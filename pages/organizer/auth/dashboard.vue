@@ -1,17 +1,20 @@
 <template>
   <v-main class="mx-md-10 mx-lg-15 px-lg-15 px-xl-0 py-0 mb-10">
     <div class="mx-xl-15 px-xl-15">
+      <!-- Notifications -->
+      <notifications />
+
       <!-- Greeting User -->
-      <h1 class="my-6">Welcome back, {{ name }}.</h1>
+      <h1 class="my-6">Welcome, {{ name }}.</h1>
 
       <!-- Tournament Part -->
-      <v-row class="mb-5">
+      <v-row class="mb-4">
         <v-col>
-          <v-card class="mx-auto" outlined>
-            <v-row class="p-15">
+          <v-card class="pa-2" outlined>
+            <v-row>
               <v-col cols="12" md="7" lg="8">
                 <div class="px-5">
-                  <h1 class="text-subtitle-1 font-weight-bold mb-8">
+                  <h1 class="text-subtitle-1 font-weight-bold mb-6">
                     My Tournaments
                   </h1>
                   <h1 class="text-h4 font-weight-medium mb-2">
@@ -22,7 +25,7 @@
                     participants, and more.
                   </h1>
                   <v-btn
-                    class="font-weight-regular mb-4 text-capitalize"
+                    class="font-weight-regular mb-6 text-capitalize"
                     dark
                     depressed
                     color="primary"
@@ -49,11 +52,11 @@
       <!-- Event Part -->
       <v-row>
         <v-col>
-          <v-card class="mx-auto" outlined>
-            <v-row class="p-15">
+          <v-card class="pa-2" outlined>
+            <v-row>
               <v-col cols="12" md="7" lg="8">
                 <div class="px-5">
-                  <h1 class="text-subtitle-1 font-weight-bold mb-8">
+                  <h1 class="text-subtitle-1 font-weight-bold mb-6">
                     My Events
                   </h1>
                   <h1 class="text-h4 font-weight-medium mb-2">
@@ -94,9 +97,14 @@
 <script>
 import firebase from 'firebase/app'
 import 'firebase/auth'
+import notifications from '~/components/notifications'
 
 export default {
   layout: 'organizer',
+
+  components: {
+    notifications,
+  },
 
   data() {
     return {

@@ -264,7 +264,7 @@
         <v-divider class="mx-3"></v-divider>
 
         <!-- Organizer Button -->
-        <v-list-item to="/organizer/auth/dashboard">
+        <v-list-item @click="onSwitch()">
           <v-list-item-title class="d-flex align-center">
             <v-icon class="mr-1 ml-0" size="24" color="#3c3c3c"
               >mdi-view-dashboard-outline</v-icon
@@ -391,6 +391,19 @@ export default {
   },
 
   methods: {
+    // Switch to Organizer Dashboard
+    onSwitch() {
+      this.$router.push('/organizer/auth/dashboard')
+
+      this.$store.commit('SET_NOTIFICATION', {
+        alert: 'Switching to Organizer Dashboard',
+        alertIcon: 'mdi-account-tie',
+        alertIconStyle: 'mr-2 align-self-top',
+        colorIcon: 'primary',
+        snackbar: true,
+      })
+    },
+
     // To change status of manager notifications
     async onChangeStatus(list, notifications) {
       try {
