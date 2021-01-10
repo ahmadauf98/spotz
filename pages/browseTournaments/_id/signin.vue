@@ -16,7 +16,7 @@
           <!-- Title -->
           <v-row>
             <v-col class="pb-0 text-center">
-              <h1><b>Log in</b> as manager</h1>
+              <h1><b>Log in</b> to Spotz</h1>
             </v-col>
           </v-row>
 
@@ -103,7 +103,7 @@
             <div class="text-center mt-2">
               <h1 class="hyperlink caption">
                 Don't have an account?
-                <NuxtLink to="/manager/signup"> Sign up. </NuxtLink>
+                <NuxtLink :to="`signup`"> Sign up. </NuxtLink>
               </h1>
             </div>
           </v-card-text>
