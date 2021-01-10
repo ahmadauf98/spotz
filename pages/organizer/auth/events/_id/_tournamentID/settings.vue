@@ -33,14 +33,13 @@
                 </v-row>
               </div>
 
-              <!--  -->
+              <!-- Button -->
               <v-card-actions class="mx-13 d-flex">
                 <v-btn
                   @click="onUpdate"
                   color="primary"
                   class="ml-auto px-10 font-weight-regular text-capitalize"
                   depressed
-                  dark
                 >
                   Update
                 </v-btn>
@@ -64,6 +63,7 @@ import 'firebase/auth'
 import eventTourHeader from '~/components/organizer/eventTourHeader'
 import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
   layout: 'organizer',

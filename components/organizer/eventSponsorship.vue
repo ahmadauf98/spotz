@@ -93,96 +93,113 @@
           </h1>
         </div>
 
-        <v-card class="mx-auto pa-8" outlined>
-          <v-row class="d-block">
-            <!-- PhotoURL Input -->
-            <v-col cols="12" class="mb-2 text-center">
-              <!-- If Profile Photo is Null -->
-              <v-avatar class="mb-8" size="150" rounded>
-                <img v-if="!isFileUploaded" :src="photoURL" alt="..." />
+        <ValidationObserver ref="observer" v-slot="{ invalid }">
+          <v-card class="mx-auto pa-8" outlined>
+            <v-row class="d-block">
+              <!-- PhotoURL Input -->
+              <v-col cols="12" class="mb-2 text-center">
+                <!-- If Profile Photo is Null -->
+                <v-avatar class="mb-8" size="150" rounded>
+                  <img v-if="!isFileUploaded" :src="photoURL" alt="..." />
 
-                <template v-else>
-                  <v-overlay absolute opacity="0" value="true">
-                    <v-progress-circular
-                      indeterminate
-                      color="primary"
-                    ></v-progress-circular>
-                  </v-overlay>
-                </template>
-              </v-avatar>
+                  <template v-else>
+                    <v-overlay absolute opacity="0" value="true">
+                      <v-progress-circular
+                        indeterminate
+                        color="primary"
+                      ></v-progress-circular>
+                    </v-overlay>
+                  </template>
+                </v-avatar>
 
-              <div class="mt-n15 ml-15">
-                <v-btn
-                  @click="choosePhoto"
-                  class="ml-15"
-                  color="#1a202c"
-                  :disabled="isFileUploaded"
-                  fab
-                  small
+                <div class="mt-n15 ml-15">
+                  <v-btn
+                    @click="choosePhoto"
+                    class="ml-15"
+                    color="#1a202c"
+                    :disabled="isFileUploaded"
+                    fab
+                    small
+                  >
+                    <v-icon color="white" size="18">mdi-camera</v-icon>
+                  </v-btn>
+                  <input
+                    type="file"
+                    ref="photoChoosen"
+                    style="display: none"
+                    @change="onFileSelected"
+                    accept="image/*"
+                  />
+                </div>
+              </v-col>
+
+              <!-- Brand Name Input -->
+              <v-col cols="12" class="mb-n6">
+                <ValidationProvider
+                  v-slot="{ errors }"
+                  name="Brand Name"
+                  rules="required"
                 >
-                  <v-icon color="white" size="18">mdi-camera</v-icon>
+                  <v-text-field
+                    label="Brand Name"
+                    v-model="brandName"
+                    :error-messages="errors"
+                    outlined
+                    dense
+                  ></v-text-field>
+                </ValidationProvider>
+              </v-col>
+
+              <!-- Brand Website Input -->
+              <v-col cols="12" class="mb-n6">
+                <ValidationProvider
+                  v-slot="{ errors }"
+                  name="Brand Website"
+                  rules="required|url"
+                >
+                  <v-text-field
+                    label="Brand Website"
+                    v-model="websiteURL"
+                    placeholder="www.website.com.my"
+                    :error-messages="errors"
+                    outlined
+                    dense
+                  ></v-text-field>
+                </ValidationProvider>
+              </v-col>
+
+              <!-- Description Input -->
+              <v-col cols="12" class="mb-n6">
+                <v-textarea
+                  outlined
+                  label="Description"
+                  v-model="description"
+                ></v-textarea>
+              </v-col>
+            </v-row>
+
+            <v-row class="d-flex">
+              <v-col cols="6" class="ml-auto">
+                <v-btn
+                  @click="addBrandSponsor"
+                  class="font-weight-regular text-capitalize"
+                  color="primary"
+                  :disabled="invalid"
+                  depressed
+                  block
+                >
+                  <span v-if="isLoading == false"> Add Sponsorship </span>
+                  <v-progress-circular
+                    v-else
+                    :size="20"
+                    indeterminate
+                    color="white"
+                  ></v-progress-circular>
                 </v-btn>
-                <input
-                  type="file"
-                  ref="photoChoosen"
-                  style="display: none"
-                  @change="onFileSelected"
-                  accept="image/*"
-                />
-              </div>
-            </v-col>
-
-            <!-- Brand Name Input -->
-            <v-col cols="12" class="mb-n6">
-              <v-text-field
-                label="Brand Name"
-                v-model="brandName"
-                outlined
-                dense
-              ></v-text-field>
-            </v-col>
-
-            <!-- Brand Website Input -->
-            <v-col cols="12" class="mb-n6">
-              <v-text-field
-                label="Brand Website"
-                v-model="websiteURL"
-                outlined
-                dense
-              ></v-text-field>
-            </v-col>
-
-            <!-- Description Input -->
-            <v-col cols="12" class="mb-n6">
-              <v-textarea
-                outlined
-                label="Description"
-                v-model="description"
-              ></v-textarea>
-            </v-col>
-          </v-row>
-
-          <v-row class="d-flex">
-            <v-col cols="6" class="ml-auto">
-              <v-btn
-                @click="addBrandSponsor"
-                class="font-weight-regular text-capitalize"
-                color="primary"
-                depressed
-                block
-                dark
-              >
-                <span v-if="isLoading == false"> Create </span>
-                <v-progress-circular
-                  v-else
-                  :size="20"
-                  indeterminate
-                  color="white"
-                ></v-progress-circular>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card>
+              </v-col>
+            </v-row>
+          </v-card>
+        </ValidationObserver>
       </v-card>
     </v-overlay>
 
@@ -241,8 +258,14 @@
 
 <script>
 import firebase from 'firebase'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
+  components: {
+    ValidationObserver: ValidationObserver,
+    ValidationProvider: ValidationProvider,
+  },
+
   data: () => ({
     // Add & Delete Sponsorship Overlay Data
     addSponsorship: false,

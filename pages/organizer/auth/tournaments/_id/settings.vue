@@ -11,235 +11,244 @@
         <v-row>
           <!-- Left Side -->
           <v-col cols="12" lg="8" xl="9" order="2" order-lg="1">
-            <v-card class="mx-auto py-10 mt-n3 mt-lg-0 px-9" outlined tile>
-              <!--  -->
-              <div class="px-15">
-                <h1 class="text-subtitle-1 font-weight-bold mb-1">
-                  Basic Details
-                </h1>
+            <ValidationObserver ref="observer" v-slot="{ invalid }">
+              <v-card class="mx-auto py-10 mt-n3 mt-lg-0 px-9" outlined tile>
+                <!-- Basic Details -->
+                <div class="px-15">
+                  <h1 class="text-subtitle-1 font-weight-bold mb-1">
+                    Basic Details
+                  </h1>
 
-                <v-row class="d-block">
-                  <!-- Title Input -->
-                  <v-col cols="12" class="mb-n6">
-                    <v-text-field
-                      label="Title"
-                      v-model="title"
-                      outlined
-                      dense
-                    ></v-text-field>
-                  </v-col>
+                  <v-row class="d-block">
+                    <!-- Title Input -->
+                    <v-col cols="12" class="mb-n6">
+                      <ValidationProvider
+                        v-slot="{ errors }"
+                        name="Title"
+                        rules="required"
+                      >
+                        <v-text-field
+                          label="Title"
+                          v-model="title"
+                          :error-messages="errors"
+                          outlined
+                          dense
+                        ></v-text-field>
+                      </ValidationProvider>
+                    </v-col>
 
-                  <!-- Gender Selection -->
-                  <v-col cols="12" class="mb-n6">
-                    <v-select
-                      :items="genderList"
-                      :value="genderList"
-                      v-model="gender"
-                      label="Gender Category"
-                      outlined
-                      dense
-                    ></v-select>
-                  </v-col>
+                    <!-- Gender Selection -->
+                    <v-col cols="12" class="mb-n6">
+                      <v-select
+                        :items="genderList"
+                        :value="genderList"
+                        v-model="gender"
+                        label="Gender Category"
+                        outlined
+                        dense
+                      ></v-select>
+                    </v-col>
 
-                  <!-- Tournament Switch -->
-                  <v-col cols="12" class="mt-n10 mb-6 d-flex">
-                    <v-switch
-                      v-model="isOpen"
-                      color="primary"
-                      label="Open Tournament"
-                      :disabled="tournamentRef.isGroupDraw == true"
-                      inset
-                      hide-details
-                    ></v-switch>
-                  </v-col>
+                    <!-- Tournament Switch -->
+                    <v-col cols="12" class="mt-n10 mb-6 d-flex">
+                      <v-switch
+                        v-model="isOpen"
+                        color="primary"
+                        label="Open Tournament"
+                        :disabled="tournamentRef.isGroupDraw == true"
+                        inset
+                        hide-details
+                      ></v-switch>
+                    </v-col>
 
-                  <v-row class="mt-n9 mb-n12">
-                    <!-- Left Block -->
-                    <v-col cols="6">
-                      <!-- Start Date Input -->
-                      <v-col cols="12">
-                        <v-menu
-                          ref="menuStart"
-                          v-model="menuStart"
-                          :close-on-content-click="false"
-                          :return-value.sync="startDate"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              v-model="startDate_Format"
-                              label="Start Date"
-                              readonly
-                              dense
-                              outlined
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            v-model="startDate"
-                            :allowed-dates="allowedDates_Start"
-                            no-title
-                            scrollable
+                    <v-row class="mt-n9 mb-n12">
+                      <!-- Left Block -->
+                      <v-col cols="6">
+                        <!-- Start Date Input -->
+                        <v-col cols="12">
+                          <v-menu
+                            ref="menuStart"
+                            v-model="menuStart"
+                            :close-on-content-click="false"
+                            :return-value.sync="startDate"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="290px"
                           >
-                            <v-spacer></v-spacer>
-                            <v-btn
-                              text
-                              color="#6b46c1"
-                              @click="menuStart = false"
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="startDate_Format"
+                                label="Start Date"
+                                readonly
+                                dense
+                                outlined
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              v-model="startDate"
+                              :allowed-dates="allowedDates_Start"
+                              no-title
+                              scrollable
                             >
-                              Cancel
-                            </v-btn>
-                            <v-btn
-                              text
-                              color="#6b46c1"
-                              @click="$refs.menuStart.save(startDate)"
-                            >
-                              OK
-                            </v-btn>
-                          </v-date-picker>
-                        </v-menu>
+                              <v-spacer></v-spacer>
+                              <v-btn
+                                text
+                                color="#6b46c1"
+                                @click="menuStart = false"
+                              >
+                                Cancel
+                              </v-btn>
+                              <v-btn
+                                text
+                                color="#6b46c1"
+                                @click="$refs.menuStart.save(startDate)"
+                              >
+                                OK
+                              </v-btn>
+                            </v-date-picker>
+                          </v-menu>
+                        </v-col>
                       </v-col>
-                    </v-col>
 
-                    <!-- Right Block -->
-                    <v-col cols="6">
-                      <!-- End Date Input-->
-                      <v-col cols="12">
-                        <v-menu
-                          ref="menuEnd"
-                          v-model="menuEnd"
-                          :close-on-content-click="false"
-                          :return-value.sync="endDate"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              v-model="endDate_Format"
-                              label="End Date"
-                              readonly
-                              dense
-                              outlined
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            v-model="endDate"
-                            :allowed-dates="allowedDates_End"
-                            no-title
-                            scrollable
+                      <!-- Right Block -->
+                      <v-col cols="6">
+                        <!-- End Date Input-->
+                        <v-col cols="12">
+                          <v-menu
+                            ref="menuEnd"
+                            v-model="menuEnd"
+                            :close-on-content-click="false"
+                            :return-value.sync="endDate"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="290px"
                           >
-                            <v-spacer></v-spacer>
-                            <v-btn
-                              text
-                              color="#6b46c1"
-                              @click="menuEnd = false"
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field
+                                v-model="endDate_Format"
+                                label="End Date"
+                                readonly
+                                dense
+                                outlined
+                                v-bind="attrs"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              v-model="endDate"
+                              :allowed-dates="allowedDates_End"
+                              no-title
+                              scrollable
                             >
-                              Cancel
-                            </v-btn>
-                            <v-btn
-                              text
-                              color="#6b46c1"
-                              @click="$refs.menuEnd.save(endDate)"
-                            >
-                              OK
-                            </v-btn>
-                          </v-date-picker>
-                        </v-menu>
+                              <v-spacer></v-spacer>
+                              <v-btn
+                                text
+                                color="#6b46c1"
+                                @click="menuEnd = false"
+                              >
+                                Cancel
+                              </v-btn>
+                              <v-btn
+                                text
+                                color="#6b46c1"
+                                @click="$refs.menuEnd.save(endDate)"
+                              >
+                                OK
+                              </v-btn>
+                            </v-date-picker>
+                          </v-menu>
+                        </v-col>
                       </v-col>
+                    </v-row>
+
+                    <v-row class="mt-n9 mb-n12">
+                      <!-- Left Block -->
+                      <v-col cols="6">
+                        <!-- Website URL Input -->
+                        <v-col cols="12">
+                          <v-text-field
+                            label="Organizer Website"
+                            placeholder="www.example.com"
+                            v-model="websiteURL"
+                            outlined
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                      </v-col>
+
+                      <!-- Right Block -->
+                      <v-col cols="6">
+                        <!-- Phone Number Input-->
+                        <v-col cols="12">
+                          <v-text-field
+                            label="Phone Number"
+                            v-model="phoneNumber"
+                            placeholder="012-3456789 or 01-23456789"
+                            outlined
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                      </v-col>
+                    </v-row>
+
+                    <v-row class="mt-n9 mb-n9">
+                      <!-- Left Block -->
+                      <v-col cols="6">
+                        <!-- Location Input -->
+                        <v-col cols="12">
+                          <v-text-field
+                            label="Location"
+                            v-model="location"
+                            placeholder="State, Country"
+                            outlined
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                      </v-col>
+
+                      <!-- Right Block -->
+                      <v-col cols="6">
+                        <!-- Email Input-->
+                        <v-col cols="12">
+                          <v-text-field
+                            label="Organizer Email"
+                            v-model="email"
+                            placeholder="username@email.com"
+                            type="email"
+                            outlined
+                            dense
+                          ></v-text-field>
+                        </v-col>
+                      </v-col>
+                    </v-row>
+
+                    <!-- Description Input -->
+                    <v-col cols="12" class="mb-n6">
+                      <v-textarea
+                        outlined
+                        label="Tournament Description"
+                        v-model="description"
+                      ></v-textarea>
                     </v-col>
                   </v-row>
+                </div>
 
-                  <v-row class="mt-n9 mb-n12">
-                    <!-- Left Block -->
-                    <v-col cols="6">
-                      <!-- Website URL Input -->
-                      <v-col cols="12">
-                        <v-text-field
-                          label="Organizer Website"
-                          placeholder="www.example.com"
-                          v-model="websiteURL"
-                          outlined
-                          dense
-                        ></v-text-field>
-                      </v-col>
-                    </v-col>
-
-                    <!-- Right Block -->
-                    <v-col cols="6">
-                      <!-- Phone Number Input-->
-                      <v-col cols="12">
-                        <v-text-field
-                          label="Phone Number"
-                          v-model="phoneNumber"
-                          placeholder="012-3456789 or 01-23456789"
-                          outlined
-                          dense
-                        ></v-text-field>
-                      </v-col>
-                    </v-col>
-                  </v-row>
-
-                  <v-row class="mt-n9 mb-n9">
-                    <!-- Left Block -->
-                    <v-col cols="6">
-                      <!-- Location Input -->
-                      <v-col cols="12">
-                        <v-text-field
-                          label="Location"
-                          v-model="location"
-                          placeholder="State, Country"
-                          outlined
-                          dense
-                        ></v-text-field>
-                      </v-col>
-                    </v-col>
-
-                    <!-- Right Block -->
-                    <v-col cols="6">
-                      <!-- Email Input-->
-                      <v-col cols="12">
-                        <v-text-field
-                          label="Organizer Email"
-                          v-model="email"
-                          placeholder="username@email.com"
-                          type="email"
-                          outlined
-                          dense
-                        ></v-text-field>
-                      </v-col>
-                    </v-col>
-                  </v-row>
-
-                  <!-- Description Input -->
-                  <v-col cols="12" class="mb-n6">
-                    <v-textarea
-                      outlined
-                      label="Tournament Description"
-                      v-model="description"
-                    ></v-textarea>
-                  </v-col>
-                </v-row>
-              </div>
-
-              <!-- Button -->
-              <v-card-actions class="mx-13 d-flex">
-                <v-btn
-                  @click="onUpdate"
-                  color="primary"
-                  class="ml-auto px-10 font-weight-regular text-capitalize"
-                  depressed
-                  dark
-                >
-                  Update
-                </v-btn>
-              </v-card-actions>
-            </v-card>
+                <!-- Button -->
+                <v-card-actions class="mx-13 d-flex">
+                  <v-btn
+                    @click="onUpdate"
+                    color="primary"
+                    class="ml-auto px-10 font-weight-regular text-capitalize"
+                    :disabled="invalid"
+                    depressed
+                  >
+                    Update
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </ValidationObserver>
           </v-col>
 
           <!-- Right Side -->
@@ -259,6 +268,7 @@ import moment from 'moment'
 import tournamentHeader from '~/components/organizer/tournamentHeader'
 import tournamentInfo from '~/components/organizer/tournamentInfo'
 import notifications from '~/components/notifications'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
   layout: 'organizer',
@@ -267,6 +277,8 @@ export default {
     tournamentHeader,
     tournamentInfo,
     notifications,
+    ValidationObserver: ValidationObserver,
+    ValidationProvider: ValidationProvider,
   },
 
   data() {

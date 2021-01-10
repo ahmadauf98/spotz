@@ -36,38 +36,50 @@
 
               <v-divider class="mt-5"></v-divider>
 
-              <div class="d-flex align-center mt-n4">
-                <v-icon class="mr-3" size="50">mdi-account-multiple</v-icon>
-                <div class="d-block">
-                  <h1 class="text-subtitle-1 font-weight-medium">Team Name</h1>
-                </div>
-                <v-col cols="5" class="mt-6 d-flex">
-                  <v-text-field
-                    v-model="tempTeamName"
+              <ValidationObserver ref="observer" v-slot="{ invalid }">
+                <div class="d-flex align-center mt-n4">
+                  <v-icon class="mr-3" size="50">mdi-account-multiple</v-icon>
+                  <div class="d-block">
+                    <h1 class="text-subtitle-1 font-weight-medium">
+                      Team Name
+                    </h1>
+                  </div>
+                  <v-col cols="5" class="mt-6 d-flex">
+                    <ValidationProvider
+                      v-slot="{ errors }"
+                      name="Team Name"
+                      rules="required"
+                    >
+                      <v-text-field
+                        v-model="tempTeamName"
+                        :error-messages="errors"
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </ValidationProvider>
+                  </v-col>
+
+                  <v-btn
+                    v-if="teamName == ''"
+                    @click="onSet"
+                    :disabled="tempTeamName == ''"
+                    class="ml-auto text-capitalize"
+                    color="primary"
                     outlined
-                    dense
-                  ></v-text-field>
-                </v-col>
+                    >Set</v-btn
+                  >
 
-                <v-btn
-                  v-if="teamName == ''"
-                  @click="onSet"
-                  :disabled="tempTeamName == ''"
-                  class="ml-auto text-capitalize"
-                  color="primary"
-                  outlined
-                  >Set</v-btn
-                >
-
-                <v-btn
-                  v-else
-                  @click="onUpdate"
-                  class="ml-auto text-capitalize"
-                  color="primary"
-                  outlined
-                  >Update</v-btn
-                >
-              </div>
+                  <v-btn
+                    v-else
+                    @click="onUpdate"
+                    class="ml-auto text-capitalize"
+                    color="primary"
+                    :disabled="invalid"
+                    outlined
+                    >Update</v-btn
+                  >
+                </div>
+              </ValidationObserver>
 
               <v-divider v-if="teamName == ''" class="mt-n4"></v-divider>
               <v-divider v-else class="mt-n4 mb-4 ml-15"></v-divider>
@@ -194,156 +206,201 @@
 
           <!-- Add Player Overlay -->
           <v-overlay :opacity="opacity" :value="addPlayerOverlay">
-            <v-card
-              class="mx-auto py-5 px-10 black--text d-block align-center"
-              min-height="300"
-              width="700"
-              color="white"
-              light
-              outlined
-            >
-              <div>
-                <v-btn
-                  @click="addPlayerOverlay = false"
-                  class="mt-n3 ml-n8"
-                  icon
-                >
-                  <v-icon>mdi-close-circle</v-icon>
-                </v-btn>
-              </div>
-
-              <div class="d-flex justify-center">
-                <v-avatar
-                  v-show="tournamentFormat.passportPhoto == true"
-                  class="profile"
-                  color="grey"
-                  size="114"
-                >
-                  <v-img v-if="!isFileUploaded" :src="passportPhoto" alt="...">
-                  </v-img>
-
-                  <template v-else>
-                    <v-overlay absolute opacity="0" value="true">
-                      <v-progress-circular
-                        indeterminate
-                        color="primary"
-                      ></v-progress-circular>
-                    </v-overlay>
-                  </template>
-                </v-avatar>
-
-                <!-- File Input Button -->
-                <div
-                  v-show="tournamentFormat.passportPhoto == true"
-                  class="mt-7 ml-n4"
-                >
+            <ValidationObserver ref="observer" v-slot="{ invalid }">
+              <v-card
+                class="mx-auto py-5 px-10 black--text d-block align-center"
+                min-height="300"
+                width="700"
+                color="white"
+                light
+                outlined
+              >
+                <div>
                   <v-btn
-                    @click="choosePhoto"
-                    class="mt-15"
-                    color="#1a202c"
-                    :disabled="isFileUploaded"
-                    fab
-                    x-small
+                    @click="addPlayerOverlay = false"
+                    class="mt-n3 ml-n8"
+                    icon
                   >
-                    <v-icon color="white" size="18">mdi-camera</v-icon>
+                    <v-icon>mdi-close-circle</v-icon>
                   </v-btn>
-                  <input
-                    type="file"
-                    ref="photoChoosen"
-                    style="display: none"
-                    @change="onFileSelected"
-                    accept="image/*"
-                  />
                 </div>
-              </div>
 
-              <div class="d-block align-center mt-n2">
-                <v-card-text>
-                  <v-text-field
-                    v-show="tournamentFormat.name == true"
-                    v-model="name"
-                    class="mt-3"
-                    color="primary"
-                    label="Player Name"
-                    outlined
-                    dense
-                  ></v-text-field>
+                <div class="d-flex justify-center">
+                  <v-avatar
+                    v-show="tournamentFormat.passportPhoto == true"
+                    class="profile"
+                    color="grey"
+                    size="114"
+                  >
+                    <v-img
+                      v-if="!isFileUploaded"
+                      :src="passportPhoto"
+                      alt="..."
+                    >
+                    </v-img>
 
-                  <div class="d-flex mt-n2">
+                    <template v-else>
+                      <v-overlay absolute opacity="0" value="true">
+                        <v-progress-circular
+                          indeterminate
+                          color="primary"
+                        ></v-progress-circular>
+                      </v-overlay>
+                    </template>
+                  </v-avatar>
+
+                  <!-- File Input Button -->
+                  <div
+                    v-show="tournamentFormat.passportPhoto == true"
+                    class="mt-7 ml-n4"
+                  >
+                    <v-btn
+                      @click="choosePhoto"
+                      class="mt-15"
+                      color="#1a202c"
+                      :disabled="isFileUploaded"
+                      fab
+                      x-small
+                    >
+                      <v-icon color="white" size="18">mdi-camera</v-icon>
+                    </v-btn>
+                    <input
+                      type="file"
+                      ref="photoChoosen"
+                      style="display: none"
+                      @change="onFileSelected"
+                      accept="image/*"
+                    />
+                  </div>
+                </div>
+
+                <div class="d-block align-center mt-n2">
+                  <v-card-text>
+                    <ValidationProvider
+                      v-slot="{ errors }"
+                      name="Player Name"
+                      rules="required"
+                    >
+                      <v-text-field
+                        v-show="tournamentFormat.name == true"
+                        v-model="name"
+                        class="mt-3"
+                        color="primary"
+                        label="Player Name"
+                        :error-messages="errors"
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </ValidationProvider>
+
+                    <v-row class="d-flex mt-n4">
+                      <v-col cols="6">
+                        <ValidationProvider
+                          v-slot="{ errors }"
+                          name="ID Number"
+                          rules="required"
+                        >
+                          <v-text-field
+                            v-show="tournamentFormat.identificationID == true"
+                            v-model="identificationID"
+                            :error-messages="errors"
+                            class="mr-2"
+                            color="primary"
+                            label="Identification Number"
+                            outlined
+                            dense
+                          ></v-text-field>
+                        </ValidationProvider>
+                      </v-col>
+                      <v-col cols="6">
+                        <ValidationProvider
+                          v-slot="{ errors }"
+                          name="Gender"
+                          rules="required"
+                        >
+                          <v-select
+                            v-show="tournamentFormat.gender == true"
+                            v-model="gender"
+                            class="ml-2"
+                            color="primary"
+                            label="Gender"
+                            :error-messages="errors"
+                            :items="genderList"
+                            outlined
+                            dense
+                          ></v-select>
+                        </ValidationProvider>
+                      </v-col>
+                    </v-row>
+
+                    <ValidationProvider
+                      v-slot="{ errors }"
+                      name="Address"
+                      rules="required"
+                    >
+                      <v-textarea
+                        v-show="tournamentFormat.address == true"
+                        v-model="address"
+                        :error-messages="errors"
+                        class="mt-n4"
+                        color="primary"
+                        label="Address"
+                        outlined
+                        dense
+                      ></v-textarea>
+                    </ValidationProvider>
+
+                    <ValidationProvider
+                      v-slot="{ errors }"
+                      name="Phone Number"
+                      :rules="{ regex: /^[0-9,+,-]+$/ }"
+                    >
+                      <v-text-field
+                        v-show="tournamentFormat.phoneNumber == true"
+                        v-model="phoneNumber"
+                        :error-messages="errors"
+                        class="mt-n1"
+                        color="primary"
+                        label="Phone Number"
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </ValidationProvider>
+
                     <v-text-field
-                      v-show="tournamentFormat.identificationID == true"
-                      v-model="identificationID"
-                      class="mr-2"
+                      v-show="tournamentFormat.numMatric == true"
+                      v-model="numMatric"
+                      class="mt-n1"
                       color="primary"
-                      label="Identification Number"
+                      label="Matric ID Number"
                       outlined
                       dense
                     ></v-text-field>
 
-                    <v-select
-                      v-show="tournamentFormat.gender == true"
-                      v-model="gender"
-                      class="ml-2"
+                    <v-text-field
+                      v-show="tournamentFormat.numAthelete == true"
+                      v-model="numAthelete"
+                      class="mt-n1"
                       color="primary"
-                      label="Gender"
-                      :items="genderList"
+                      label="Athelete ID Number"
                       outlined
                       dense
-                    ></v-select>
-                  </div>
+                    ></v-text-field>
+                  </v-card-text>
+                </div>
 
-                  <v-textarea
-                    v-show="tournamentFormat.address == true"
-                    v-model="address"
-                    class="mt-n2"
+                <div class="d-flex mt-n4 mb-1 px-4">
+                  <v-btn
+                    @click="onAddPlayer"
+                    class="ml-auto font-weight-regular text-capitalize"
                     color="primary"
-                    label="Address"
-                    outlined
-                    dense
-                  ></v-textarea>
-
-                  <v-text-field
-                    v-show="tournamentFormat.phoneNumber == true"
-                    v-model="phoneNumber"
-                    class="mt-n2"
-                    color="primary"
-                    label="Phone Number"
-                    outlined
-                    dense
-                  ></v-text-field>
-
-                  <v-text-field
-                    v-show="tournamentFormat.numMatric == true"
-                    v-model="numMatric"
-                    class="mt-n2"
-                    color="primary"
-                    label="Matric ID Number"
-                    outlined
-                    dense
-                  ></v-text-field>
-
-                  <v-text-field
-                    v-show="tournamentFormat.numAthelete == true"
-                    v-model="numAthelete"
-                    class="mt-n2"
-                    color="primary"
-                    label="Athelete ID Number"
-                    outlined
-                    dense
-                  ></v-text-field>
-                </v-card-text>
-              </div>
-
-              <div class="d-flex mt-n4 mb-1 px-4">
-                <v-btn
-                  @click="onAddPlayer"
-                  class="ml-auto font-weight-regular text-capitalize"
-                  color="primary"
-                  depressed
-                  >Submit</v-btn
-                >
-              </div>
-            </v-card>
+                    :disabled="invalid"
+                    depressed
+                    >Add Player</v-btn
+                  >
+                </div>
+              </v-card>
+            </ValidationObserver>
           </v-overlay>
 
           <!-- View Player Overlay -->
@@ -465,6 +522,7 @@ import firebase from 'firebase'
 import tournamentHeader from '~/components/manager/tournamentHeader'
 import tournamentInfo from '~/components/manager/tournamentInfo'
 import notifications from '~/components/notifications'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
   layout: 'manager',
@@ -473,6 +531,8 @@ export default {
     tournamentHeader,
     tournamentInfo,
     notifications,
+    ValidationObserver: ValidationObserver,
+    ValidationProvider: ValidationProvider,
   },
 
   data() {
@@ -567,12 +627,21 @@ export default {
           .collection('team-registration')
           .doc(this.userId)
           .onSnapshot((doc) => {
-            if (doc.data() == null) {
-            } else {
+            if (doc.exists) {
               this.teamName = doc.data().teamName
               this.tempTeamName = this.teamName
               this.listPlayers = doc.data().listPlayers
               this.lengthListPlayers = this.listPlayers.length
+
+              if (
+                doc.data().status == 'pending' ||
+                doc.data().status == 'approved'
+              ) {
+                console.log('Registration Status Void')
+                this.$router.replace(
+                  `/manager/auth/tournaments/${this.$route.params.id}/overview`
+                )
+              }
             }
           })
 
@@ -582,10 +651,12 @@ export default {
           .collection('team-registration')
           .doc('format')
           .onSnapshot((doc) => {
-            this.tournamentFormat = doc.data()
-            this.numPlayers = doc.data().numPlayers
-            this.availablePlayers =
-              Number(this.numPlayers) - this.lengthListPlayers
+            if (doc.exists) {
+              this.tournamentFormat = doc.data()
+              this.numPlayers = doc.data().numPlayers
+              this.availablePlayers =
+                Number(this.numPlayers) - this.lengthListPlayers
+            }
           })
       } else {
         this.$router.push('/')
