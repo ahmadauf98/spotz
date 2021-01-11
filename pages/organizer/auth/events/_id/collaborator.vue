@@ -248,7 +248,9 @@
                   <v-btn
                     @click="onAddCollab(userID, tournamentID)"
                     class="font-weight-regular text-capitalize"
-                    :disabled="tournamentList == ''"
+                    :disabled="
+                      tournamentList == '' || tournamentID == '' || userID == ''
+                    "
                     color="primary"
                     height="40"
                     depressed
@@ -273,6 +275,7 @@ import 'firebase/firestore'
 import eventHeader from '~/components/organizer/eventHeader'
 import eventSponsorship from '~/components/organizer/eventSponsorship'
 import notifications from '~/components/notifications'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
   layout: 'organizer',
@@ -281,6 +284,8 @@ export default {
     eventHeader,
     eventSponsorship,
     notifications,
+    ValidationObserver: ValidationObserver,
+    ValidationProvider: ValidationProvider,
   },
 
   data() {
@@ -315,8 +320,6 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        this.userID = user.uid
-
         // Validate Account Credential
         this.$fire.firestore
           .collection('events')

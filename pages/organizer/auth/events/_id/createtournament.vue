@@ -473,7 +473,7 @@ export default {
             colorIcon: 'red darken-1',
             snackbar: true,
           })
-        } else if (Number.isInteger(this.gTeamNumbers) == false) {
+        } else if (Number.isInteger(this.gTeamNumbers) == 'false') {
           // Loading State -> False
           this.isLoading = false
           // Notify User -> Form Validation Error
