@@ -196,8 +196,7 @@
                     Due date of registration
                   </h1>
                   <h1 class="text-caption text-grey">
-                    This is not automated. Only to inform manager. You need to
-                    do manually in tournament settings.
+                    This is not automated. Only to inform manager.
                   </h1>
                 </div>
 
